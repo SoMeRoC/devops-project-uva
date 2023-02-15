@@ -1,0 +1,59 @@
+Game functionality:
+- Start game with 8 pieces set pieces
+- Best of 9
+- White/black player randomly assigned
+- You see a board, a timer, on both sides of the board show power-up cards
+- Show current score, player rating and who's turn it is
+- Legal moves highlighted (legal moved checked in backend)
+- On game end:
+    - Loser chooses a new power
+    - Winner sees selection but can't choose
+    - Game restarts with new setup. (auto choose and start after 1 minute)
+- On set end:
+    - new ratings distributed to DB
+- Offer Draw for match and game
+- Leave, opponent wins
+
+MVP:
+- As a user I want to be able to login and play SoMeRoc matches, my scores and statistics are saved
+- As a user I want to find other players to match with in a Lobby
+    (to be determined later, auto match making, invite links etc.)
+- As an admin I want to have a specific login flow and get an admin tab/view
+    - Remove users
+    - Change general rule
+- Game parameters (as MVP allow users to set a timer)
+- Rule explanation tab
+
+Nice to have:
+- Chat function
+- Make set selection process more interesting
+- Spectators
+- Global distribution?
+
+Epic: Application
+Features:
+    - List features we are going to implement for an MVP
+        (including user-login, game management,.....) See above
+    - Design Microservices boundaries (application architecture)
+    - Database design
+
+Epic: CI/CD
+Features:
+    - Which infrastructure deployment tool are we going to use
+    - Create pipeline + templates for basic functions (to be extended later)
+    - How will testing be done?
+    - Repo and git strategy and design
+
+Epic: Authentication
+Features:
+    - Investigate Azure B2C for Admin login and user login
+    - Implement the above
+    - Design custom frontend
+    - Allow password change
+    -
+
+Epic: Azure
+Feature:
+    - Investigate Use case API management
+    - Think about network security
+    - Load balancing?
