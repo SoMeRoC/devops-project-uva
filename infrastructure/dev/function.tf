@@ -1,7 +1,7 @@
 resource "azurerm_storage_account" "func_storage" {
-  name                     = "st${var.workload_name}backend${var.env}${var.postfix}"
-  resource_group_name      = azurerm_resource_group.messaging.name
-  location                 = azurerm_resource_group.messaging.location
+  name                     = "stfuncstorage${var.env}"
+  resource_group_name      = azurerm_resource_group.dev.name
+  location                 = azurerm_resource_group.dev.location
   account_tier             = "Standard"
   account_replication_type = "GRS"
   shared_access_key_enabled = true
@@ -25,6 +25,12 @@ resource "azurerm_service_plan" "consumption" {
   location            = azurerm_resource_group.dev.location
   os_type             = "Linux"
   sku_name            = "Y1"
+
+  lifecycle {
+    ignore_changes = [
+      tags,
+    ]
+  }
 }
 
 resource "azurerm_linux_function_app" "example" {
@@ -37,4 +43,10 @@ resource "azurerm_linux_function_app" "example" {
   service_plan_id            = azurerm_service_plan.consumption.id
 
   site_config {}
+
+  lifecycle {
+    ignore_changes = [
+      tags,
+    ]
+  }
 }
