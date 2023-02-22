@@ -1,0 +1,12 @@
+name: Deploy Function
+on: [push]
+
+defaults:
+  run:
+    working-directory: 'infrastructure/dev'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
