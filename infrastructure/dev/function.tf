@@ -1,5 +1,5 @@
 resource "azurerm_storage_account" "func_storage" {
-  name                     = "stfuncstorage${var.env}"
+  name                     = "stsomeroc${var.env}"
   resource_group_name      = azurerm_resource_group.dev.name
   location                 = azurerm_resource_group.dev.location
   account_tier             = "Standard"
