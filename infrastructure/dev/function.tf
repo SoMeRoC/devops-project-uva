@@ -6,11 +6,11 @@ resource "azurerm_storage_account" "func_storage" {
   account_replication_type = "GRS"
   shared_access_key_enabled = true
 
-  network_rules {
-    default_action             = "Deny"
-    bypass                     = ["Logging","Metrics","AzureServices"]
-    virtual_network_subnet_ids = [data.azurerm_subnet.subnet.id]
-  }
+#   network_rules {
+#     default_action             = "Deny"
+#     bypass                     = ["Logging","Metrics","AzureServices"]
+#     virtual_network_subnet_ids = [data.azurerm_subnet.subnet.id]
+#   }
 
   lifecycle {
     ignore_changes = [
