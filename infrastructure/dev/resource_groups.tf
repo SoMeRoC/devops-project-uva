@@ -1,5 +1,5 @@
 resource "azurerm_resource_group" "dev" {
-  name     = "rg-${var.workload_name}-cluster-${var.env}-${var.postfix}"
+  name     = "rg-inititalfunc-${var.env}"
   location = "westeurope"
   tags     = merge(local.tags, {"WorkloadName" : var.workload_name})
 
