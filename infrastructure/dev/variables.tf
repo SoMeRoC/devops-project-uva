@@ -1,2 +1,10 @@
-workload_name = "initial"
-environment = "dev"
+variable "env" {
+  type    = string
+  default = "dev"
+}
+
+
+variable "workload_name" {
+  type    = string
+  default = "initial"
+}
