@@ -1,14 +1,27 @@
 name: Deploy Function
 on:
-  push:
-    # Sequence of patterns matched against refs/heads
-    branches:
-      - main
-
+  workflow_dispatch:
+    inputs:
+      terraform_destroy:
+          description: 'Destroy infra'
+          required: true
+          default: 'false'
+          type: choice
+          options:
+          - 'false'
+          - 'true'
+      working_directory:
+          description: 'Set default working directory'
+          required: true
+          default: 'infrastructure/dev'
+          type: choice
+          options:
+          - 'infrastructure/dev'
+          - 'infrastructure/shared/dev'
 
 defaults:
   run:
-    working-directory: 'infrastructure/dev'
+    working-directory: github.event.inputs.working_directory
 
 jobs:
   build:
