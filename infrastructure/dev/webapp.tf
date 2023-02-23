@@ -7,15 +7,23 @@ resource "azurerm_service_plan" "app" {
   sku_name            = "B1"
 }
 
-resource "azurerm_linux_web_app" "example" {
+resource "azurerm_linux_web_app" "fe" {
   name                = "web-${var.workload_name}-FrontEnd-${var.env}"
   resource_group_name = azurerm_resource_group.dev.name
   location            = azurerm_service_plan.app.location
   service_plan_id     = azurerm_service_plan.app.id
 
 
+  connection_string {
+    name = "ConnectionString"
+    type = "Custom"
+    value = azurerm_application_insights.appi.connection_string
+  }
+
   site_config {
-    application_insights_connection_string = var.application_insights_connection_string
+    application_stack {
+        node_version = "18-lts"
+    }
   }
 
   identity {
