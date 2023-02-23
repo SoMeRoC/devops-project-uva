@@ -13,11 +13,8 @@ resource "azurerm_linux_web_app" "fe" {
   location            = azurerm_service_plan.app.location
   service_plan_id     = azurerm_service_plan.app.id
 
-
-  connection_string {
-    name = "ConnectionString"
-    type = "Custom"
-    value = azurerm_application_insights.appi.connection_string
+  app_settings = {
+    "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.appi.connection_string
   }
 
   site_config {
