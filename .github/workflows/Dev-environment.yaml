@@ -1,7 +1,10 @@
 name: Deploy Dev environment Infrastructure
 on:
-  - push
-  - workflow_dispatch
+  push:
+    branches:
+      - dev
+    paths:
+      - infrastructure/dev/**
 
 defaults:
   run:
