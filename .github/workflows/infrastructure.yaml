@@ -44,14 +44,16 @@ jobs:
       run: terraform init -backend-config "./backend-dev.cfg"
 
     # Generates an execution plan for Terraform
-    - name: Terraform Plan
+    - if: github.event.inputs.terraform_destroy == 'false'
+      name: Terraform Plan
       run: terraform plan
 
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
-    - name: Terraform Apply
+    - if: github.event.inputs.terraform_destroy == 'false'
+      name: Terraform Apply
       run: terraform apply -auto-approve
 
 
-    # - if: github.event.inputs.terraform_destroy == 'true'
-    #   name: Terraform Destroy
-    #   run: terraform destroy -auto-approve
+    - if: github.event.inputs.terraform_destroy == 'true'
+      name: Terraform Destroy
+      run: terraform destroy -auto-approve
