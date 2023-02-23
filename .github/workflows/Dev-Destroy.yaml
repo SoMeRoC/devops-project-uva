@@ -2,6 +2,9 @@ name: Destroy Dev environment
 on:
    - workflow_dispatch
 
+# TO TRIGGER, RUN FROM YOUR ROOT FOLDER:
+# gh workflow run Dev-Destroy.yaml --ref SOM-22-Infrastructure-pipeline
+
 defaults:
   run:
     working-directory: 'infrastructure/dev'
