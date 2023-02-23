@@ -1,5 +1,7 @@
 name: Deploy Dev environment Infrastructure
-on: ["push"]
+on:
+  - push
+  - workflow_dispatch
 
 defaults:
   run:
