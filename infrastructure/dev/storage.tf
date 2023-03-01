@@ -6,6 +6,7 @@ resource "azurerm_storage_account" "func_storage" {
   account_replication_type = "GRS"
   shared_access_key_enabled = true
 
+  tags =  local.tags
   lifecycle {
     ignore_changes = [
       tags,

@@ -5,6 +5,8 @@ resource "azurerm_service_plan" "consumption" {
   os_type             = "Linux"
   sku_name            = "Y1"
 
+  tags = var.tags
+
   lifecycle {
     ignore_changes = [
       tags,
@@ -21,6 +23,7 @@ resource "azurerm_linux_function_app" "func" {
   storage_account_access_key = var.storage_account_access_key
   service_plan_id            = azurerm_service_plan.consumption.id
 
+  tags = var.tags
   site_config {
     application_insights_connection_string = var.application_insights_connection_string
   }
