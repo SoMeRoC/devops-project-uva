@@ -39,7 +39,3 @@ variable "application_insights_connection_string" {
 }
 
 variable "tags" {}
-
-variable "product_name" {
-  type = string
-}
