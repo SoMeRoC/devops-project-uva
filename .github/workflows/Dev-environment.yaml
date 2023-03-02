@@ -5,6 +5,9 @@ on:
       - dev
     paths:
       - infrastructure/dev/**
+  workflow_dispatch:
+
+# gh workflow run Dev-environment.yaml --ref SOM-22-Infrastructure-pipeline
 
 defaults:
   run:
