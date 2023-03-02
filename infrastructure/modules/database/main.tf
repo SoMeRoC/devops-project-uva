@@ -7,6 +7,7 @@ resource "azurerm_mssql_database" "db" {
   max_size_gb    = 4
   read_scale     = false
   sku_name = "GP_S_Gen5_1"
+  min_capacity = 0.5
 
   zone_redundant = true
   tags = var.tags
