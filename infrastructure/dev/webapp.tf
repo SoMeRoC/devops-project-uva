@@ -1,8 +1,8 @@
 
 resource "azurerm_service_plan" "app" {
   name                = "apps-FrontEnd-${var.env}"
-  resource_group_name = azurerm_resource_group.dev.name
-  location            = azurerm_resource_group.dev.location
+  resource_group_name = azurerm_resource_group.frontend.name
+  location            = azurerm_resource_group.frontend.location
   os_type             = "Linux"
   sku_name            = "B1"
 }
