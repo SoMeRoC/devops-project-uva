@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - dev
-      - SOM-22-Infrastructure-pipeline
     paths:
       - infrastructure/shared/dev/**
   workflow_dispatch:
@@ -23,7 +22,7 @@ jobs:
       ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: HashiCorp - Setup Terraform
       # You may pin to the exact commit or the version.
@@ -38,9 +37,9 @@ jobs:
     - name: Terraform Plan
       run: terraform plan
 
-      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
-    # - name: Terraform Apply
-    #   run: terraform apply -auto-approve
+    # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+    - name: Terraform Apply
+      run: terraform apply -auto-approve
 
 
     # - if: github.event.inputs.terraform_destroy == 'true'
