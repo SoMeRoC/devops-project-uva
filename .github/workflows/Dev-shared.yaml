@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - dev
+      - SOM-22-Infrastructure-pipeline
     paths:
       - infrastructure/shared/dev/**
   workflow_dispatch:
