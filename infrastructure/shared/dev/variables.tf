@@ -11,5 +11,5 @@ variable "workload_name" {
 
 variable "product_name" {
   type    = string
-  default = "someroc"
+  default = "shared"
 }
