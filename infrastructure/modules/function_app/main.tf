@@ -1,5 +1,5 @@
 resource "azurerm_service_plan" "consumption" {
-  name                = "apps-${var.workload_name}-${var.env}"
+  name                = "apps-${var.workload_name}-${var.product_name}-${var.env}"
   resource_group_name = var.resource_group_name
   location            = var.location
   os_type             = "Linux"
