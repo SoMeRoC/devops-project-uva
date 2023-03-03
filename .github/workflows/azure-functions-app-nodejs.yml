@@ -51,7 +51,7 @@ jobs:
         node-version: ${{ env.NODE_VERSION }}
 
     - name: 'Resolve Project Dependencies Using Npm'
-      shell: pwsh # For Linux, use bash
+      shell: bash # For Linux, use bash
       run: |
         pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
         npm install
