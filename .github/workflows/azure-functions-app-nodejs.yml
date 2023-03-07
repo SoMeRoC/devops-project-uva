@@ -45,11 +45,13 @@ jobs:
     #   with:
     #     creds: ${{ secrets.AZURE_RBAC_CREDENTIALS }} # set up AZURE_RBAC_CREDENTIALS secrets in your repository
 
+    # Default
     - name: Setup Node ${{ env.NODE_VERSION }} Environment
       uses: actions/setup-node@v3
       with:
         node-version: ${{ env.NODE_VERSION }}
 
+    # Default
     - name: 'Resolve Project Dependencies Using Npm'
       shell: bash # For Linux, use bash
       run: |
@@ -68,11 +70,12 @@ jobs:
         resourceGroupName: ${{ env.RESOURCE_GROUP_NAME_DEV }}
         appName: ${{ env.RESOURCE_FUNCTIONAPP_NAME_DEV }}
 
+    # Default
     - name: Deploy FunctionApp
       uses: Azure/functions-action@v1
       with:
         app-name: ${{ env.RESOURCE_FUNCTIONAPP_NAME_DEV }}
-        package: published
+        package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
         publish-profile: ${{ steps.publishprofile.outputs.profile }}
 
     - name: Reset FunctionApp publish profile
