@@ -51,6 +51,15 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS_DEV }}
         enable-AzPSSession: true
 
+    - name: Azure PowerShell Action
+      uses: Azure/powershell@v1
+      with:
+        # Specify the Az PowerShell script here.
+        inlineScript: Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
+        azPSVersion: latest
+        errorActionPreference: Stop
+        failOnStandardError: true
+        
     # Default
     # - name: Setup Node ${{ env.NODE_VERSION }} Environment
     #   uses: actions/setup-node@v3
