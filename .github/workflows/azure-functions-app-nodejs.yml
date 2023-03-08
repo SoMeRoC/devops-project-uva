@@ -24,13 +24,15 @@ on:
   push:
     branches:
     - "dev"
+    paths:
+      - src/UserManagement/**
 
 env:
   AZURE_FUNCTIONAPP_NAME: 'UserManagement'   # set this to your function app name on Azure
   AZURE_FUNCTIONAPP_PACKAGE_PATH: 'src/UserManagement'       # set this to the path to your function app project, defaults to the repository root
   NODE_VERSION: '16.x'                      # set this to the node version to use (e.g. '8.x', '10.x', '12.x')
   RESOURCE_GROUP_NAME_DEV: 'rg-someroc-dev'
-  RESOURCE_FUNCTIONAPP_NAME_DEV: 'func-someroc-userManagement-dev' 
+  RESOURCE_FUNCTIONAPP_NAME_DEV: 'func-someroc-userManagement-dev'
 
 jobs:
   build-and-deploy:
@@ -39,13 +41,13 @@ jobs:
     steps:
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@v3
-      
+
     - name: Login via Azure CLI
       uses: azure/login@v1
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}        
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
         enable-AzPSSession: true
-        
+
     # Default
     - name: Setup Node ${{ env.NODE_VERSION }} Environment
       uses: actions/setup-node@v3
