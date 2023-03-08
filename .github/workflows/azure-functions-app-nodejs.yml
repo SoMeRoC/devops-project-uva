@@ -45,21 +45,21 @@ jobs:
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@v3
 
-    - name: Login via Azure CLI
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS_DEV }}
-        enable-AzPSSession: true
+    # - name: Login via Azure CLI
+    #   uses: azure/login@v1
+    #   with:
+    #     creds: ${{ secrets.AZURE_CREDENTIALS_DEV }}
+    #     enable-AzPSSession: true
 
-    - name: Azure PowerShell Action
-      uses: Azure/powershell@v1
-      with:
-        # Specify the Az PowerShell script here.
-        inlineScript: Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
-        azPSVersion: latest
-        errorActionPreference: Stop
-        failOnStandardError: true
-        
+    # - name: Azure PowerShell Action
+    #   uses: Azure/powershell@v1
+    #   with:
+    #     # Specify the Az PowerShell script here.
+    #     inlineScript: Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
+    #     azPSVersion: latest
+    #     errorActionPreference: Stop
+    #     failOnStandardError: true
+
     # Default
     # - name: Setup Node ${{ env.NODE_VERSION }} Environment
     #   uses: actions/setup-node@v3
@@ -76,14 +76,14 @@ jobs:
     #     npm run test --if-present
     #     popd
 
-    - name: 'Get FunctionApp publish profile'
-      id: publishprofile
-      uses: aliencube/publish-profile-actions@v1
-      env:
-        AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS_DEV }}
-      with:
-        resourceGroupName: ${{ env.RESOURCE_GROUP_NAME_DEV }}
-        appName: ${{ env.RESOURCE_FUNCTIONAPP_NAME_DEV }}
+    # - name: 'Get FunctionApp publish profile'
+    #   id: publishprofile
+    #   uses: aliencube/publish-profile-actions@v1
+    #   env:
+    #     AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS_DEV }}
+    #   with:
+    #     resourceGroupName: ${{ env.RESOURCE_GROUP_NAME_DEV }}
+    #     appName: ${{ env.RESOURCE_FUNCTIONAPP_NAME_DEV }}
 
     # Default
     - name: 'Deploy FunctionApp'
@@ -91,13 +91,14 @@ jobs:
       with:
         app-name: ${{ env.RESOURCE_FUNCTIONAPP_NAME_DEV }}
         package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-        publish-profile: ${{ steps.publishprofile.outputs.profile }}
+        publish-profile: ${{ secrets.PUBLISH_PROFILE }}
+        # publish-profile: ${{ steps.publishprofile.outputs.profile }}
 
-    - name: 'Reset FunctionApp publish profile'
-      uses: aliencube/publish-profile-actions@v1
-      env:
-        AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS_DEV }}
-      with:
-        resourceGroupName: ${{ env.RESOURCE_GROUP_NAME_DEV }}
-        appName: ${{ env.RESOURCE_FUNCTIONAPP_NAME_DEV }}
-        reset: true
+    # - name: 'Reset FunctionApp publish profile'
+    #   uses: aliencube/publish-profile-actions@v1
+    #   env:
+    #     AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS_DEV }}
+    #   with:
+    #     resourceGroupName: ${{ env.RESOURCE_GROUP_NAME_DEV }}
+    #     appName: ${{ env.RESOURCE_FUNCTIONAPP_NAME_DEV }}
+    #     reset: true
