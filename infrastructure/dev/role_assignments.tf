@@ -1,8 +1,8 @@
-# resource "azurerm_role_assignment" "func_users_to_kv" {
-#   scope                            = data.azurerm_key_vault.kv.id
-#   role_definition_name             = "Key Vault Secrets Officer"
-#   principal_id                     = module.user_management.principal_id
-# }
+resource "azurerm_role_assignment" "func_users_to_kv" {
+  scope                            = data.azurerm_key_vault.kv.id
+  role_definition_name             = "Key Vault Secrets Officer"
+  principal_id                     = module.user_management.principal_id
+}
 
 resource "azurerm_role_assignment" "webapp_to_kv" {
   scope                            = data.azurerm_key_vault.kv.id
