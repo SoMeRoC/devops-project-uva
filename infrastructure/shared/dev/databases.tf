@@ -6,7 +6,7 @@ module "userdb" {
   tags = local.tags
 }
 
-module "userdb" {
+module "gamedb" {
   source  = "../../modules/database"
 
   name           = "sqldb-game-${var.env}"
@@ -14,7 +14,7 @@ module "userdb" {
   tags = local.tags
 }
 
-module "userdb" {
+module "sessiondb" {
   source  = "../../modules/database"
 
   name           = "sqldb-session-${var.env}"

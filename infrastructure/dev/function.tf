@@ -24,7 +24,7 @@ module "session_management" {
   application_insights_connection_string = azurerm_application_insights.appi.connection_string
 }
 
-module "session_management" {
+module "match_making" {
   source  = "../modules/function_app"
 
   name                = "func-${var.workload_name}-matchMaking-${var.env}"
