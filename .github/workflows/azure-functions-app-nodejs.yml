@@ -35,6 +35,8 @@ env:
   RESOURCE_GROUP_NAME_DEV: 'rg-someroc-dev'
   RESOURCE_FUNCTIONAPP_NAME_DEV: 'func-someroc-userManagement-dev'
 
+# gh workflow run azure-functions-app-nodejs.yml --ref dev
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest # For Linux, use ubuntu-latest
@@ -43,13 +45,10 @@ jobs:
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@v3
 
-    - name: test
-      run: az -h
-
     - name: Login via Azure CLI
       uses: azure/login@v1
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        creds: ${{ secrets.AZURE_CREDENTIALS_DEV }}
         enable-AzPSSession: true
 
     # Default
