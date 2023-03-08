@@ -26,6 +26,7 @@ on:
     - "dev"
     paths:
       - src/UserManagement/**
+  workflow_dispatch:
 
 env:
   AZURE_FUNCTIONAPP_NAME: 'UserManagement'   # set this to your function app name on Azure
@@ -42,6 +43,9 @@ jobs:
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@v3
 
+    - name: test
+      run: az -h
+
     - name: Login via Azure CLI
       uses: azure/login@v1
       with:
@@ -49,20 +53,20 @@ jobs:
         enable-AzPSSession: true
 
     # Default
-    - name: Setup Node ${{ env.NODE_VERSION }} Environment
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ env.NODE_VERSION }}
+    # - name: Setup Node ${{ env.NODE_VERSION }} Environment
+    #   uses: actions/setup-node@v3
+    #   with:
+    #     node-version: ${{ env.NODE_VERSION }}
 
-    # Default
-    - name: 'Resolve Project Dependencies Using Npm'
-      shell: bash # For Linux, use bash
-      run: |
-        pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-        npm install
-        npm run build --if-present
-        npm run test --if-present
-        popd
+    # # Default
+    # - name: 'Resolve Project Dependencies Using Npm'
+    #   shell: bash # For Linux, use bash
+    #   run: |
+    #     pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+    #     npm install
+    #     npm run build --if-present
+    #     npm run test --if-present
+    #     popd
 
     - name: 'Get FunctionApp publish profile'
       id: publishprofile
