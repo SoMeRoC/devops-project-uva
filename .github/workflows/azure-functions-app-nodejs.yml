@@ -24,13 +24,18 @@ on:
   push:
     branches:
     - "dev"
+    paths:
+      - src/UserManagement/**
+  workflow_dispatch:
 
 env:
   AZURE_FUNCTIONAPP_NAME: 'UserManagement'   # set this to your function app name on Azure
   AZURE_FUNCTIONAPP_PACKAGE_PATH: 'src/UserManagement'       # set this to the path to your function app project, defaults to the repository root
   NODE_VERSION: '16.x'                      # set this to the node version to use (e.g. '8.x', '10.x', '12.x')
   RESOURCE_GROUP_NAME_DEV: 'rg-someroc-dev'
-  RESOURCE_FUNCTIONAPP_NAME_DEV: 'func-someroc-userManagement-dev' 
+  RESOURCE_FUNCTIONAPP_NAME_DEV: 'func-someroc-userManagement-dev'
+
+# gh workflow run azure-functions-app-nodejs.yml --ref dev
 
 jobs:
   build-and-deploy:
@@ -39,20 +44,29 @@ jobs:
     steps:
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@v3
-      
-    - name: Login via Azure CLI
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}        
-        enable-AzPSSession: true
-        
+
+    # - name: Login via Azure CLI
+    #   uses: azure/login@v1
+    #   with:
+    #     creds: ${{ secrets.AZURE_CREDENTIALS_DEV }}
+    #     enable-AzPSSession: true
+
+    # - name: Azure PowerShell Action
+    #   uses: Azure/powershell@v1
+    #   with:
+    #     # Specify the Az PowerShell script here.
+    #     inlineScript: Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
+    #     azPSVersion: latest
+    #     errorActionPreference: Stop
+    #     failOnStandardError: true
+
     # Default
     - name: Setup Node ${{ env.NODE_VERSION }} Environment
       uses: actions/setup-node@v3
       with:
         node-version: ${{ env.NODE_VERSION }}
 
-    # Default
+    # # Default
     - name: 'Resolve Project Dependencies Using Npm'
       shell: bash # For Linux, use bash
       run: |
@@ -62,28 +76,29 @@ jobs:
         npm run test --if-present
         popd
 
-    - name: 'Get FunctionApp publish profile'
-      id: publishprofile
-      uses: aliencube/publish-profile-actions@v1
-      env:
-        AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS_DEV }}
-      with:
-        resourceGroupName: ${{ env.RESOURCE_GROUP_NAME_DEV }}
-        appName: ${{ env.RESOURCE_FUNCTIONAPP_NAME_DEV }}
+    # - name: 'Get FunctionApp publish profile'
+    #   id: publishprofile
+    #   uses: aliencube/publish-profile-actions@v1
+    #   env:
+    #     AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS_DEV }}
+    #   with:
+    #     resourceGroupName: ${{ env.RESOURCE_GROUP_NAME_DEV }}
+    #     appName: ${{ env.RESOURCE_FUNCTIONAPP_NAME_DEV }}
 
     # Default
     - name: 'Deploy FunctionApp'
-      uses: Azure/functions-action@v1
+      uses: Azure/functions-action@v1.4.8
       with:
         app-name: ${{ env.RESOURCE_FUNCTIONAPP_NAME_DEV }}
         package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-        publish-profile: ${{ steps.publishprofile.outputs.profile }}
+        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+        # publish-profile: ${{ steps.publishprofile.outputs.profile }}
 
-    - name: 'Reset FunctionApp publish profile'
-      uses: aliencube/publish-profile-actions@v1
-      env:
-        AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS_DEV }}
-      with:
-        resourceGroupName: ${{ env.RESOURCE_GROUP_NAME_DEV }}
-        appName: ${{ env.RESOURCE_FUNCTIONAPP_NAME_DEV }}
-        reset: true
+    # - name: 'Reset FunctionApp publish profile'
+    #   uses: aliencube/publish-profile-actions@v1
+    #   env:
+    #     AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS_DEV }}
+    #   with:
+    #     resourceGroupName: ${{ env.RESOURCE_GROUP_NAME_DEV }}
+    #     appName: ${{ env.RESOURCE_FUNCTIONAPP_NAME_DEV }}
+    #     reset: true
