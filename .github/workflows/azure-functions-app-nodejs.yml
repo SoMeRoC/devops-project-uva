@@ -91,7 +91,7 @@ jobs:
       with:
         app-name: ${{ env.RESOURCE_FUNCTIONAPP_NAME_DEV }}
         package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-        publish-profile: ${{ secrets.PUBLISH_PROFILE }}
+        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
         # publish-profile: ${{ steps.publishprofile.outputs.profile }}
 
     # - name: 'Reset FunctionApp publish profile'
