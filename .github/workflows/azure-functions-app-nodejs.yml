@@ -71,7 +71,7 @@ jobs:
             -ResourceGroupName $rg
             -Name $func
         $profile = $profile.Replace("`r", "").Replace("`n", "")
-        echo "PROFILE=$profile" >> $GITHUB_OUTPUT
+        echo ::set-output name=PROFILE::$($profile)
 
     - name: test
       run: echo "${{ steps.fncapp.outputs.PROFILE }}"
