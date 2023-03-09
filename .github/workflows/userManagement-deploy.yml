@@ -13,7 +13,7 @@ on:
 
 jobs:
   call-workflow-passing-data:
-    uses: ./.github/workflows/deploy-template.yml@dev
+    uses: ./.github/workflows/deploy-template.yml
     with:
       AZURE_FUNCTIONAPP_PACKAGE_PATH: 'src/UserManagement'
       RESOURCE_GROUP_NAME_DEV: 'rg-someroc-dev'

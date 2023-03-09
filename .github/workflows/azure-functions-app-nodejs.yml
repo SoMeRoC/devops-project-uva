@@ -21,11 +21,11 @@
 name: Deploy Node.js project to Azure Function App
 
 on:
-  push:
-    branches:
-    - "dev"
-    paths:
-      - src/UserManagement/**
+  # push:
+  #   branches:
+  #   - "dev"
+  #   paths:
+  #     - src/UserManagement/**
   workflow_dispatch:
 
 env:
