@@ -59,7 +59,7 @@ jobs:
         Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
         $profile = Get-AzWebAppPublishingProfile `
             -ResourceGroupName $\{\{ env.RESOURCE_GROUP_NAME_DEV \}\} `
-            -Name $\{\{ env.AZURE_FUNCTIONAPP_NAME \}\}
+            -Name $\{\{ env.RESOURCE_FUNCTIONAPP_NAME_DEV \}\}
         $profile = $profile.Replace("`r", "").Replace("`n", "")
         Write-Output "::set-output name=profile::$profile"
 
