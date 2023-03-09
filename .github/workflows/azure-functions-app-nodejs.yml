@@ -58,14 +58,14 @@ jobs:
       run: |
         Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
 
-        $clientId = $\{\{ secrets.ARM_CLIENT_ID \}\}
-        $clientSecret = $\{\{ secrets.ARM_CLIENT_SECRET \}\} | ConvertTo-SecureString -AsPlainText -Force
-        $tenantID = $\{\{ secrets.ARM_TENANT_ID \}\}
+        $clientId = "${{ secrets.ARM_CLIENT_ID }}"
+        $clientSecret = "${{ secrets.ARM_CLIENT_SECRET }}" | ConvertTo-SecureString -AsPlainText -Force
+        $tenantID = "${{ secrets.ARM_TENANT_ID }}""
         $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $clientId, $clientSecret
         Connect-AzAccount -ServicePrincipal -TenantId $tenantID -Credential $Credential
 
-        $func = $\{\{ env.RESOURCE_FUNCTIONAPP_NAME_DEV \}\}
-        $rg = $\{\{ env.RESOURCE_GROUP_NAME_DEV \}\}
+        $func = "${{ env.RESOURCE_FUNCTIONAPP_NAME_DEV }}"
+        $rg = "${{ env.RESOURCE_GROUP_NAME_DEV }}"
 
         $profile = Get-AzWebAppPublishingProfile `
             -ResourceGroupName $rg
@@ -74,7 +74,7 @@ jobs:
         echo "PROFILE=$profile" >> $GITHUB_OUTPUT
 
     - name: test
-      run: echo ${{ steps.fncapp.outputs.PROFILE }}
+      run: echo "${{ steps.fncapp.outputs.PROFILE }}"
     # - name: Azure PowerShell Action
     #   uses: Azure/powershell@v1
     #   with:
