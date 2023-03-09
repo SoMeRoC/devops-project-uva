@@ -49,14 +49,18 @@ jobs:
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS_DEV }}
-        enable-AzPSSession: false
+        enable-AzPSSession: true
 
-    - name: publishprofile
+
+    - name: Get publish Profile
+      id: fncapp
+      shell: pwsh
       run: |
-        az functionapp deployment list-publishing-credentials --name ${{ env.RESOURCE_FUNCTIONAPP_NAME_DEV }} --resource-group ${{ env.RESOURCE_GROUP_NAME_DEV }} --slot 'production' --xml > profile.xml
-        sed -i -e 's/\\r\\n//g' profile.xml
-        xsltproc --output profile.json transform.xslt profile.xml
-      id: publish_profile
+        $profile = Get-AzWebAppPublishingProfile `
+            -ResourceGroupName $\{\{ env.RESOURCE_GROUP_NAME_DEV \}\} `
+            -Name $\{\{ env.AZURE_FUNCTIONAPP_NAME \}\}
+        $profile = $profile.Replace("`r", "").Replace("`n", "")
+        Write-Output "::set-output name=profile::$profile"
 
     # - name: Azure PowerShell Action
     #   uses: Azure/powershell@v1
@@ -68,39 +72,39 @@ jobs:
     #     failOnStandardError: true
 
     # Default
-    - name: Setup Node ${{ env.NODE_VERSION }} Environment
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ env.NODE_VERSION }}
+    # - name: Setup Node ${{ env.NODE_VERSION }} Environment
+    #   uses: actions/setup-node@v3
+    #   with:
+    #     node-version: ${{ env.NODE_VERSION }}
+
+    # # # Default
+    # - name: 'Resolve Project Dependencies Using Npm'
+    #   shell: bash # For Linux, use bash
+    #   run: |
+    #     pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+    #     npm install
+    #     npm run build --if-present
+    #     npm run test --if-present
+    #     popd
+
+    # # - name: 'Get FunctionApp publish profile'
+    # #   id: publishprofile
+    # #   uses: aliencube/publish-profile-actions@v1
+    # #   env:
+    # #     AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS_DEV }}
+    # #   with:
+    # #     resourceGroupName: ${{ env.RESOURCE_GROUP_NAME_DEV }}
+    # #     appName: ${{ env.RESOURCE_FUNCTIONAPP_NAME_DEV }}
 
     # # Default
-    - name: 'Resolve Project Dependencies Using Npm'
-      shell: bash # For Linux, use bash
-      run: |
-        pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-        npm install
-        npm run build --if-present
-        npm run test --if-present
-        popd
-
-    # - name: 'Get FunctionApp publish profile'
-    #   id: publishprofile
-    #   uses: aliencube/publish-profile-actions@v1
-    #   env:
-    #     AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS_DEV }}
+    # - name: 'Deploy FunctionApp'
+    #   uses: Azure/functions-action@v1.4.8
     #   with:
-    #     resourceGroupName: ${{ env.RESOURCE_GROUP_NAME_DEV }}
-    #     appName: ${{ env.RESOURCE_FUNCTIONAPP_NAME_DEV }}
-
-    # Default
-    - name: 'Deploy FunctionApp'
-      uses: Azure/functions-action@v1.4.8
-      with:
-        app-name: ${{ env.RESOURCE_FUNCTIONAPP_NAME_DEV }}
-        package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-        slot-name: 'production'
-        # publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
-        publish-profile: ${{ steps.publishprofile.outputs.publishprofile }}
+    #     app-name: ${{ env.RESOURCE_FUNCTIONAPP_NAME_DEV }}
+    #     package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+    #     slot-name: 'production'
+    #     # publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+    #     publish-profile: ${{ steps.publishprofile.outputs.publishprofile }}
 
     # - name: 'Reset FunctionApp publish profile'
     #   uses: aliencube/publish-profile-actions@v1
