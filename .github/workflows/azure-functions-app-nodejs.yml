@@ -70,7 +70,7 @@ jobs:
         $profile = Get-AzWebAppPublishingProfile `
             -ResourceGroupName $rg
             -Name $func
-        $profile = $profile.Replace("`r", "").Replace("`n", "")
+        $profile = $profile.Replace("`r`n", "")
         echo ::set-output name=PROFILE::$($profile)
 
     - name: test
