@@ -45,11 +45,18 @@ jobs:
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@v3
 
-    # - name: Login via Azure CLI
-    #   uses: azure/login@v1
-    #   with:
-    #     creds: ${{ secrets.AZURE_CREDENTIALS_DEV }}
-    #     enable-AzPSSession: true
+    - name: Login via Azure CLI
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS_DEV }}
+        enable-AzPSSession: false
+
+    - name: publishprofile
+      run: |
+        az functionapp deployment source show-publishing-credentials --name ${{ env.RESOURCE_FUNCTIONAPP_NAME_DEV }} --resource-group ${{ env.RESOURCE_GROUP_NAME_DEV }} --slot 'production' --xml > profile.xml
+        sed -i -e 's/\\r\\n//g' profile.xml
+        xsltproc --output profile.json transform.xslt profile.xml
+      id: publish_profile
 
     # - name: Azure PowerShell Action
     #   uses: Azure/powershell@v1
@@ -92,8 +99,8 @@ jobs:
         app-name: ${{ env.RESOURCE_FUNCTIONAPP_NAME_DEV }}
         package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
         slot-name: 'production'
-        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
-        # publish-profile: ${{ steps.publishprofile.outputs.profile }}
+        # publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+        publish-profile: ${{ steps.publishprofile.outputs.publishprofile }}
 
     # - name: 'Reset FunctionApp publish profile'
     #   uses: aliencube/publish-profile-actions@v1
