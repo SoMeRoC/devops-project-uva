@@ -72,7 +72,7 @@ jobs:
         $profile = $profile.Replace("`r`n", "")
         echo "xxxxxx"
         echo "$profile"
-        echo "PROFILE=$profile" >> $GITHUB_OUTPUT
+        echo "PROFILE=$profile" >> $env:GITHUB_OUTPUT
 
 
     - name: test
