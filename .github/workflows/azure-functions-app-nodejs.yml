@@ -67,9 +67,8 @@ jobs:
         $func = "${{ env.RESOURCE_FUNCTIONAPP_NAME_DEV }}"
         $rg = "${{ env.RESOURCE_GROUP_NAME_DEV }}"
 
-        $profile = Get-AzWebAppPublishingProfile `
-            -ResourceGroupName $rg `
-            -Name $func
+        $profile = Get-AzWebAppPublishingProfile -ResourceGroupName $rg -Name $func
+
         $profile = $profile.Replace("`r`n", "")
         echo ::set-output name=PROFILE::$($profile)
 
