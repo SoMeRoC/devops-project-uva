@@ -15,5 +15,5 @@ export const sql: SQLConfig = {
   password: process.env.MYSQL_PASSWORD || 'guest',
   database: process.env.MYSQL_DATABASE || 'matchHistory',
   dialect: process.env.MYSQL_DIALECT as Dialect || 'mysql', // mssql for azure
-  dialectOptions: {}, // { encrypt: true } for azure
+  dialectOptions: process.env.MYSQL_DIALECT_OPTIONS ? JSON.parse(process.env.MYSQL_DIALECT_OPTIONS) : {}, // { encrypt: true } for azure
 }
