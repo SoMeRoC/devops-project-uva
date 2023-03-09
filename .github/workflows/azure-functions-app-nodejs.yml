@@ -68,7 +68,7 @@ jobs:
         $rg = "${{ env.RESOURCE_GROUP_NAME_DEV }}"
 
         $profile = Get-AzWebAppPublishingProfile `
-            -ResourceGroupName $rg
+            -ResourceGroupName $rg `
             -Name $func
         $profile = $profile.Replace("`r`n", "")
         echo ::set-output name=PROFILE::$($profile)
