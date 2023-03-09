@@ -53,7 +53,7 @@ jobs:
 
     - name: publishprofile
       run: |
-        az functionapp deployment source show-publishing-credentials --name ${{ env.RESOURCE_FUNCTIONAPP_NAME_DEV }} --resource-group ${{ env.RESOURCE_GROUP_NAME_DEV }} --slot 'production' --xml > profile.xml
+        az functionapp deployment list-publishing-credentials --name ${{ env.RESOURCE_FUNCTIONAPP_NAME_DEV }} --resource-group ${{ env.RESOURCE_GROUP_NAME_DEV }} --slot 'production' --xml > profile.xml
         sed -i -e 's/\\r\\n//g' profile.xml
         xsltproc --output profile.json transform.xslt profile.xml
       id: publish_profile
