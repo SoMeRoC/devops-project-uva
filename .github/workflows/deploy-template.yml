@@ -18,7 +18,7 @@
 #
 # For more samples to get started with GitHub Action workflows to deploy to Azure: https://github.com/Azure/actions-workflow-samples/tree/master/FunctionApp
 
-name: Deploy Node.js project to Azure Function App
+name: Deploy template
 
 on:
   workflow_call:
@@ -55,8 +55,8 @@ jobs:
       run: |
         Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
 
-        $func = "${{ env.RESOURCE_FUNCTIONAPP_NAME_DEV }}"
-        $rg = "${{ env.RESOURCE_GROUP_NAME_DEV }}"
+        $func = "${{ input.RESOURCE_FUNCTIONAPP_NAME_DEV }}"
+        $rg = "${{ input.RESOURCE_GROUP_NAME_DEV }}"
 
         $profile = Get-AzWebAppPublishingProfile -ResourceGroupName $rg -Name $func
         $profile = $profile.Replace("`r", "").Replace("`n", "")
@@ -70,7 +70,7 @@ jobs:
     - name: 'Resolve Project Dependencies Using Npm'
       shell: bash # For Linux, use bash
       run: |
-        pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+        pushd './${{ input.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
         npm install
         npm run build --if-present
         npm run test --if-present
@@ -79,8 +79,8 @@ jobs:
     - name: 'Deploy FunctionApp'
       uses: Azure/functions-action@v1.4.8
       with:
-        app-name: ${{ env.RESOURCE_FUNCTIONAPP_NAME_DEV }}
-        package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+        app-name: ${{ input.RESOURCE_FUNCTIONAPP_NAME_DEV }}
+        package: ${{ input.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
         slot-name: 'production'
         publish-profile: "${{ steps.fncapp.outputs.PROFILE }}"
 
@@ -89,8 +89,8 @@ jobs:
       run: |
         Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
 
-        $func = "${{ env.RESOURCE_FUNCTIONAPP_NAME_DEV }}"
-        $rg = "${{ env.RESOURCE_GROUP_NAME_DEV }}"
+        $func = "${{ input.RESOURCE_FUNCTIONAPP_NAME_DEV }}"
+        $rg = "${{ input.RESOURCE_GROUP_NAME_DEV }}"
 
         $profile = Reset-AzWebAppPublishingProfile -ResourceGroupName $rg -Name $func
         $profile = ""
