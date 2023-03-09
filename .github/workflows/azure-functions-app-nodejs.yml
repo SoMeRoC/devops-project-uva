@@ -57,8 +57,8 @@ jobs:
       shell: pwsh
       run: |
         Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
-        $Credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ${{ secret.ARM_CLIENT_ID }}, ${{ secret.ARM_CLIENT_SECRET }}
-        Connect-AzAccount -ServicePrincipal -TenantId ${{ secret.ARM_TENANT_ID }} -Credential $Credential
+        $Credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ${{ secrets.ARM_CLIENT_ID }}, ${{ secrets.ARM_CLIENT_SECRET }}
+        Connect-AzAccount -ServicePrincipal -TenantId ${{ secrets.ARM_TENANT_ID }} -Credential $Credential
 
         $profile = Get-AzWebAppPublishingProfile `
             -ResourceGroupName ${{ env.RESOURCE_GROUP_NAME_DEV }} `
