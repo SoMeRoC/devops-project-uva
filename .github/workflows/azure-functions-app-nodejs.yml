@@ -69,7 +69,7 @@ jobs:
 
         $profile = Get-AzWebAppPublishingProfile -ResourceGroupName $rg -Name $func
 
-        $profile = $profile.Replace("`r`n", "")
+        $profile = $profile.Replace("`r", "").Replace("`n", "")
         echo "xxxxxx"
         echo "$profile"
         echo "PROFILE=$profile" >> $env:GITHUB_OUTPUT
