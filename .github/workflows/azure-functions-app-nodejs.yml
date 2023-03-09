@@ -91,6 +91,7 @@ jobs:
       with:
         app-name: ${{ env.RESOURCE_FUNCTIONAPP_NAME_DEV }}
         package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+        slot-name: 'production'
         publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
         # publish-profile: ${{ steps.publishprofile.outputs.profile }}
 
