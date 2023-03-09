@@ -35,8 +35,13 @@ paths:
 
     post:
       summary: Create match history
-      parameters:
-      - name: a
+      requestBody:
+        description: Match object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Match'
       responses:
         "200":
           description: "success"
@@ -46,7 +51,67 @@ paths:
           #       $ref: '#/components/schemas/Student'
 
 components:
-  # schemas:
+  schemas:
+    Match:
+      required:
+      - winner
+      - rated
+      type: object
+      properties:
+        winner:
+          type: string
+        rated:
+          type: boolean
+        players:
+          type: array
+          items:
+            $ref: '#/components/schemas/MatchPlayer'
+        rounds:
+          type: array
+          items:
+            $ref: '#/components/schemas/MatchRound'
+      example:
+        winner: 'b'
+        rated: true
+        players:
+        - role: 'w'
+          uid: 'player1UID'
+        - role: 'b'
+          uid: 'player2UID'
+        rounds:
+        - round: 1
+          winner: 'b'
+        - round: 2
+          winner: 'w'
+
+    MatchPlayer:
+      required:
+      - role
+      - uid
+      type: object
+      properties:
+        role:
+          type: string
+        uid:
+          type: string
+      example:
+        role: 'w'
+        uid: 'player1UID'
+
+    MatchRound:
+      required:
+      - round
+      - winner
+      type: object
+      properties:
+        round:
+          type: number
+          format: integer
+        winner:
+          type: string
+      example:
+        round: 1
+        winner: b
   #   Student:
   #     required:
   #     - first_name

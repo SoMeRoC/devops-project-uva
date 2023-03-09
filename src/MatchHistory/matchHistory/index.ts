@@ -79,18 +79,7 @@ const GetMatchHistory: AzureFunction = async function (context: Context, req: Ht
 };
 
 const PostMatchHistory: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
-  const match = await Match.create({
-    winner: 'b',
-    rated: true,
-    players: [
-      { role: 'w', uid: 'player1UID' },
-      { role: 'b', uid: 'player2UID' },
-    ],
-    rounds: [
-      { round: 1, winner: 'b' },
-      { round: 2, winner: 'w' },
-    ]
-  }, {
+  const match = await Match.create(req.body, {
     include: [MatchPlayer, MatchRound]
   });
   const matchId = match.dataValues.id;
