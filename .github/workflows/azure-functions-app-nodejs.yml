@@ -60,7 +60,7 @@ jobs:
 
         $clientId = "${{ secrets.ARM_CLIENT_ID }}"
         $clientSecret = "${{ secrets.ARM_CLIENT_SECRET }}" | ConvertTo-SecureString -AsPlainText -Force
-        $tenantID = "${{ secrets.ARM_TENANT_ID }}""
+        $tenantID = "${{ secrets.ARM_TENANT_ID }}"
         $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $clientId, $clientSecret
         Connect-AzAccount -ServicePrincipal -TenantId $tenantID -Credential $Credential
 
