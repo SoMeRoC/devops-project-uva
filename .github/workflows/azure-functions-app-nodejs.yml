@@ -70,7 +70,10 @@ jobs:
         $profile = Get-AzWebAppPublishingProfile -ResourceGroupName $rg -Name $func
 
         $profile = $profile.Replace("`r`n", "")
-        echo ::set-output name=PROFILE::$($profile)
+        echo "xxxxxx"
+        echo "$profile"
+        echo "PROFILE=$profile" >> $GITHUB_OUTPUT
+
 
     - name: test
       run: echo "${{ steps.fncapp.outputs.PROFILE }}"
