@@ -58,8 +58,8 @@ jobs:
       run: |
         Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
         $profile = Get-AzWebAppPublishingProfile `
-            -ResourceGroupName $\{\{ env.RESOURCE_GROUP_NAME_DEV \}\} `
-            -Name $\{\{ env.RESOURCE_FUNCTIONAPP_NAME_DEV \}\}
+            -ResourceGroupName ${{ env.RESOURCE_GROUP_NAME_DEV }} `
+            -Name func-someroc-userManagement-dev
         $profile = $profile.Replace("`r", "").Replace("`n", "")
         Write-Output "::set-output name=profile::$profile"
 
