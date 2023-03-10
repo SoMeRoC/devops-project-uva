@@ -34,10 +34,10 @@ jobs:
       with:
         azcliversion: 2.46.0
         inlineScript: |
-          kv="${{ env.KEY_VAULT_NAME }}"
-          val=$(az keyvault secret show --name 'gameConnection' --vault-name $kv)
-          secret_value=$(echo $val | jq -r '.value')
-          echo "DB_CONN=$secret_value" >> $GITHUB_OUTPUT
+          # kv="${{ env.KEY_VAULT_NAME }}"
+          # val=$(az keyvault secret show --name 'gameConnection' --vault-name $kv)
+          # secret_value=$(echo $val | jq -r '.value')
+          # echo "DB_CONN=$secret_value" >> $GITHUB_OUTPUT
 
           runner_ip=$(curl -s https://api.ipify.org)
           echo $runner_ip
@@ -56,7 +56,7 @@ jobs:
         # Path to the file used for this action. Supported file types are .sql, .dacpac, or .sqlproj.
         path: gameDb-table-scheme.sql
       env:
-        CONN: "${{ steps.secret.outputs.DB_CONN }}"
+        CONN: ${{ secrets.GAME_CONNECTION }}
 
     # - name: Deploy SQL file
     #   run: |
