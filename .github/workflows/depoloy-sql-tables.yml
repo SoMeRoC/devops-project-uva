@@ -52,7 +52,7 @@ jobs:
       uses: Azure/sql-action@v2.1
       with:
         # The connection string, including authentication information, for the Azure SQL Server database.
-        connection-string: $CONN
+        connection-string: ${{ secrets.GAME_CONNECTION }}
         # Path to the file used for this action. Supported file types are .sql, .dacpac, or .sqlproj.
         path: gameDb-table-scheme.sql
       env:
@@ -75,5 +75,3 @@ jobs:
 
           # Remove the firewall rule when finished
           az sql server firewall-rule delete --resource-group "${{ env.SHARED_RG }}" --server "${{ env.SQL_SERVER_NAME }}" --name "GitHub Runner"
-
-
