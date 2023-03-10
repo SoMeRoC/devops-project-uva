@@ -49,11 +49,6 @@ jobs:
 
 
     - name: Azure SQL Deploy
-      run: echo $CONN
-      env:
-        CONN: "${{ steps.secret.outputs.DB_CONN }}"
-
-    - name: Azure SQL Deploy
       uses: Azure/sql-action@v2.1
       with:
         # The connection string, including authentication information, for the Azure SQL Server database.
