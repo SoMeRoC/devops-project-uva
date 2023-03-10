@@ -34,10 +34,10 @@ jobs:
       with:
         azcliversion: 2.46.0
         inlineScript: |
-          # kv="${{ env.KEY_VAULT_NAME }}"
-          # val=$(az keyvault secret show --name 'gameConnection' --vault-name $kv)
-          # secret_value=$(echo $val | jq -r '.value')
-          # echo "DB_CONN=$secret_value" >> $GITHUB_OUTPUT
+          kv="${{ env.KEY_VAULT_NAME }}"
+          val=$(az keyvault secret show --name 'gameConnection' --vault-name $kv)
+          secret_value=$(echo $val | jq -r '.value')
+          echo "DB_CONN=$secret_value" >> $GITHUB_OUTPUT
 
           runner_ip=$(curl -s https://api.ipify.org)
           echo $runner_ip
@@ -52,11 +52,11 @@ jobs:
       uses: Azure/sql-action@v2.1
       with:
         # The connection string, including authentication information, for the Azure SQL Server database.
-        connection-string: "${{ secrets.GAME_CONNECTION }}"
+        connection-string: $CONN
         # Path to the file used for this action. Supported file types are .sql, .dacpac, or .sqlproj.
         path: gameDb-table-scheme.sql
       env:
-        CONN: asffs
+        CONN: "${{ steps.secret.outputs.DB_CONN }}"
 
     # - name: Deploy SQL file
     #   run: |
