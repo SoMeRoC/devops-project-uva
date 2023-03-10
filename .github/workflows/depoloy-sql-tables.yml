@@ -1,11 +1,9 @@
 name: Deploy SQL to Azure SQL
 
 on:
-  push:
-    branches:
-      - dev
   workflow_dispatch:
 
+# gh workflow run depoloy-sql-tables.yml --ref dev
 
 defaults:
   run:
@@ -24,12 +22,6 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-
-    - name: Set up SQLCMD
-      uses: microsoft/setup-sqlcmd@v1
-      with:
-        accept-eula: true
-
 
     - name: Azure Login
       uses: azure/login@v1
@@ -51,7 +43,19 @@ jobs:
 
           # Add a firewall rule to allow the GitHub runner's IP address
           az sql server firewall-rule create --resource-group "${{ env.SHARED_RG }}" --server "${{ env.SQL_SERVER_NAME }}" --name "GitHub Runner" --start-ip-address $runner_ip --end-ip-address $runner_ip
-
+      # - name: Azure SQL Deploy
+      #   uses: Azure/sql-action@v2.1
+      #   with:
+      #     # The connection string, including authentication information, for the Azure SQL Server database.
+      #     connection-string:
+      #     # Path to the file used for this action. Supported file types are .sql, .dacpac, or .sqlproj.
+      #     path:
+      #     # If not using a .sql file, the sqlpackage action to execute.
+      #     action: # optional
+      #     # In case of .dacpac or .sqlproj file types, additional sqlpackage arguments that will be applied. In case of .sql file type, additional go-sqlcmd argument that will be applied.
+      #     arguments: # optional
+      #     # In case of a .sqlproj file, additional arguments that will be applied to dotnet build when building the database project.
+      #     build-arguments: # optional
     - name: Deploy SQL file
       run: |
         server="${{ env.SQL_SERVER_NAME }}"
