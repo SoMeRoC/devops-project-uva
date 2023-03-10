@@ -21,3 +21,10 @@ resource "azurerm_mssql_server" "sqlserver" {
     ]
   }
 }
+
+resource "azurerm_mssql_firewall_rule" "allow_azure_services" {
+  name             = "Allow access to Azure services"
+  server_id        = azurerm_mssql_server.sqlserver.id
+  start_ip_address = "0.0.0.0"
+  end_ip_address   = "0.0.0.0"
+}
