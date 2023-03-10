@@ -1,0 +1,21 @@
+
+name: Deploy UserManagement
+
+on:
+  push:
+    branches:
+    - "dev"
+    paths:
+      - src/UserManagement/**
+  workflow_dispatch:
+
+# gh workflow run userManagement-deploy.yml --ref dev
+
+jobs:
+  call-workflow-passing-data:
+    uses: ./.github/workflows/deploy-template.yml
+    with:
+      AZURE_FUNCTIONAPP_PACKAGE_PATH: 'src/UserManagement'
+      RESOURCE_GROUP_NAME_DEV: 'rg-someroc-dev'
+      RESOURCE_FUNCTIONAPP_NAME_DEV: 'func-someroc-userManagement-dev'
+    secrets: inherit
