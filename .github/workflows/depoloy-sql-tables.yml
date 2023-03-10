@@ -54,15 +54,7 @@ jobs:
         # The connection string, including authentication information, for the Azure SQL Server database.
         connection-string: ${{ secrets.GAME_CONNECTION }}
         # Path to the file used for this action. Supported file types are .sql, .dacpac, or .sqlproj.
-        path: gameDb-table-scheme.sql
-      env:
-        CONN: "${{ steps.secret.outputs.DB_CONN }}"
-
-    # - name: Deploy SQL file
-    #   run: |
-    #     server="${{ env.SQL_SERVER_NAME }}"
-    #     db="${{ env.DB_NAME }}"
-    #     sqlcmd -S ${server}.database.windows.net -d <your-database> -U 'dbroot' -P "${{ steps.secret.outputs.DBPASS }}" -i gameDb-table-scheme.sql
+        path: ./gameDb-table-scheme.sql
 
     - name: Azure CLI script
       if: always()
