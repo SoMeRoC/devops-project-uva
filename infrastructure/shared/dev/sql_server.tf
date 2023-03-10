@@ -1,6 +1,6 @@
 resource "random_password" "db_root" {
   length           = 16
-  special          = true
+  special          = false
 }
 
 resource "azurerm_mssql_server" "sqlserver" {
