@@ -47,6 +47,12 @@ jobs:
           server="${{ env.SQL_SERVER_NAME }}"
           az sql server firewall-rule create --resource-group $rg --server $server --name "GitHub Runner" --start-ip-address $runner_ip --end-ip-address $runner_ip
 
+
+    - name: Azure SQL Deploy
+      run: echo $CONN
+      env:
+        CONN: "${{ steps.secret.outputs.DB_CONN }}"
+
     - name: Azure SQL Deploy
       uses: Azure/sql-action@v2.1
       with:
@@ -74,4 +80,5 @@ jobs:
 
           # Remove the firewall rule when finished
           az sql server firewall-rule delete --resource-group "${{ env.SHARED_RG }}" --server "${{ env.SQL_SERVER_NAME }}" --name "GitHub Runner"
+
 
