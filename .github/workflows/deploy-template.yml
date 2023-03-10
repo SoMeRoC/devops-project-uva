@@ -1,0 +1,96 @@
+# This workflow will build a Node.js project and deploy it to an Azure Functions App on Windows or Linux when a commit is pushed to your default branch.
+#
+# This workflow assumes you have already created the target Azure Functions app.
+# For instructions see:
+#   - https://learn.microsoft.com/en-us/azure/azure-functions/create-first-function-vs-code-node
+#   - https://learn.microsoft.com/en-us/azure/azure-functions/create-first-function-vs-code-typescript
+#
+# To configure this workflow:
+# 1. Set up the following secrets in your repository:
+#   - AZURE_FUNCTIONAPP_PUBLISH_PROFILE
+# 2. Change env variables for your configuration.
+#
+# For more information on:
+#   - GitHub Actions for Azure: https://github.com/Azure/Actions
+#   - Azure Functions Action: https://github.com/Azure/functions-action
+#   - Publish Profile: https://github.com/Azure/functions-action#using-publish-profile-as-deployment-credential-recommended
+#   - Azure Service Principal for RBAC: https://github.com/Azure/functions-action#using-azure-service-principal-for-rbac-as-deployment-credential
+#
+# For more samples to get started with GitHub Action workflows to deploy to Azure: https://github.com/Azure/actions-workflow-samples/tree/master/FunctionApp
+
+name: Deploy template
+
+on:
+  workflow_call:
+    inputs:
+      RESOURCE_FUNCTIONAPP_NAME_DEV:
+        required: true
+        type: string
+      RESOURCE_GROUP_NAME_DEV:
+        required: true
+        type: string
+      AZURE_FUNCTIONAPP_PACKAGE_PATH:
+        required: true
+        type: string
+env:
+  NODE_VERSION: '18.x'
+
+jobs:
+  reusable_workflow_job:
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@v3
+
+    - name: Login via Azure CLI
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS_DEV }}
+        enable-AzPSSession: true
+
+    - name: Get publish Profile
+      id: fncapp
+      shell: pwsh
+      run: |
+        Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
+
+        $func = "${{ inputs.RESOURCE_FUNCTIONAPP_NAME_DEV }}"
+        $rg = "${{ inputs.RESOURCE_GROUP_NAME_DEV }}"
+
+        $profile = Get-AzWebAppPublishingProfile -ResourceGroupName $rg -Name $func
+        $profile = $profile.Replace("`r", "").Replace("`n", "")
+        echo "PROFILE=$profile" >> $env:GITHUB_OUTPUT
+
+    - name: Setup Node ${{ env.NODE_VERSION }} Environment
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+
+    - name: 'Resolve Project Dependencies Using Npm'
+      shell: bash # For Linux, use bash
+      run: |
+        pushd './${{ inputs.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+        npm install
+        npm run build --if-present
+        npm run test --if-present
+        popd
+
+    - name: 'Deploy FunctionApp'
+      uses: Azure/functions-action@v1.4.8
+      with:
+        app-name: ${{ inputs.RESOURCE_FUNCTIONAPP_NAME_DEV }}
+        package: ${{ inputs.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+        slot-name: 'production'
+        publish-profile: "${{ steps.fncapp.outputs.PROFILE }}"
+
+    - name: Reset publish Profile
+      shell: pwsh
+      run: |
+        Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
+
+        $func = "${{ inputs.RESOURCE_FUNCTIONAPP_NAME_DEV }}"
+        $rg = "${{ inputs.RESOURCE_GROUP_NAME_DEV }}"
+
+        $profile = Reset-AzWebAppPublishingProfile -ResourceGroupName $rg -Name $func
+        $profile = ""

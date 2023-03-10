@@ -26,6 +26,10 @@ resource "azurerm_linux_function_app" "func" {
   tags = var.tags
   site_config {
     application_insights_connection_string = var.application_insights_connection_string
+
+    application_stack {
+      node_version = 18
+    }
   }
 
   identity {
