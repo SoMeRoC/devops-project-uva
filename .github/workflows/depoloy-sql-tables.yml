@@ -35,7 +35,7 @@ jobs:
         azcliversion: 2.46.0
         inlineScript: |
           kv="${{ env.KEY_VAULT_NAME }}"
-          val=$(az keyvault secret show --name 'dbroot' --vault-name $kv)
+          val=$(az keyvault secret show --name 'gameConnection' --vault-name $kv)
           secret_value=$(echo $val | jq -r '.value')
           echo "DB_CONN=$secret_value" >> $GITHUB_OUTPUT
 
