@@ -45,7 +45,7 @@ jobs:
         # The connection string, including authentication information, for the Azure SQL Server database.
         connection-string: ${{ secrets.GAME_CONNECTION }}
         # Path to the file used for this action. Supported file types are .sql, .dacpac, or .sqlproj.
-        path: /infrastructure/sql/gameDb-table-scheme.sql
+        path: './infrastructure/sql/gameDb-table-scheme.sql'
 
     - name: Azure CLI script
       if: always()
