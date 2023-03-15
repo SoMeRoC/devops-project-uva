@@ -49,6 +49,13 @@ jobs:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         package: "src/frontend/build"
         resource-group-name: "rg-someroc-frontEnd-dev"
+        startup-command: "pm2 serve /home/site/wwwroot --no-daemon --spa"
+
+    - name: Azure App Service Settings
+      uses: Azure/appservice-settings@v1
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        app-settings-json: "src/frontend/app-settings.json"
 
     # Azure logout
     - name: logout
