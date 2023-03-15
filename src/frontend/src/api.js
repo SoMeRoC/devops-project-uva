@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const browser = typeof localStorage !== 'undefined';
-let apiCallback = (tokenData) => { };
+// let apiCallback = (tokenData) => { };
 let token = null;
 let tokenData = null
 
@@ -41,7 +41,7 @@ const setToken = (newToken) => {
 setToken(localStorage.getItem('apiToken'))
 const api = {
   setTokenChangeCallback: (fn) => {
-    apiCallback = fn;
+    // apiCallback = fn;
   },
 
   getApiTokenData: () => {
