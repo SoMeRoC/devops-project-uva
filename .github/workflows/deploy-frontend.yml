@@ -11,6 +11,9 @@ env:
   NODE_VERSION: '18.x'
   AZURE_WEBAPP_NAME: 'web-someroc-FrontEnd-dev'
   AZURE_WEBAPP_PACKAGE_PATH: src/frontend
+  CI: false
+
+# gh workflow run deploy-frontend.yml --ref SOM-67-Create-sample-static-webapp-and-deploy-to-Azure
 
 jobs:
   build-and-deploy:
@@ -35,7 +38,7 @@ jobs:
       shell: bash # For Linux, use bash
       run: |
         npm install
-        npm run build --if-present
+        npm run build --passWithNoTests
         npm run test --passWithNoTests
       working-directory: src/frontend
 
