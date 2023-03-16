@@ -20,10 +20,11 @@ CREATE TABLE user_stats (
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- TODO: Does not work yet
 CREATE TABLE user_friends (
   user_id INT NOT NULL,
   friend_id INT NOT NULL,
   PRIMARY KEY (user_id, friend_id),
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-  FOREIGN KEY (friend_id) REFERENCES users(id) ON DELETE CASCADE
+  CONSTRAINT FK_user_friends_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT FK_user_friends_friend_id FOREIGN KEY (friend_id) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE CASCADE
 );
