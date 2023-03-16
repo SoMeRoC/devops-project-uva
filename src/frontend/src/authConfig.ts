@@ -92,8 +92,6 @@ export async function getMsalConfig() {
         },
     }
 }
-// export const msalInstance = new PublicClientApplication(await getMsalConfig());
-// export const msalConfig = getMsalConfig();
 
 // export const msalConfig = {
 //     auth: {
