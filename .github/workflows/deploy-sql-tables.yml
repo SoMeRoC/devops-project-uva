@@ -1,12 +1,9 @@
 name: Deploy SQL to Azure SQL
 
 on:
-  push:
-    branches:
-      - SOM-68-Create-and-upload-User-SQL-schema
   workflow_dispatch:
 
-# gh workflow run deploy-sql-tables.yml --ref SOM-68-Create-and-upload-User-SQL-schema dev
+# gh workflow run deploy-sql-tables.yml --ref dev
 
 env:
   KEY_VAULT_NAME: 'kv-someroc-shared-dev'
