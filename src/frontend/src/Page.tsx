@@ -7,10 +7,11 @@ type props = {
 
 class Page extends React.Component<props> {
   render() {
+    console.log(this.props)
     return (
-      <Container>
+      <div className="h-100">
         {this.props.page}
-      </Container>
+      </div>
     );
   }
 }

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Table, Button } from 'react-bootstrap'
 
+import { Table, Button } from 'react-bootstrap'
 import api from '../api';
 
 class Game extends React.Component {
@@ -12,7 +12,7 @@ class Game extends React.Component {
 
   render() {
     return (
-      <p>Wat een mooie game</p>
+      <p>Mooie game</p>
     );
   }
 }
