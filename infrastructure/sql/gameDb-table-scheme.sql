@@ -1,4 +1,6 @@
-CREATE TABLE gameHistory
+DROP TABLE IF EXISTS game_history;
+
+CREATE TABLE game_history
 (
     gameId INT IDENTITY PRIMARY KEY,
     gameState NVARCHAR(256) NOT NULL,
