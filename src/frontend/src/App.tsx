@@ -13,38 +13,8 @@ import { InteractionType } from "@azure/msal-browser";
 import { Component, Fragment, useEffect } from 'react';
 
 // Used to require authentication on specific Urls
-function RequireAuthd (children :JSX.Element) {
-  console.log(typeof children )
-  // Redirect if not authenticated
-  // See: https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-react/docs/getting-started.md#msalauthenticationtemplate-component
-  const authRequest = {
-    scopes: ["openid", "profile"]
-  };
-
-  const { login, result, error } = useMsalAuthentication(InteractionType.Redirect, authRequest);
-
-  useEffect(() => {
-      if (error) {
-          login(InteractionType.Redirect, authRequest);
-      }
-  }, [error]);
-
-  const { accounts } = useMsal();
-  
-  return  (
-    <Fragment>
-      <AuthenticatedTemplate>
-        {/* <component /> */}
-      </AuthenticatedTemplate>
-      <UnauthenticatedTemplate>
-      <p>Not signed in, attempting to sign you in.</p>
-      </UnauthenticatedTemplate>
-    </Fragment>
-  )
-}
-
 export const RequireAuth: React.FC<{ children: JSX.Element }> = ({ children }) => {
- // Redirect if not authenticated
+  // Redirect if not authenticated
   // See: https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-react/docs/getting-started.md#msalauthenticationtemplate-component
   const authRequest = {
     scopes: ["openid", "profile"]
