@@ -6,13 +6,13 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 import { PublicClientApplication, EventType, EventMessage, AuthenticationResult } from "@azure/msal-browser";
-import { msalConfig } from "./authConfig";
+import { getMsalConfig } from "./authConfig";
 
 /**
 * MSAL should be instantiated outside of the component tree to prevent it from being re-instantiated on re-renders.
 * For more, visit: https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-react/docs/getting-started.md
 */
-export const msalInstance = new PublicClientApplication(msalConfig);
+export const msalInstance = new PublicClientApplication(await getMsalConfig());
 
 // Account selection logic is app dependent. Adjust as needed for different use cases.
 // Default to first account :D

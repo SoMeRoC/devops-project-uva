@@ -12,6 +12,7 @@ import { AuthenticatedTemplate, MsalAuthenticationTemplate, MsalProvider, Unauth
 import { InteractionType } from "@azure/msal-browser";
 import { Component, Fragment, useEffect } from 'react';
 
+
 // Used to require authentication on specific Urls
 export const RequireAuth: React.FC<{ children: JSX.Element }> = ({ children }) => {
   // Redirect if not authenticated
@@ -20,6 +21,10 @@ export const RequireAuth: React.FC<{ children: JSX.Element }> = ({ children }) =
     scopes: ["openid", "profile"]
   };
 
+  console.log("TEST");
+  console.log(process.env.NODE_ENV);
+  console.log("TESTSS");
+
   const { login, result, error } = useMsalAuthentication(InteractionType.Redirect, authRequest);
 
   useEffect(() => {
@@ -27,7 +32,7 @@ export const RequireAuth: React.FC<{ children: JSX.Element }> = ({ children }) =
           login(InteractionType.Redirect, authRequest);
       }
   }, [error]);
-  
+
   return  (
     <Fragment>
       <AuthenticatedTemplate>
