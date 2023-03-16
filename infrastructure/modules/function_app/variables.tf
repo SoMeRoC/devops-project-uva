@@ -38,4 +38,9 @@ variable "application_insights_connection_string" {
   sensitive = true
 }
 
+variable "app_conf_connection_string" {
+  type    = string
+  sensitive = true
+}
+
 variable "tags" {}

@@ -24,6 +24,11 @@ resource "azurerm_linux_function_app" "func" {
   service_plan_id            = azurerm_service_plan.consumption.id
 
   tags = var.tags
+
+  app_settings = {
+    "AZURE_APP_CONFIG_CONNECTION_STRING" = var.app_conf_connection_string
+  }
+
   site_config {
     application_insights_connection_string = var.application_insights_connection_string
 

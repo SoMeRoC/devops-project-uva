@@ -22,6 +22,7 @@ module "session_management" {
   storage_account_name       = azurerm_storage_account.func_storage.name
   storage_account_access_key = azurerm_storage_account.func_storage.primary_access_key
   application_insights_connection_string = azurerm_application_insights.appi.connection_string
+  app_conf_connection_string = data.azurerm_key_vault_secret.appconf.value
 }
 
 module "match_making" {
