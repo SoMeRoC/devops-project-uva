@@ -1,0 +1,26 @@
+CREATE TABLE users (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  userID CHAR(36) NOT NULL,
+  first_name VARCHAR(50) NOT NULL,
+  last_name VARCHAR(50) NOT NULL,
+  admin BOOLEAN NOT NULL DEFAULT FALSE,
+  email VARCHAR(255) NOT NULL UNIQUE
+);
+
+CREATE TABLE user_stats (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  games_won INT NOT NULL DEFAULT 0,
+  games_lost INT NOT NULL DEFAULT 0,
+  games_played INT NOT NULL DEFAULT 0,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE user_friends (
+  user_id INT NOT NULL,
+  friend_id INT NOT NULL,
+  PRIMARY KEY (user_id, friend_id),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (friend_id) REFERENCES users(id) ON DELETE CASCADE
+);
