@@ -1,5 +1,5 @@
 resource "azurerm_mssql_database" "db" {
-  name           = "sqldb-${var.name}-${var.env}"
+  name           = "${var.name}"
   server_id      = var.server_id
   collation      = "SQL_Latin1_General_CP1_CI_AS"
 

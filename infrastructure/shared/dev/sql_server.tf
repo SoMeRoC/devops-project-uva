@@ -1,6 +1,6 @@
 resource "random_password" "db_root" {
   length           = 16
-  special          = true
+  special          = false
 }
 
 resource "azurerm_mssql_server" "sqlserver" {
@@ -21,3 +21,19 @@ resource "azurerm_mssql_server" "sqlserver" {
     ]
   }
 }
+
+resource "azurerm_mssql_firewall_rule" "allow_azure_services" {
+  name             = "Allow access to Azure services"
+  server_id        = azurerm_mssql_server.sqlserver.id
+  start_ip_address = "0.0.0.0"
+  end_ip_address   = "0.0.0.0"
+}
+
+
+resource "azurerm_mssql_firewall_rule" "jorrit" {
+  name             = "Allow Private IP Jorrit"
+  server_id        = azurerm_mssql_server.sqlserver.id
+  start_ip_address = "94.157.232.136"
+  end_ip_address   = "94.157.232.136"
+}
+
