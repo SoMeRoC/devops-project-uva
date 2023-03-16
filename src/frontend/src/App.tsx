@@ -21,9 +21,6 @@ export const RequireAuth: React.FC<{ children: JSX.Element }> = ({ children }) =
     scopes: ["openid", "profile"]
   };
 
-  console.log("TEST");
-  console.log(process.env.NODE_ENV);
-  console.log("TESTSS");
 
   const { login, result, error } = useMsalAuthentication(InteractionType.Redirect, authRequest);
 

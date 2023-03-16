@@ -28,7 +28,7 @@ const connection_string = process.env.AZURE_APP_CONFIG_CONNECTION_STRING;
 
 async function getRedirectUri() {
     if (process.env.NODE_ENV === 'development') {
-      return 'http://localhost:3000';
+      return 'http://localhost:3001';
     } else {
         const client = new appConfig.AppConfigurationClient(connection_string);
 
@@ -36,103 +36,58 @@ async function getRedirectUri() {
             key: "dev:redirecturi"
         });
 
-      console.log("Retrieved value:", retrievedSetting.value);
+        console.log("Retrieved value:", retrievedSetting.value);
       return retrievedSetting.value;
     }
   }
 
-/**
- * Configuration object to be passed to MSAL instance on creation.
- * For a full list of MSAL.js configuration parameters, visit:
- * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/configuration.md
- */
-export async function getMsalConfig() {
-    const redirectUri = process.env.NODE_ENV === 'development'
-      ? 'http://localhost:3000'
-      : await getRedirectUri();
-
-    return {
-        auth: {
-            clientId: '58045bc1-1bac-4d5f-bdf8-731e6f6995ad', // This is the ONLY mandatory field that you need to supply.
-            authority: b2cPolicies.authorities.signUpSignIn.authority, // Choose SUSI as your default authority.
-            knownAuthorities: [b2cPolicies.authorityDomain], // Mark your B2C tenant's domain as trusted.
-            redirectUri: redirectUri,
-            // redirectUri: 'http://localhost:3000', // You must register this URI on Azure Portal/App Registration. Defaults to window.location.origin
-            postLogoutRedirectUri: '', // Indicates the page to navigate after logout.
-            navigateToLoginRequestUrl: true, // If "true", will navigate back to the original request location before processing the auth code response.
-        },
-        cache: {
-            cacheLocation: 'sessionStorage', // Configures cache location. "sessionStorage" is more secure, but "localStorage" gives you SSO between tabs.
-            storeAuthStateInCookie: false, // Set this to "true" if you are having issues on IE11 or Edge
-        },
-        system: {
-            loggerOptions: {
-                loggerCallback: (level:any, message:any, containsPii:any) => {
-                    if (containsPii) {
+export const msalConfig = {
+    auth: {
+        clientId: '58045bc1-1bac-4d5f-bdf8-731e6f6995ad', // This is the ONLY mandatory field that you need to supply.
+        authority: b2cPolicies.authorities.signUpSignIn.authority, // Choose SUSI as your default authority.
+        knownAuthorities: [b2cPolicies.authorityDomain], // Mark your B2C tenant's domain as trusted.
+        redirectUri: (() => {
+            let uri = '';
+            getRedirectUri().then(response => {
+              uri = response;
+            });
+            console.log("URI:", uri)
+            return uri;
+          })(),
+        // redirectUri: 'http://localhost:3000', // You must register this URI on Azure Portal/App Registration. Defaults to window.location.origin
+        postLogoutRedirectUri: '', // Indicates the page to navigate after logout.
+        navigateToLoginRequestUrl: true, // If "true", will navigate back to the original request location before processing the auth code response.
+    },
+    cache: {
+        cacheLocation: 'sessionStorage', // Configures cache location. "sessionStorage" is more secure, but "localStorage" gives you SSO between tabs.
+        storeAuthStateInCookie: false, // Set this to "true" if you are having issues on IE11 or Edge
+    },
+    system: {
+        loggerOptions: {
+            loggerCallback: (level:any, message:any, containsPii:any) => {
+                if (containsPii) {
+                    return;
+                }
+                switch (level) {
+                    case LogLevel.Error:
+                        console.error(message);
                         return;
-                    }
-                    switch (level) {
-                        case LogLevel.Error:
-                            console.error(message);
-                            return;
-                        case LogLevel.Info:
-                            console.info(message);
-                            return;
-                        case LogLevel.Verbose:
-                            console.debug(message);
-                            return;
-                        case LogLevel.Warning:
-                            console.warn(message);
-                            return;
-                        default:
-                            return;
-                    }
-                },
+                    case LogLevel.Info:
+                        console.info(message);
+                        return;
+                    case LogLevel.Verbose:
+                        console.debug(message);
+                        return;
+                    case LogLevel.Warning:
+                        console.warn(message);
+                        return;
+                    default:
+                        return;
+                }
             },
         },
-    }
-}
-
-// export const msalConfig = {
-//     auth: {
-//         clientId: '58045bc1-1bac-4d5f-bdf8-731e6f6995ad', // This is the ONLY mandatory field that you need to supply.
-//         authority: b2cPolicies.authorities.signUpSignIn.authority, // Choose SUSI as your default authority.
-//         knownAuthorities: [b2cPolicies.authorityDomain], // Mark your B2C tenant's domain as trusted.
-//         redirectUri: x,
-//         // redirectUri: 'http://localhost:3000', // You must register this URI on Azure Portal/App Registration. Defaults to window.location.origin
-//         postLogoutRedirectUri: '', // Indicates the page to navigate after logout.
-//         navigateToLoginRequestUrl: true, // If "true", will navigate back to the original request location before processing the auth code response.
-//     },
-//     cache: {
-//         cacheLocation: 'sessionStorage', // Configures cache location. "sessionStorage" is more secure, but "localStorage" gives you SSO between tabs.
-//         storeAuthStateInCookie: false, // Set this to "true" if you are having issues on IE11 or Edge
-//     },
-//     system: {
-//         loggerOptions: {
-//             loggerCallback: (level:any, message:any, containsPii:any) => {
-//                 if (containsPii) {
-//                     return;
-//                 }
-//                 switch (level) {
-//                     case LogLevel.Error:
-//                         console.error(message);
-//                         return;
-//                     case LogLevel.Info:
-//                         console.info(message);
-//                         return;
-//                     case LogLevel.Verbose:
-//                         console.debug(message);
-//                         return;
-//                     case LogLevel.Warning:
-//                         console.warn(message);
-//                         return;
-//                     default:
-//                         return;
-//                 }
-//             },
-//         },
-//     },
-// };
+    },
+};
 
 /**
  * Add here the endpoints and scopes when obtaining an access token for protected web APIs. For more information, see:
