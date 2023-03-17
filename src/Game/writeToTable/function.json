@@ -1,7 +1,7 @@
 {
   "bindings": [
     {
-      "authLevel": "Anonymous",
+      "authLevel": "Function",
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
@@ -12,6 +12,7 @@
     },
     {
       "tableName": "GameState",
+      "connection": "",
       "name": "tableBinding",
       "type": "table",
       "direction": "out"

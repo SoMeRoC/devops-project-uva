@@ -7,6 +7,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
         ? "Hello, " + name + ". This HTTP triggered function executed successfully."
         : "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.";
 
+
     context.bindings.tableBinding = [];
 
     for (var i = 1; i < 10; i++) {
