@@ -11,6 +11,13 @@
       ]
     },
     {
+      "tableName": "GameState",
+      "connection": "",
+      "name": "tableBinding",
+      "type": "table",
+      "direction": "out"
+    },
+    {
       "type": "http",
       "direction": "out",
       "name": "res"
