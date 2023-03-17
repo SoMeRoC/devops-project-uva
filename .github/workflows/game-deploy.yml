@@ -1,0 +1,22 @@
+
+name: Deploy UserManagement
+
+on:
+  push:
+    branches:
+    - dev
+    - SOM-72-Create-basic-function-example-that-writes-state-to-table-storage
+    paths:
+      - src/Game/**
+  workflow_dispatch:
+
+# gh workflow run game-deploy.yml --ref dev
+
+jobs:
+  call-workflow-passing-data:
+    uses: ./.github/workflows/deploy-template.yml
+    with:
+      AZURE_FUNCTIONAPP_PACKAGE_PATH: 'src/Game'
+      RESOURCE_GROUP_NAME_DEV: 'rg-someroc-dev'
+      RESOURCE_FUNCTIONAPP_NAME_DEV: 'func-someroc-game-dev'
+    secrets: inherit
