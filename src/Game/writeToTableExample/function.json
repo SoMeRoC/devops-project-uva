@@ -12,7 +12,7 @@
     },
     {
       "tableName": "GameState",
-      "connection": "",
+      "connection": "AzureWebJobsMyStorage",
       "name": "tableBinding",
       "type": "table",
       "direction": "out"
