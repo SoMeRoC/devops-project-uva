@@ -9,12 +9,11 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 
     context.bindings.tableBinding = [];
 
-    for (var i = 1; i < 10; i++) {
-        responseMessage = responseMessage + i.toString()
+    for (var i = 1; i < 2; i++) {
         context.bindings.tableBinding.push({
             PartitionKey: "Test",
-            RowKey: i.toString(),
-            Name: "Name " + i
+            RowKey: "iii",
+            Name: "Name "
         });
     }
     context.res = {
