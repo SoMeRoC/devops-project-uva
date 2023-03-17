@@ -1,7 +1,7 @@
 {
   "bindings": [
     {
-      "authLevel": "Function",
+      "authLevel": "function",
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
@@ -11,17 +11,10 @@
       ]
     },
     {
-      "tableName": "GameState",
-      "connection": "",
-      "name": "tableBinding",
-      "type": "table",
-      "direction": "out"
-    },
-    {
       "type": "http",
       "direction": "out",
       "name": "res"
     }
   ],
-  "scriptFile": "../dist/writeToTable/index.js"
+  "scriptFile": "../dist/writeToTableExample/index.js"
 }
