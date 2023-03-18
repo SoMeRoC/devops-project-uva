@@ -21,9 +21,9 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
         context.log("1");
 
         context.bindings.tableBinding.push({
-            "partitionKey": "hometasks",
-            "rowKey": "2",
-            "description": "Drink beer"}
+            partitionKey: "hometasks",
+            rowKey: "2",
+            description: "Drink beer"}
         );
 
     } catch (err) {
