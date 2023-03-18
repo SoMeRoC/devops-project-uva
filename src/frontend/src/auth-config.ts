@@ -84,7 +84,7 @@ export const msalConfig = {
  */
 export const protectedResources = {
     gamewebapi: {
-        endpoint: "http://localhost:5000/",
+        endpoint: "http://localhost:3001/",
         scopes: {
             read: ["https://someroc.onmicrosoft.com/game/game.read"],
             write: ["https://someroc.onmicrosoft.com/game/game.write"],
