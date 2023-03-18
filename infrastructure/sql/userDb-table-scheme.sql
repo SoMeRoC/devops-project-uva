@@ -1,8 +1,9 @@
-IF OBJECT_ID('user_stats', 'U') IS NOT NULL
+DECLARE @fk_name VARCHAR(255)
+SELECT @fk_name = f.name FROM sys.foreign_keys AS f WHERE name LIKE 'FK__user_stat__use%'
+IF @fk_name IS NOT NULL
 BEGIN
-  ALTER TABLE user_stats DROP CONSTRAINT FK_user_stats_users;
-  DROP TABLE user_stats;
-END;
+    EXEC('ALTER TABLE dbo.user_stats DROP CONSTRAINT ' + @fk_name)
+END
 
 IF OBJECT_ID('users', 'U') IS NOT NULL
 BEGIN
