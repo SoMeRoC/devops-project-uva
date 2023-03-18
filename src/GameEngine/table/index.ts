@@ -5,14 +5,15 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 
     const data = req.body;
 
-    const partitionKey = data.partitionKey;
-    const rowKey = data.rowKey;
-    const someData = data.someData;
+    // const partitionKey = data.partitionKey;
+    // const rowKey = data.rowKey;
+    // const someData = data.someData;
+    console.log( data.partitionKey)
 
     const entity = {
-        PartitionKey: { '_': partitionKey },
-        RowKey: { '_': rowKey },
-        SomeData: { '_': someData }
+        partitionKey: "hometasks",
+        rowKey: "1",
+        description: "take out the trash"
     };
 
     context.bindings.outputTable = entity;
