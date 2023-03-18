@@ -26,28 +26,25 @@ export const b2cPolicies = {
 // const appConfig = require("@azure/app-configuration");
 // const connection_string = process.env.AZURE_APP_CONFIG_CONNECTION_STRING;
 
-// async function getRedirectUri(): Promise<String> {
-//     if (process.env.NODE_ENV === 'development') {
-//       return 'http://localhost:3001';
-//     } else {
-//         const client = new appConfig.AppConfigurationClient(connection_string);
+// async function getAppConfig() {
 
-//         let retrievedSetting = await client.getConfigurationSetting({
-//             key: "dev:redirecturi"
-//         });
+//     const client = new appConfig.AppConfigurationClient(connection_string);
 
-//         console.log("Retrieved value:", retrievedSetting.value);
-//       return retrievedSetting.value;
-//     }
+//     let retrievedSetting = await client.getConfigurationSetting({
+//         key: "dev:redirecturi"
+//     });
+
+//     console.log("Retrieved value:", retrievedSetting.value);
+//     return retrievedSetting.value;
 //   }
 
 export const msalConfig = {
     auth: {
-        clientId: '58045bc1-1bac-4d5f-bdf8-731e6f6995ad', // This is the ONLY mandatory field that you need to supply.
+        clientId: (process.env.REACT_APP_CLIENT_ID as string),  // This is the ONLY mandatory field that you need to supply.
         authority: b2cPolicies.authorities.signUpSignIn.authority, // Choose SUSI as your default authority.
         knownAuthorities: [b2cPolicies.authorityDomain], // Mark your B2C tenant's domain as trusted.
-        redirectUri: window.location.origin + "/success", // You must register this URI on Azure Portal/App Registration. Defaults to window.location.origin
-        postLogoutRedirectUri: window.location.origin, // Indicates the page to navigate after logout.
+        redirectUri: (process.env.REACT_APP_REDIRECT_URI as string), // You must register this URI on Azure Portal/App Registration. Defaults to window.location.origin
+        postLogoutRedirectUri: (process.env.REACT_APP_LOGOUT_PAGE as string), // Indicates the page to navigate after logout.
         navigateToLoginRequestUrl: true, // If "true", will navigate back to the original request location before processing the auth code response.
     },
     cache: {
