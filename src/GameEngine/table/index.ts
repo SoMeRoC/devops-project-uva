@@ -23,6 +23,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
         body: `Data inserted/updated successfully.`
     };
 
+
     context.done();
 };
 

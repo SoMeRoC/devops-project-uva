@@ -7,7 +7,7 @@ on:
     - dev
     - SOM-72-Create-basic-function-example-that-writes-state-to-table-storage
     paths:
-      - src/Game/**
+      - src/GameEngine/**
   workflow_dispatch:
 
 # gh workflow run game-deploy.yml --ref dev
