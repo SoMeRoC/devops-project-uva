@@ -1,12 +1,12 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions"
 import {TableServiceClient, TableClient} from "@azure/data-tables";
-import { table } from "console";
+
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
     context.log('HTTP trigger function processed a request.');
 
-    const requestBody = req.body;
-    const data = JSON.parse(requestBody);
+    // const requestBody = req.body;
+    // const data = JSON.parse(requestBody);
 
     // const partitionKey = data.partitionKey;
     // const rowKey = data.rowKey;
@@ -16,8 +16,9 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     console.log("1");
     const connectionString = process.env.AzureWebJobsStorage;
     const tableName = "mytable";
-    const tableService = TableServiceClient.fromConnectionString(connectionString);
     console.log("2");
+    const tableService = TableServiceClient.fromConnectionString(connectionString);
+    console.log("2.1");
     await tableService.createTable(tableName);
     console.log("3");
     const tableClient = TableClient.fromConnectionString(connectionString, tableName)
