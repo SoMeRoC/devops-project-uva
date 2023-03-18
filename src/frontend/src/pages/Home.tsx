@@ -2,7 +2,7 @@ import React from "react"
 import Chessground from "@react-chess/chessground"
 import { Chess } from "chess.js"
 
-import "./Home.scss"
+import "./home.scss"
 
 class Home extends React.Component {
 

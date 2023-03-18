@@ -23,39 +23,31 @@ export const b2cPolicies = {
 };
 
 
-const appConfig = require("@azure/app-configuration");
-const connection_string = process.env.AZURE_APP_CONFIG_CONNECTION_STRING;
+// const appConfig = require("@azure/app-configuration");
+// const connection_string = process.env.AZURE_APP_CONFIG_CONNECTION_STRING;
 
-async function getRedirectUri() {
-    if (process.env.NODE_ENV === 'development') {
-      return 'http://localhost:3001';
-    } else {
-        const client = new appConfig.AppConfigurationClient(connection_string);
+// async function getRedirectUri(): Promise<String> {
+//     if (process.env.NODE_ENV === 'development') {
+//       return 'http://localhost:3001';
+//     } else {
+//         const client = new appConfig.AppConfigurationClient(connection_string);
 
-        let retrievedSetting = await client.getConfigurationSetting({
-            key: "dev:redirecturi"
-        });
+//         let retrievedSetting = await client.getConfigurationSetting({
+//             key: "dev:redirecturi"
+//         });
 
-        console.log("Retrieved value:", retrievedSetting.value);
-      return retrievedSetting.value;
-    }
-  }
+//         console.log("Retrieved value:", retrievedSetting.value);
+//       return retrievedSetting.value;
+//     }
+//   }
 
 export const msalConfig = {
     auth: {
         clientId: '58045bc1-1bac-4d5f-bdf8-731e6f6995ad', // This is the ONLY mandatory field that you need to supply.
         authority: b2cPolicies.authorities.signUpSignIn.authority, // Choose SUSI as your default authority.
         knownAuthorities: [b2cPolicies.authorityDomain], // Mark your B2C tenant's domain as trusted.
-        redirectUri: (() => {
-            let uri = '';
-            getRedirectUri().then(response => {
-              uri = response;
-            });
-            console.log("URI:", uri)
-            return uri;
-          })(),
-        // redirectUri: 'http://localhost:3000', // You must register this URI on Azure Portal/App Registration. Defaults to window.location.origin
-        postLogoutRedirectUri: '', // Indicates the page to navigate after logout.
+        redirectUri: window.location.origin + "/success", // You must register this URI on Azure Portal/App Registration. Defaults to window.location.origin
+        postLogoutRedirectUri: window.location.origin, // Indicates the page to navigate after logout.
         navigateToLoginRequestUrl: true, // If "true", will navigate back to the original request location before processing the auth code response.
     },
     cache: {
