@@ -1,12 +1,11 @@
 import './app.css';
 
-import api from './api';
+// import api from './api';
 import Page from './page';
 import Game from './pages/game';
 import Home from './pages/home';
 import Error from './pages/error';
 import Success from './pages/success';
-import NotFound from './pages/home';
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthenticatedTemplate, MsalProvider, UnauthenticatedTemplate, useMsalAuthentication } from '@azure/msal-react';
@@ -23,14 +22,14 @@ export const RequireAuth: React.FC<{ children: JSX.Element }> = ({ children }) =
   };
 
 
-  const { login, result, error } = useMsalAuthentication(InteractionType.Redirect, authRequest);
+  const { error } = useMsalAuthentication(InteractionType.Redirect, authRequest);
   const navigate = useNavigate();
   
   useEffect(() => {
       if (error) {
         navigate("/error");
       }
-  }, [error]);
+  }, [error, navigate]);
 
 
 
@@ -55,7 +54,7 @@ function App(props:any) {
           <Route path='/game/*' element={<RequireAuth><Game/></RequireAuth>} />
           <Route path='/error'element={<Page page={<Error />} />} />
           <Route path='/success'element={<Page page={<Success />} />} />
-          <Route path='*' element={<Page page={<NotFound />} />} />
+          <Route path='*' element={<Page page={<Error />} />} />
         </Routes>
       </BrowserRouter>
   </MsalProvider>

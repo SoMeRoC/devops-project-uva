@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { LogLevel, PublicClientApplication } from "@azure/msal-browser";
+import { LogLevel } from "@azure/msal-browser";
 
 /**
  * Enter here the user flows and custom policies for your B2C application

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { Chessground as ChessgroundApi } from 'chessground';
 
 import { Api as cgApi } from 'chessground/api';
@@ -30,7 +30,7 @@ function Chessground({
     } else if (ref && ref.current && api) {
       api.set(config);
     }
-  }, [ref]);
+  }, [ref, api, config, setApi]);
 
   useEffect(() => {
     api?.set(config);
