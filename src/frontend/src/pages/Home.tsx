@@ -1,6 +1,5 @@
 import React from "react"
-import Chessground from "@react-chess/chessground"
-import { Chess } from "chess.js"
+import Chessground from "./chessground";
 
 import "./home.scss"
 
@@ -8,7 +7,6 @@ class Home extends React.Component {
 
   render(): any {
     //TODO: Make it play a random game
-    const chess = new Chess()
     const chessConfig = {
       animation: {
         duration: 1000
