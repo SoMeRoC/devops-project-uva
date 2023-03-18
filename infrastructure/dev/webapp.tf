@@ -21,6 +21,7 @@ resource "azurerm_linux_web_app" "fe" {
   site_config {
     application_stack {
         node_version = "18-lts"
+        app_command_line = "pm2 serve /home/site/wwwroot --no-daemon --spa"
     }
   }
 
