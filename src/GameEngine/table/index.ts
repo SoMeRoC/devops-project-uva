@@ -8,15 +8,20 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     // const partitionKey = data.partitionKey;
     // const rowKey = data.rowKey;
     // const someData = data.someData;
-    console.log( data.partitionKey)
+    context.log( data.partitionKey);
 
     const entity = {
         partitionKey: "hometasks",
-        rowKey: "1",
-        description: "take out the trash"
+        rowKey: "2",
+        description: "Drink beer"
     };
+    context.bindings.tableBinding = [];
 
     context.bindings.outputTable = entity;
+
+    context.log("Context:");
+
+    context.log(context);
 
     context.res = {
         status: 200,

@@ -12,17 +12,11 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     // const rowKey = data.rowKey;
     // const someData = data.someData;
 
-    console.log(process.env.AzureWebJobsStorage)
-    console.log("1");
     const connectionString = process.env.AzureWebJobsStorage;
     const tableName = "mytable";
-    console.log("2");
     const tableService = TableServiceClient.fromConnectionString(connectionString);
-    console.log("2.1");
     await tableService.createTable(tableName);
-    console.log("3");
     const tableClient = TableClient.fromConnectionString(connectionString, tableName)
-    console.log("4");
     const task = {
         partitionKey: "hometasks",
         rowKey: "1",
@@ -31,8 +25,6 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     };
 
     let result = await tableClient.createEntity(task);
-    console.log("5");
-    context.log(`result: ${result}`);
 
     if (result.etag) {
         context.log(`ETag: ${result.etag}`);
