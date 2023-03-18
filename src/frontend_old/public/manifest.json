@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Architecture manager",
+  "name": "The architecture manager of automatically generated microservices architectures",
   "icons": [
     {
       "src": "favicon.ico",
