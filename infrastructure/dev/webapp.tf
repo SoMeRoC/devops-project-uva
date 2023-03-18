@@ -21,7 +21,6 @@ resource "azurerm_linux_web_app" "fe" {
   site_config {
     application_stack {
         node_version = "18-lts"
-        app_command_line = "pm2 serve /home/site/wwwroot --no-daemon --spa"
     }
   }
 
@@ -31,6 +30,7 @@ resource "azurerm_linux_web_app" "fe" {
 
   lifecycle {
     ignore_changes = [
+      site_config[0].app_command_line,
       tags,
     ]
   }
