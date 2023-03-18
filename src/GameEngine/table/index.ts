@@ -17,7 +17,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     };
     context.bindings.tableBinding = [];
 
-    context.bindings.outputTable = entity;
+    context.bindings.tableBinding = entity;
 
     context.log("Context:");
 
