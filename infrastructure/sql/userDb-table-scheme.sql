@@ -1,6 +1,14 @@
-DROP TABLE IF EXISTS user_friends;
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS user_stats;
+IF OBJECT_ID('user_stats', 'U') IS NOT NULL
+BEGIN
+  ALTER TABLE user_stats DROP CONSTRAINT FK_user_stats_users;
+  DROP TABLE user_stats;
+END;
+
+IF OBJECT_ID('users', 'U') IS NOT NULL
+BEGIN
+  DROP TABLE users;
+END;
+
 
 CREATE TABLE users (
   id INT IDENTITY(1,1) PRIMARY KEY,
