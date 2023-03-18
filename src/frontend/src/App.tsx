@@ -1,16 +1,18 @@
-import './App.css';
+import './app.css';
 
 import api from './api';
-import Page from './Page';
-import Game from './pages/Game';
-import Home from './pages/Home';
-import Error from './pages/Home';
-import NotFound from './pages/Home';
+import Page from './page';
+import Game from './pages/game';
+import Home from './pages/home';
+import Error from './pages/error';
+import Success from './pages/success';
+import NotFound from './pages/home';
 
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthenticatedTemplate, MsalAuthenticationTemplate, MsalProvider, UnauthenticatedTemplate, useMsal, useMsalAuthentication } from '@azure/msal-react';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthenticatedTemplate, MsalProvider, UnauthenticatedTemplate, useMsalAuthentication } from '@azure/msal-react';
 import { InteractionType } from "@azure/msal-browser";
-import { Component, Fragment, useEffect } from 'react';
+import { Fragment, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 
 // Used to require authentication on specific Urls
 export const RequireAuth: React.FC<{ children: JSX.Element }> = ({ children }) => {
@@ -20,14 +22,18 @@ export const RequireAuth: React.FC<{ children: JSX.Element }> = ({ children }) =
     scopes: ["openid", "profile"]
   };
 
-  const { login, result, error } = useMsalAuthentication(InteractionType.Redirect, authRequest);
 
+  const { login, result, error } = useMsalAuthentication(InteractionType.Redirect, authRequest);
+  const navigate = useNavigate();
+  
   useEffect(() => {
       if (error) {
-          login(InteractionType.Redirect, authRequest);
+        navigate("/error");
       }
   }, [error]);
-  
+
+
+
   return  (
     <Fragment>
       <AuthenticatedTemplate>
@@ -48,6 +54,7 @@ function App(props:any) {
           <Route path='/' element={<Page page={<Home />} />} />
           <Route path='/game/*' element={<RequireAuth><Game/></RequireAuth>} />
           <Route path='/error'element={<Page page={<Error />} />} />
+          <Route path='/success'element={<Page page={<Success />} />} />
           <Route path='*' element={<Page page={<NotFound />} />} />
         </Routes>
       </BrowserRouter>
