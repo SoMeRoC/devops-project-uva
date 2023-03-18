@@ -16,8 +16,7 @@ resource "azurerm_linux_web_app" "fe" {
   app_settings = {
     "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.appi.connection_string
     "AZURE_APP_CONFIG_CONNECTION_STRING" = data.azurerm_key_vault_secret.appconf.value
-    # Ensures that we can use 'devlopment' as env on localhost.
-    "NODE_ENV" = "test"
+    "NODE_ENV" = "development"
   }
 
   site_config {
