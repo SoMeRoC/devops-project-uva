@@ -10,26 +10,29 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     // const someData = data.someData;
     context.log( data.partitionKey);
 
-    const entity = {
-        partitionKey: "hometasks",
-        rowKey: "2",
-        description: "Drink beer"
-    };
+    // const entity = {
+    //     partitionKey: "hometasks",
+    //     rowKey: "2",
+    //     description: "Drink beer"
+    // };
     context.bindings.tableBinding = [];
+    context.log("1");
 
-    context.bindings.tableBinding.push(entity);
+    context.bindings.tableBinding.push({
+        "partitionKey": "hometasks",
+        "rowKey": "2",
+        "description": "Drink beer"}
+    );
 
-    context.log("Context:");
+    context.log("2:");
 
-    context.log(context);
+    // context.log(context);
 
     context.res = {
         status: 200,
         body: `Data inserted/updated successfully.`
     };
-
-
-    context.done();
+    return
 };
 
 export default httpTrigger;
