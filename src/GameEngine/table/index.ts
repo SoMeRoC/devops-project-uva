@@ -15,24 +15,34 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     //     rowKey: "2",
     //     description: "Drink beer"
     // };
-    context.bindings.tableBinding = [];
-    context.log("1");
 
-    context.bindings.tableBinding.push({
-        "partitionKey": "hometasks",
-        "rowKey": "2",
-        "description": "Drink beer"}
-    );
+    try {
+        context.bindings.tableBinding = [];
+        context.log("1");
 
-    context.log("2:");
+        context.bindings.tableBinding.push({
+            "partitionKey": "hometasks",
+            "rowKey": "2",
+            "description": "Drink beer"}
+        );
 
-    // context.log(context);
+    } catch (err) {
+        context.log.error('ERROR', err);
+        // This rethrown exception will be handled by the Functions Runtime and will only fail the individual invocation
+        throw err;
+    }
+    // context.log("2:");
+
+    // // context.log(context);
+
+    const responseMessage = "Hello World";
 
     context.res = {
-        status: 200,
-        body: `Data inserted/updated successfully.`
+        // status defaults to 200
+        body: responseMessage
     };
-    return
+    // context.done
+    // callback(null);
 };
 
 export default httpTrigger;
