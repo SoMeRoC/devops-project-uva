@@ -3,6 +3,7 @@ SELECT @fk_name = f.name FROM sys.foreign_keys AS f WHERE name LIKE 'FK__user_st
 IF @fk_name IS NOT NULL
 BEGIN
     EXEC('ALTER TABLE dbo.user_stats DROP CONSTRAINT ' + @fk_name)
+    DROP TABLE user_stats;
 END
 
 IF OBJECT_ID('users', 'U') IS NOT NULL
