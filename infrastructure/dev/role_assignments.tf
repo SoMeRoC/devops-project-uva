@@ -4,11 +4,11 @@ resource "azurerm_role_assignment" "func_users_to_kv" {
   principal_id                     = module.user_management.principal_id
 }
 
-resource "azurerm_role_assignment" "func_game_to_kv" {
-  scope                            = data.azurerm_key_vault.kv.id
-  role_definition_name             = "Key Vault Secrets Officer"
-  principal_id                     = module.game.principal_id
-}
+# resource "azurerm_role_assignment" "func_game_to_kv" {
+#   scope                            = data.azurerm_key_vault.kv.id
+#   role_definition_name             = "Key Vault Secrets Officer"
+#   principal_id                     = module.game.principal_id
+# }
 
 resource "azurerm_role_assignment" "func_session_to_kv" {
   scope                            = data.azurerm_key_vault.kv.id
