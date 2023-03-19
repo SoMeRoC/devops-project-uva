@@ -44,3 +44,8 @@ variable "app_conf_connection_string" {
 }
 
 variable "tags" {}
+
+variable "sql_connection_string" {
+  type    = string
+  sensitive = true
+}
