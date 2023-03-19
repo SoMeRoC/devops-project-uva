@@ -15,6 +15,7 @@ async function connectToDatabase(connectionString) {
         throw error;
     }
 }
+
 interface B2CUser {
   email: string;
   identities: Identity[];
