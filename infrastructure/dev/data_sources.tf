@@ -16,3 +16,18 @@ data "azurerm_key_vault_secret" "appconf" {
   name         = "appConfig"
   key_vault_id = data.azurerm_key_vault.kv.id
 }
+
+data "azurerm_key_vault_secret" "gameSql" {
+  name         = "gameConnection"
+  key_vault_id = data.azurerm_key_vault.kv.id
+}
+
+data "azurerm_key_vault_secret" "userSql" {
+  name         = "userConnection"
+  key_vault_id = data.azurerm_key_vault.kv.id
+}
+
+data "azurerm_key_vault_secret" "sessionSql" {
+  name         = "sessionConnection"
+  key_vault_id = data.azurerm_key_vault.kv.id
+}
