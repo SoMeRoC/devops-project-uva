@@ -22,14 +22,15 @@ export const RequireAuth: React.FC<{ children: JSX.Element }> = ({ children }) =
   };
 
 
-  const { error } = useMsalAuthentication(InteractionType.Redirect, authRequest);
+  const { result,  error } = useMsalAuthentication(InteractionType.Redirect, authRequest);
   const navigate = useNavigate();
-  
+
   useEffect(() => {
       if (error) {
         navigate("/error");
       }
-  }, [error, navigate]);
+      console.log(result)
+  }, [result, error, navigate]);
 
 
 

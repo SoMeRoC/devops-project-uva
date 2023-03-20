@@ -27,7 +27,15 @@ resource "azurerm_linux_function_app" "func" {
 
   app_settings = {
     "AZURE_APP_CONFIG_CONNECTION_STRING" = var.app_conf_connection_string
+    "SqlConnectionString" =  var.sql_connection_string
   }
+
+  connection_string {
+    name = "SqlConnectionString"
+    type = "SQLAzure"
+    value = var.sql_connection_string
+  }
+
 
   site_config {
     application_insights_connection_string = var.application_insights_connection_string
