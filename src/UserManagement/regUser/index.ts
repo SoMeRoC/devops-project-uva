@@ -63,7 +63,6 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
             .input('userId', sql.VarChar(100), user.objectId)
             .query('INSERT INTO dbo.users (userName, email, userId) VALUES (@displayName, @email, @userId)');
 
-            const userId = insertResult.recordset[0].id;
             context.log(`User created successfully with ID: ${user.objectId}`);
 
             context.res = {
@@ -74,7 +73,6 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
             }
             };
         } else {
-            const userId = result.recordset[0].id;
             context.log(`User already exists with ID: ${user.objectId}`);
 
             context.res = {
