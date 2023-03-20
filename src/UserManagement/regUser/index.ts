@@ -36,6 +36,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     context.log("----------");
     const user: B2CUser = req.body;
 
+
     try {
         const pool = await connectToDatabase(connectionString);
 

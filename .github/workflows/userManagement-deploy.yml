@@ -5,7 +5,6 @@ on:
   push:
     branches:
     - "dev"
-    - "SOM-71-Create-user-in-DB-on-signup"
     paths:
       - src/UserManagement/**
   workflow_dispatch:
