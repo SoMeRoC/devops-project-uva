@@ -1,9 +1,9 @@
 import axios from 'axios';
 
 const browser = typeof localStorage !== 'undefined';
-let apiCallback = (tokenData) => { };
+let apiCallback = (tokenData:any) => { };
 let token = null;
-let tokenData = null
+let tokenData:any = null
 
 const server = axios.create({
   baseURL: 'http://localhost:3001/api', // TODO: Make this the correct endpoint
@@ -21,7 +21,7 @@ server.interceptors.response.use((response) => {
   return response.data;
 });
 
-const unpackToken = (token) => {
+const unpackToken = (token:any) => {
   if (!token) { return null; }
 
   const split = token.split('.');
@@ -29,18 +29,18 @@ const unpackToken = (token) => {
     throw new Error(`Received invalid token. Token has ${split.length} parts, expected 3.`);
   }
 
-  const payload = browser ? atob(split[1]) : (new Buffer.from(split[1], 'base64')).toString();
+  const payload = browser ? atob(split[1]) : (Buffer.from(split[1], 'base64')).toString();
   return JSON.parse(payload);
 }
 
-const setToken = (newToken) => {
+const setToken = (newToken:any) => {
   token = newToken;
   tokenData = unpackToken(newToken);
 }
 
 setToken(localStorage.getItem('apiToken'))
 const api = {
-  setTokenChangeCallback: (fn) => {
+  setTokenChangeCallback: (fn:any) => {
     apiCallback = fn;
   },
 

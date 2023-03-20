@@ -1,0 +1,19 @@
+@import "~bootstrap/scss/bootstrap";
+
+.full-background {
+    // https://heropatterns.com/
+    background-color: #6f42c1;
+    background-image: url(../background.svg);
+    color: white;
+    > h1 {
+        size: 5em;
+    }
+
+    > h2 {
+        size:2em;
+    }
+
+    > a {
+        margin-top: 20px;
+    }
+}

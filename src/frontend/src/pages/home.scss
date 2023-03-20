@@ -1,0 +1,55 @@
+@import "~bootstrap/scss/bootstrap";
+
+html,
+body {
+  height: 100%;
+  background-color: $gray-100
+}
+
+#root {
+    height: 100%;
+}
+
+body {
+  // text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
+//   box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);
+}
+
+.background {
+    & .content-container {
+        margin-top: -100px;
+        background-color: $gray-300;
+        height: 100%;
+        
+        > .content {
+            margin-top: 150px;
+        }
+    }
+}
+
+
+.title-container {
+    color: white;
+
+    > h1 {
+        font-size: 5.5rem;
+    }
+    
+    > p {
+        font-size: 2rem;
+    }
+}
+
+.header-background {
+    box-shadow: 0 0 5rem rgba(0, 0, 0, .5);
+
+    // background-color: $purple;
+    padding-bottom: 60px;
+    border-radius: 0 0 100% 100%/20px;
+
+    
+    z-index: 9999;
+    // https://heropatterns.com/
+    background-color: #6f42c1;
+    background-image: url(../background.svg);
+}
