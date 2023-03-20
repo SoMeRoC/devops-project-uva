@@ -27,3 +27,30 @@ resource "azurerm_web_pubsub" "pubsub" {
     ]
   }
 }
+
+
+resource "azurerm_web_pubsub_hub" "hub" {
+  name          = "session_hub"
+  web_pubsub_id = azurerm_web_pubsub.pubsub.id
+
+  # event_handler {
+  #   url_template       = "https://test.com/api/{hub}/{event}"
+  #   user_event_pattern = "*"
+  #   system_events      = ["connect", "connected"]
+  # }
+
+  # event_handler {
+  #   url_template       = "https://test.com/api/{hub}/{event}"
+  #   user_event_pattern = "event1, event2"
+  #   system_events      = ["connected"]
+  #   auth {
+  #     managed_identity_id = azurerm_user_assigned_identity.example.id
+  #   }
+  # }
+
+  anonymous_connections_enabled = false
+
+  depends_on = [
+    azurerm_web_pubsub.pubsub
+  ]
+}
