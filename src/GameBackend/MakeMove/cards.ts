@@ -1,4 +1,22 @@
-import {Card, Move, Action, Board, Piece, Color, Square} from "./someroc.ts";
+import { Board, Piece, Color, Square } from "./board";
+
+export enum Action {
+	Resign,
+	Timeout,
+	Move,
+}
+
+export type Move = {
+	type: Action,
+	color: Color,
+	pieceMove?: PieceMove,
+};
+
+type PieceMove = {
+	from: Square,
+	to: Square,
+	promotion?: Piece,
+};
 
 const empty = {piece: Piece.Empty, color: Color.None};
 
@@ -43,6 +61,25 @@ function isPiece(piece: Piece) {
 		return board.grid[from.row][from.col].piece == piece &&
 			   board.grid[from.row][from.col].color == board.color;
 	}
+}
+
+export abstract class Card {
+	static description = "Dummy card";
+
+	// Takes in a board state and a move that is made and then
+	// determines whether this card applies in these circumstances
+	static applies(_board: Board, _move: Move): boolean {
+		return true
+	}
+
+	// Returns true if it considers this move legal, false otherwise
+	static legal(_board: Board, _move: Move): boolean {
+		return true
+	}
+
+	// Changes the state of the given "board" object according to the results
+	// of this card on this move
+	static compute(_board: Board, _move: Move): void {}
 }
 
 export class MoveInBounds extends Card {
