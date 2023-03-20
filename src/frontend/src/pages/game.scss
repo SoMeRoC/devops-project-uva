@@ -1,0 +1,26 @@
+
+.score-sidebar {
+    position: absolute;
+    left: 100%;
+    top: 0px; 
+    height: 100%; 
+
+    .user-container {
+        margin-left: 10px;
+
+        .score-number {
+            font-size: 60px;
+        }
+    
+        .username {
+            font-size: 45px;
+        }
+    }
+ 
+}
+
+.alert {
+    width: 900px;
+    position: absolute !important;
+    bottom: 100%;
+}
