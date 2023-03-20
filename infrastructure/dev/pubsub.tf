@@ -33,11 +33,11 @@ resource "azurerm_web_pubsub_hub" "hub" {
   name          = "session_hub"
   web_pubsub_id = azurerm_web_pubsub.pubsub.id
 
-  # event_handler {
-  #   url_template       = "https://test.com/api/{hub}/{event}"
-  #   user_event_pattern = "*"
-  #   system_events      = ["connect", "connected"]
-  # }
+  event_handler {
+    url_template       = "https://large-months-add-213-10-31-95.loca.lt/api/{hub}/{event}"
+    user_event_pattern = "*"
+    system_events      = ["connect", "connected", "disconnected", "gameAction"]
+  }
 
   # event_handler {
   #   url_template       = "https://test.com/api/{hub}/{event}"
