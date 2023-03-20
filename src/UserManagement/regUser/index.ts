@@ -35,29 +35,20 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     context.log(req.body);
     context.log("----------");
     const user: B2CUser = req.body;
-    // context.log(typeof req.body);
-    // context.log("User");
-    // context.log(user);
-    // context.log("xxx");
 
     try {
         const pool = await connectToDatabase(connectionString);
-        // context.log("User2");
-        // context.log(user);
-        // context.log("yyyyyy");
 
         const result = await pool.request()
             .input('email', sql.VarChar(100), user.email)
             .query('SELECT id FROM users WHERE email = @email');
         context.log(result);
-        context.log("1");
         context.log(user.displayName);
         context.log(user.email);
         context.log(user.objectId);
-        context.log("2");
 
         if (result.recordset.length === 0) {
-            const insertResult = await pool.request()
+            await pool.request()
             .input('displayName', sql.VarChar(50), user.displayName)
             .input('email', sql.VarChar(100), user.email)
             .input('userId', sql.VarChar(100), user.objectId)
