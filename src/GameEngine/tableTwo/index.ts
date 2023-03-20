@@ -12,8 +12,9 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     // const rowKey = data.rowKey;
     // const someData = data.someData;
 
-    const connectionString = process.env.AzureWebJobsStorage;
-    const tableName = "mytable";
+    const connectionString = (process.env.AzureWebJobsStorage as string);
+    context.log(connectionString);
+    const tableName = "gameStates";
     const tableService = TableServiceClient.fromConnectionString(connectionString);
     await tableService.createTable(tableName);
     const tableClient = TableClient.fromConnectionString(connectionString, tableName)
@@ -25,6 +26,16 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     };
 
     let result = await tableClient.createEntity(task);
+
+    const partitionKey = "boards";
+    const rowKey = "123";
+    const columnToRetrieve = "board";
+
+    const entity = await tableClient.getEntity(partitionKey, rowKey);
+    const boardData = entity[columnToRetrieve];
+    context.log("boardData");
+    context.log(boardData);
+    context.log("-----");
 
     if (result.etag) {
         context.log(`ETag: ${result.etag}`);
