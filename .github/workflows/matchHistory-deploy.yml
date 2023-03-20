@@ -1,0 +1,21 @@
+
+name: Deploy Match History
+
+on:
+  push:
+    branches:
+    - "dev"
+    paths:
+      - src/MatchHistory/**
+  workflow_dispatch:
+
+# gh workflow run matchHistory-deploy.yml --ref dev-MatchHistoryJorrit
+
+jobs:
+  call-workflow-passing-data:
+    uses: ./.github/workflows/deploy-template.yml
+    with:
+      AZURE_FUNCTIONAPP_PACKAGE_PATH: 'src/MatchHistory'
+      RESOURCE_GROUP_NAME_DEV: 'rg-someroc-dev'
+      RESOURCE_FUNCTIONAPP_NAME_DEV: 'func-someroc-matchHistory-dev'
+    secrets: inherit
