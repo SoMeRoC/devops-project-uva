@@ -19,7 +19,7 @@ async function connectToDatabase(connectionString) {
 interface B2CUser {
   email: string;
   identities: Identity[];
-  givenName: string;
+  displayName: string;
   objectId: string;
   [key: string]: any;
 }
@@ -46,19 +46,12 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 
         if (result.recordset.length === 0) {
             const insertResult = await pool.request()
-            .input('first_name', sql.VarChar(50), user.givenName)
-            .input('last_name', sql.VarChar(50), user.surname)
+            .input('displayName', sql.VarChar(50), user.givenName)
             .input('email', sql.VarChar(100), user.email)
-            .query('INSERT INTO dbo.users (first_name, last_name, email) OUTPUT inserted.id VALUES (@first_name, @last_name, @email)');
+            .query('INSERT INTO dbo.users (userName, email) OUTPUT inserted.id VALUES (@displayName, @email)');
 
             const userId = insertResult.recordset[0].id;
             context.log(`User created successfully with ID: ${userId}`);
-
-            const insertResultStats = await pool.request()
-            .input('user_id', sql.Int(), userId)
-            .query('INSERT INTO dbo.user_stats (user_id)  VALUES (@user_id)');
-
-            // context.log(insertResultStats);
 
             context.res = {
             status: 200,
