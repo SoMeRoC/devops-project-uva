@@ -22,6 +22,7 @@ export const RequireAuth: React.FC<{ children: JSX.Element }> = ({ children }) =
   };
 
 
+<<<<<<< Updated upstream
   const { result,  error } = useMsalAuthentication(InteractionType.Redirect, authRequest);
   const navigate = useNavigate();
 
@@ -31,14 +32,24 @@ export const RequireAuth: React.FC<{ children: JSX.Element }> = ({ children }) =
       }
       console.log(result)
   }, [result, error, navigate]);
+=======
+  // const { error } = useMsalAuthentication(InteractionType.Redirect, authRequest);
+  const navigate = useNavigate();
+  
+  // useEffect(() => {
+      // if (error) {
+        // navigate("/error");
+      // }
+  // }, [error, navigate]);
+>>>>>>> Stashed changes
 
 
 
   return  (
     <Fragment>
-      <AuthenticatedTemplate>
+      {/* <AuthenticatedTemplate> */}
         {children}
-      </AuthenticatedTemplate>
+      {/* </AuthenticatedTemplate> */}
       <UnauthenticatedTemplate>
       <p>Not signed in, attempting to sign you in.</p>
       </UnauthenticatedTemplate>
@@ -52,7 +63,7 @@ function App(props:any) {
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Page page={<Home />} />} />
-          <Route path='/game/*' element={<RequireAuth><Game/></RequireAuth>} />
+          <Route path='/game/*' element={<RequireAuth><Game orientation='black' gameId='123'/></RequireAuth>} />
           <Route path='/error'element={<Page page={<Error />} />} />
           <Route path='/success'element={<Page page={<Success />} />} />
           <Route path='*' element={<Page page={<Error />} />} />
