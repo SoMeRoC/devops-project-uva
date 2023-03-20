@@ -5,13 +5,13 @@ const sql = require('mssql');
 const connectionString = (process.env.SqlConnectionString as string)
 
 
-async function connectToDatabase(connectionString) {
+async function connectToDatabase(context: Context, connectionString) {
     try {
         const pool = await sql.connect(connectionString);
-        console.log('Successfully connected to the database.');
+        context.log('Successfully connected to the database.');
         return pool;
     } catch (error) {
-        console.error('Error connecting to the database:', error);
+        context.log('Error connecting to the database:', error);
         throw error;
     }
 }
@@ -33,12 +33,10 @@ interface Identity {
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
     context.log('JavaScript HTTP trigger and SQL output binding function processed a request.');
     context.log(req.body);
-    context.log("----------");
     const user: B2CUser = req.body;
 
-
     try {
-        const pool = await connectToDatabase(connectionString);
+        const pool = await connectToDatabase(context, connectionString);
 
         const result = await pool.request()
             .input('email', sql.VarChar(100), user.email)
