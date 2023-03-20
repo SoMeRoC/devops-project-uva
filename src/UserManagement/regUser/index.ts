@@ -61,7 +61,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
             .input('displayName', sql.VarChar(50), user.displayName)
             .input('email', sql.VarChar(100), user.email)
             .input('userId', sql.VarChar(100), user.objectId)
-            .query('INSERT INTO dbo.users (userName, email, userId) VALUES (@displayName, @email, @objectId)');
+            .query('INSERT INTO dbo.users (userName, email, userId) VALUES (@displayName, @email, @userId)');
 
             const userId = insertResult.recordset[0].id;
             context.log(`User created successfully with ID: ${user.objectId}`);
