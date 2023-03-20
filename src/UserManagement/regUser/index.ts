@@ -46,7 +46,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 
         if (result.recordset.length === 0) {
             const insertResult = await pool.request()
-            .input('displayName', sql.VarChar(50), user.givenName)
+            .input('displayName', sql.VarChar(50), user.displayName)
             .input('email', sql.VarChar(100), user.email)
             .query('INSERT INTO dbo.users (userName, email) OUTPUT inserted.id VALUES (@displayName, @email)');
 
