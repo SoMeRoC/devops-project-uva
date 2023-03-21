@@ -6,7 +6,7 @@ import gameApi from "../gameApi";
 
 const GameAction: AzureFunction = async function (context: Context, req: HttpRequest, wpsReq): Promise<Object> {
   const { connectionId } = wpsReq.request.connectionContext;
-  const move = wpsReq.request.data;
+  const payload = wpsReq.request.data;
   const pool = await connectToDatabase(context);
   const result = await pool.request()
     .input('connectionId', sql.VarChar(100), connectionId)
@@ -26,7 +26,7 @@ const GameAction: AzureFunction = async function (context: Context, req: HttpReq
   const color = session.whiteConId === connectionId ? 'w' : 'b';
 
   // Propagate action, broadcast result.
-  const res = await gameApi.action(sessionId, color, move);
+  const res = await gameApi.action(sessionId, color, payload);
   // const res = `session-${sessionId} Player ${color} made move: ${move}`;
 
   context.bindings.actions = [

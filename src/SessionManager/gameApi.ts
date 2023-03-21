@@ -18,12 +18,12 @@ const gameService = axios.create({
 });
 
 const gameApi = {
-  action: (gameId: Number | String, color: String, move: String) => {
+  action: (gameId: Number | String, color: String, payload: Object) => {
     return gameService.get('/MakeMove', {
       data: {
+        ...payload,
         gameId,
         color,
-        move,
       }
     });
   },

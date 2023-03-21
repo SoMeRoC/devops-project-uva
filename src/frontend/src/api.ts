@@ -79,9 +79,9 @@ export default class GameAPI extends EventEmitter {
     return this.game?.color;
   }
 
-  action(input: string) {
+  action(payload: { action: 1 | 2, move: String }) {
     if (!this.socket || !this.connected) { throw new Error('Socket not connected!'); }
 
-    this.socket.send(JSON.stringify(input));
+    this.socket.send(JSON.stringify(payload));
   }
 }
