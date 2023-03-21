@@ -28,6 +28,10 @@ resource "azurerm_linux_function_app" "func" {
   app_settings = {
     "AZURE_APP_CONFIG_CONNECTION_STRING" = var.app_conf_connection_string
     "SqlConnectionString" =  var.sql_connection_string
+    "gameApi" = "@Microsoft.KeyVault(SecretUri=${data.azurerm_key_vault_secret.gameApi.id})"
+    "sessionApi" = "@Microsoft.KeyVault(SecretUri=${data.azurerm_key_vault_secret.sessionApi.id})"
+    "userApi" = "@Microsoft.KeyVault(SecretUri=${data.azurerm_key_vault_secret.userApi.id})"
+    "matchApi" = "@Microsoft.KeyVault(SecretUri=${data.azurerm_key_vault_secret.matchApi.id})"
   }
 
   connection_string {
