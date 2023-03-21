@@ -1,6 +1,6 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions"
 // import { Session } from "../db";
-
+import ConnectToDatabase from "../db";
 
 const sql = require('mssql');
 
@@ -12,17 +12,6 @@ interface schema {
   blackConId?: string,
   white: string,
   whiteConId?: string
-}
-
-async function connectToDatabase(context: Context, connectionString) {
-    try {
-        const pool = await sql.connect(connectionString);
-        context.log('Successfully connected to the database.');
-        return pool;
-    } catch (error) {
-        context.log('Error connecting to the database:', error);
-        throw error;
-    }
 }
 
 const CreateSessions: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
@@ -41,13 +30,17 @@ const CreateSessions: AzureFunction = async function (context: Context, req: Htt
   }
 
   try {
-    const pool = await connectToDatabase(context, connectionString);
+    const pool = await ConnectToDatabase(context, connectionString);
 
     const session: schema = {
       start: new Date(),
       white: players[0],
       black: players[1]
     };
+    context.log(session.start);
+    context.log(typeof session.start);
+    context.log(session.white);
+    context.log(session.black);
 
     const result = await pool.request()
     .input('start', sql.Date, session.start)
