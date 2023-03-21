@@ -53,20 +53,26 @@ function movePiece(board: Board, move: Move): void {
 function isPiece(piece: Piece) {
 	return (board: Board, move: Move) => {
 		// If this is not a move of a piece, this card does not apply
-		if (move.type != Action.Move || !move.pieceMove)
+		if (move.type != Action.Move || !move.pieceMove) {
 			return false;
+		}
 
 		// This card applies if the piece being moved matches with the given
 		// piece and the color of the piece matches with who is to move
 		const from = move.pieceMove.from;
-		return board.grid[from.row][from.col].piece == piece &&
-			   board.grid[from.row][from.col].color == board.color;
+		console.log(from);
+		console.log(board.grid[from.row][from.col]);
+		console.log(board.color);
+		return board.pieceAt(from).piece == piece &&
+			   board.pieceAt(from).color == board.color;
 	}
 }
 
 type CardSerialization = {
 	color: Color,
 	className: string,
+	title: string,
+	description: string,
 };
 
 export class Card {
@@ -103,6 +109,8 @@ export class Card {
 		return {
 			color: this.color,
 			className: this.constructor.name,
+			title: this.title,
+			description: this.description,
 		};
 	}
 }
@@ -117,11 +125,12 @@ export class MoveInBounds extends Card {
 	description = "A piece cannot be moved outside the chess board";
 
 	legal(_board: Board, move: Move) {
-		return move.pieceMove == undefined ||
+		console.log(move);
+		return move.pieceMove == undefined || (
 			   move.pieceMove.to.row >= 0 &&
-			   move.pieceMove.to.row <= 8 &&
+			   move.pieceMove.to.row < 8 &&
 			   move.pieceMove.to.col >= 0 &&
-			   move.pieceMove.to.col <= 8;
+			   move.pieceMove.to.col < 8);
 	}
 }
 
@@ -147,7 +156,7 @@ export class Bishop extends Card {
 
 		// Check if there are no pieces in the way
 		for (const square of rayBetween(from, to)) {
-			if (board.grid[square.row][square.col].piece != Piece.Empty)
+			if (board.pieceAt(square).piece != Piece.Empty)
 				return false;
 		}
 
@@ -177,7 +186,7 @@ export class Rook extends Card {
 
 		// Check if there are no pieces in the way
 		for (const square of rayBetween(from, to)) {
-			if (board.grid[square.row][square.col].piece != Piece.Empty)
+			if (board.pieceAt(square).piece != Piece.Empty)
 				return false;
 		}
 
@@ -249,16 +258,16 @@ export class Pawn extends Card {
 		if (diff.row == 2 &&
 			(from.row == 6 || from.row == 1) &&
 			diff.col == 0 &&
-			board.grid[to.row][to.col].piece == Piece.Empty &&
+			board.pieceAt(to).piece == Piece.Empty &&
 			rayBetween(from, to).every(
-				e => board.grid[e.row][e.col].piece == Piece.Empty)) {
+				e => board.pieceAt(e).piece == Piece.Empty)) {
 			return true;
 		}
 
 		// If the pawn moves one square forward, there must not be a piece there
 		else if (diff.row == 1 &&
 				 diff.col == 0 &&
-				 board.grid[to.row][to.col].piece == Piece.Empty) {
+				 board.pieceAt(to).piece == Piece.Empty) {
 			return true;
 		}
 
@@ -274,8 +283,8 @@ export class Pawn extends Card {
 				board.enPassant.col == to.col)
 				return true;
 
-			if (board.grid[to.row][to.col].piece != Piece.Empty &&
-				board.grid[to.row][to.col].color != board.color)
+			if (board.pieceAt(to).piece != Piece.Empty &&
+				board.pieceAt(to).color != board.color)
 				return true;
 		}
 

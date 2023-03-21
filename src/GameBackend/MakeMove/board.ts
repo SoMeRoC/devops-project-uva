@@ -24,13 +24,14 @@ export class Square {
 	col = 0;
 
 	static serialize(square: Square): string {
-		return String.fromCharCode(square.col + "a".charCodeAt(1)) + square.row;
+		return String.fromCharCode(square.col + "a".charCodeAt(0) + 1)
+		       + (square.row + 1);
 	}
 
 	static deserialize(str: string): Square {
 		return {
-			col: str.charCodeAt(1) - "a".charCodeAt(1),
-			row: Number(str[1]),
+			col: str.charCodeAt(0) - "a".charCodeAt(0),
+			row: Number(str[1]) - 1,
 		};
 	}
 }
@@ -45,34 +46,30 @@ export class Board {
 	enPassant: Square | null;
 	grid: ColoredPiece[][];
 
-	static fromFEN(fen: FEN): Board {
-		const board = new Board();
-
-		const [grid, color, _castling, enPassant, _halfmove, ply] = fen.split(" ");
-		board.grid = [[]]; // TODO: parse FEN
-
+	static parseFENposition(fen: string): ColoredPiece[][] {
+		const grid: ColoredPiece[][] = [[]];
 		let row = 0;
 		let col = 0;
-		for (const c of grid) {
+		for (const c of fen) {
 			if (c == "/") {
 				row++;
 				col = 0;
-				board.grid[row] = [];
+				grid[row] = [];
 				continue;
 			}
 
 			if (c == "1") {
-				board.grid[row][col] = {
+				grid[row][col] = {
 					color: Color.None,
 					piece: Piece.Empty,
 				}
 			} else if (c.toLowerCase() == c) {
-				board.grid[row][col] = {
+				grid[row][col] = {
 					color: Color.Black,
 					piece: c as Piece,
 				};
 			} else {
-				board.grid[row][col] = {
+				grid[row][col] = {
 					color: Color.White,
 					piece: c.toLowerCase() as Piece,
 				};
@@ -80,6 +77,15 @@ export class Board {
 
 			col++;
 		}
+
+		return grid;
+	}
+
+	static fromFEN(fen: FEN): Board {
+		const board = new Board();
+
+		const [grid, color, _castling, enPassant, ply, _fullmove] = fen.split(" ");
+		board.grid = Board.parseFENposition(grid);
 		board.color = color as Color;
 		board.castling = [];
 		if (enPassant == "-") {
@@ -101,18 +107,11 @@ export class Board {
 		];
 		this.color = Color.White;
 		this.enPassant = null;
-		this.grid = [];
-		for (let row = 0; row < 8; row++) {
-			this.grid[row] = []
-
-			for (let col = 0; col < 8; col++) {
-				this.grid[row][col] = {piece: Piece.Empty, color: Color.None};
-			}
-		}
+		this.grid = Board.parseFENposition("rnbqkbnr/pppppppp/11111111/11111111/11111111/11111111/PPPPPPPP/RNBQKBNR");
 	}
 
 	pieceAt(square: Square): ColoredPiece {
-		return this.grid[square.col][square.row];
+		return this.grid[square.row][square.col];
 	}
 
 	clone(): Board {
@@ -127,7 +126,7 @@ export class Board {
 
 	toFEN(): FEN {
 		// Position encoded
-		let fen = this.grid.map(row => 
+		let fen = this.grid.reverse().map(row => 
 			row.map(e => {
 				const {piece: piece, color: color} = e;
 
@@ -161,12 +160,11 @@ export class Board {
 
 		// Fifty-move rule
 		fen += " ";
-		fen += "0";
-		
+		fen += this.ply;
+
 		// Total number of moves
 		fen += " "
-		// fen += Math.floor(this.ply / 2) + 1;
-		fen += this.ply;
+		fen += Math.floor(this.ply / 2) + 1;
 
 		return fen;
 	}

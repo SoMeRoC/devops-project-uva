@@ -1,8 +1,8 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions"
 import { TableServiceClient, TableClient } from "@azure/data-tables";
 import { Game } from "./someroc";
-import { Card } from "./cards";
-import { Board } from "./board";
+import { Card, Move, Action } from "./cards";
+import { Board, Square, Color } from "./board";
 
 const dbConnection = process.env.AzureWebJobsStorage;
 const gameStateTable = "gameStates";
@@ -16,7 +16,13 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 	// Read mandatory query variables
 	const gameid = req.query.gameid;
 	const color = req.query.color;
-	const move = req.query.move;
+	const action = req.query.action;
+	const serializedMove = req.query.move;
+
+	console.log(gameid)
+	console.log(color)
+	console.log(action)
+	console.log(serializedMove)
 
 	// Make sure the table storing game states exists
     // await service.createTable("gameStates");
@@ -37,10 +43,45 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 		// already
 	}
 
-	console.log(game);
+	// Get the move in IR
+	let move: Move;
+	if (serializedMove) {
+		move = {
+			type: Number(action) as Action,
+			color: color as Color,
+			pieceMove: {
+				from: Square.deserialize(serializedMove.split("-")[0]),
+				to: Square.deserialize(serializedMove.split("-")[1]),
+			},
+		};
+	} else {
+		move = {
+			type: Number(action) as Action,
+			color: color as Color,
+		};
+	}
+
+	// Attempt to put the move on the board
+	game.eval_move(move);
+
+	// Get the result to the client
+	context.res = {
+		status: 200,
+		body: JSON.stringify({
+			boardstate: {
+				fen: game.board.toFEN(),
+				won: game.board.win,
+			},
+			score: {
+				black: game.wins.filter(e => e == Color.Black).length,
+				white: game.wins.filter(e => e == Color.White).length,
+			},
+			rules: game.cards.map(e => e.serialize()),
+		}),
+	};
 
 	// Write the game back to the database
-    const entity = {
+    await client.upsertEntity({
         partitionKey: partition,
         rowKey: gameid,
 
@@ -50,23 +91,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 		// Game information
 		wins: JSON.stringify(game.wins),
 		cards: JSON.stringify(game.cards.map(e => e.serialize())),
-    };
-
-    const result = await client.upsertEntity(entity);
-
-    if (result.etag) {
-        context.log(`ETag: ${result.etag}`);
-
-        context.res = {
-            status: 200,
-            body: `Data inserted/updated successfully.`
-        };
-    } else {
-        context.res = {
-            status: 404,
-            body: `Not working; inserted/updated unsuccessfully.`
-        };
-    }
+    });
 };
 
 export default httpTrigger;
