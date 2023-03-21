@@ -42,6 +42,8 @@ jobs:
         echo "REACT_APP_SESSION_API=${{ secrets.SESSION_API }}" >> .env
         echo "REACT_APP_GAME_API=${{ secrets.GAME_API }}" >> .env
         echo "REACT_APP_USER_API=${{ secrets.USER_API }}" >> .env
+        echo "REACT_APP_TOKEN_1=${{ secrets.TOKEN_1 }}" >> .env
+        echo "REACT_APP_TOKEN_2=${{ secrets.TOKEN_2 }}" >> .env
 
         npm install
         npm run build --passWithNoTests

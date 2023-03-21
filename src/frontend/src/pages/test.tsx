@@ -1,9 +1,10 @@
 import React from "react";
 import GameAPI from "../api";
 
-const sessionId = '1';
-const apiToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ3c3M6Ly93cHMtc29tZXJvYy1kZXYud2VicHVic3ViLmF6dXJlLmNvbS9jbGllbnQvaHVicy9zZXNzaW9uX2h1Yl9kZXYiLCJpYXQiOjE2NzkzOTcwMjUsImV4cCI6MTY3OTQzMzAyNSwic3ViIjoiMSJ9.y-z_wvvM1SS3hCcHAoFjsMvSUnosZb4r56cmJI329Iw';
-const api = new GameAPI(sessionId, apiToken);
+const sessionId = '3';
+const apiToken1 = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ3c3M6Ly93cHMtc29tZXJvYy1kZXYud2VicHVic3ViLmF6dXJlLmNvbS9jbGllbnQvaHVicy9zZXNzaW9uX2h1YiIsImlhdCI6MTY3OTQzOTkxNCwiZXhwIjoxNjc5NDc1OTE0LCJzdWIiOiIxIn0.RTbDQvP4JZWq_6ZndR_XCaoEnMJvKbGqRXTO-I292z4';
+const apiToken2 = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ3c3M6Ly93cHMtc29tZXJvYy1kZXYud2VicHVic3ViLmF6dXJlLmNvbS9jbGllbnQvaHVicy9zZXNzaW9uX2h1YiIsImlhdCI6MTY3OTQzOTg5MSwiZXhwIjoxNjc5NDc1ODkxLCJzdWIiOiIyIn0.7o8xcflgADo51Km9yJ7RyxAJ6rMRYGMgskBVrw0SKzQ';
+const api = new GameAPI(sessionId, apiToken1);
 
 class Test extends React.Component {
   ref: any

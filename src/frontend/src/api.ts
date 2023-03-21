@@ -1,6 +1,6 @@
 import EventEmitter from "events";
 
-const hub = 'session_hub_dev';
+const hub = 'session_hub';
 
 export default class GameAPI extends EventEmitter {
   sessionId: string
@@ -36,6 +36,7 @@ export default class GameAPI extends EventEmitter {
     this.connected = true;
     console.info(`WebSocket session ${this.sessionId} connected.`);
   }
+
 
   onMessage = (event: MessageEvent) => {
     let { data } = event;
@@ -78,9 +79,9 @@ export default class GameAPI extends EventEmitter {
     return this.game?.color;
   }
 
-  action(input: string) {
+  action(payload: { action: 1 | 2, move: String }) {
     if (!this.socket || !this.connected) { throw new Error('Socket not connected!'); }
 
-    this.socket.send(JSON.stringify(input));
+    this.socket.send(JSON.stringify(payload));
   }
 }
