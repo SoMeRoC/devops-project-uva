@@ -26,7 +26,19 @@ const GameAction: AzureFunction = async function (context: Context, req: HttpReq
   const color = session.whiteConId === connectionId ? 'w' : 'b';
 
   // Propagate action, broadcast result.
-  const res = await gameApi.action(sessionId, color, payload);
+  let res: any;
+  try {
+    res = await gameApi.action(sessionId, color, payload);
+  } catch (error) {
+    context.bindings.actions = [
+      {
+      actionName: 'sendToGroup',
+      group: `session-${sessionId}`,
+      data: JSON.stringify({ event: 'error', input: payload, error: error }),
+      }
+    ]
+    return;
+  }
   // const res = `session-${sessionId} Player ${color} made move: ${move}`;
 
   context.bindings.actions = [
