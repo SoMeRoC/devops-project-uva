@@ -6,7 +6,7 @@ import gameApi from "../gameApi";
 
 const GameAction: AzureFunction = async function (context: Context, req: HttpRequest, wpsReq): Promise<Object> {
   const { connectionId } = wpsReq.request.connectionContext;
-  const payload = wpsReq.request.data;
+  const payload = JSON.parse(wpsReq.request.data);
   const pool = await connectToDatabase(context);
   const result = await pool.request()
     .input('connectionId', sql.VarChar(100), connectionId)
