@@ -29,8 +29,15 @@ async function callAzureFunction(): Promise<void> {
     });
 
     if (response.ok) {
-      const responseData = await response.json();
-      console.log("Azure Function response:", responseData);
+      const contentType = response.headers.get("Content-Type");
+      let responseData;
+      if (contentType && contentType.includes("application/json")) {
+        responseData = await response.json();
+        console.log(responseData);
+      } else {
+        responseData = await response.text();
+        console.log(responseData);
+      }
     } else {
       console.error(`Error calling Azure Function: ${response.statusText}`);
     }
