@@ -22,17 +22,14 @@ export const RequireAuth: React.FC<{ children: JSX.Element }> = ({ children }) =
     scopes: ["openid", "profile"]
   };
 
-
-  const { result,  error } = useMsalAuthentication(InteractionType.Redirect, authRequest);
+  const { error } = useMsalAuthentication(InteractionType.Redirect, authRequest);
   const navigate = useNavigate();
 
   useEffect(() => {
       if (error) {
         navigate("/error");
       }
-  }, [result, error, navigate]);
-
-
+  }, [error, navigate]);
 
   return  (
     <Fragment>
@@ -40,7 +37,7 @@ export const RequireAuth: React.FC<{ children: JSX.Element }> = ({ children }) =
         {children}
       </AuthenticatedTemplate>
       <UnauthenticatedTemplate>
-      <p>Not signed in, attempting to sign you in.</p>
+        <p>Not signed in, attempting to sign you in.</p>
       </UnauthenticatedTemplate>
     </Fragment>
   )
