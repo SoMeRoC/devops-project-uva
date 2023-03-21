@@ -24,11 +24,34 @@ resource "azurerm_linux_function_app" "func" {
   service_plan_id            = azurerm_service_plan.consumption.id
 
   tags = var.tags
+
+  app_settings = {
+    "AZURE_APP_CONFIG_CONNECTION_STRING" = var.app_conf_connection_string
+    "SqlConnectionString" =  var.sql_connection_string
+    "gameApi" = data.azurerm_key_vault_secret.gameApi.value
+    "sessionApi" = data.azurerm_key_vault_secret.sessionApi.value
+    "userApi" = data.azurerm_key_vault_secret.userApi.value
+    "matchApi" = data.azurerm_key_vault_secret.matchApi.value
+  }
+
+  connection_string {
+    name = "SqlConnectionString"
+    type = "SQLAzure"
+    value = var.sql_connection_string
+  }
+
+
   site_config {
     application_insights_connection_string = var.application_insights_connection_string
 
     application_stack {
       node_version = 18
+    }
+
+    cors {
+      allowed_origins     = [
+        "https://someroc.azurewebsites.net/",
+      ]
     }
   }
 

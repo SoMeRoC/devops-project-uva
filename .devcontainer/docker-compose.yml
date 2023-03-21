@@ -1,0 +1,64 @@
+version: '3.8'
+services:
+  devcontainer:
+    image: mcr.microsoft.com/devcontainers/base:ubuntu
+    volumes:
+      - ..:/workspace:cached
+    command: sleep infinity
+    expose:
+    - 7071
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.functions.rule: Host(`func.localhost`)
+      traefik.http.services.functions.loadbalancer.server.port: 7071
+
+  db:
+    image: mysql:latest
+    restart: unless-stopped
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: guest
+      MYSQL_PASSWORD: guest
+      MYSQL_DATABASE: matchHistory
+
+  adminer:
+    image: adminer
+    restart: unless-stopped
+    expose:
+    - 8080
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.adminer.rule: Host(`adminer.localhost`)
+      traefik.http.services.adminer.loadbalancer.server.port: 8080
+      # traefik.http.routers.adminer.middlewares: adminerStrip
+      # traefik.http.middlewares.adminerStrip.stripprefix.prefixes: /adminer
+
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    expose:
+    - 8080
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.swagger.rule: Host(`swagger.localhost`)
+      traefik.http.services.swagger.loadbalancer.server.port: 8080
+    volumes:
+        - ../docs/swagger:/usr/share/nginx/html/doc
+    environment:
+      API_URL: doc/swagger.yaml
+      BASE_PATH: /swagger
+
+
+
+  traefik:
+    image: traefik:2.8
+    command: --api.insecure=true --providers.docker.watch=true --providers.docker.exposedByDefault=false
+    ports:
+    - 80:80
+    - 8080:8080
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+
+volumes:
+  mysql-data:

@@ -8,8 +8,9 @@
       }
     }
   },
+  "functionTimeout": "00:10:00",
   "extensionBundle": {
-    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "id": "Microsoft.Azure.Functions.ExtensionBundle.Preview",
     "version": "[3.*, 4.0.0)"
   }
 }

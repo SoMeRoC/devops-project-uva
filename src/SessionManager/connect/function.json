@@ -1,0 +1,30 @@
+{
+  "disabled": false,
+  "bindings": [
+    {
+      "authLevel": "function",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "$return"
+    },
+    {
+      "type": "webPubSubContext",
+      "name": "wpsReq",
+      "direction": "in"
+    },
+    {
+      "type": "webPubSub",
+      "name": "actions",
+      "direction": "out"
+    }
+  ],
+  "scriptFile": "../dist/connect/index.js"
+}

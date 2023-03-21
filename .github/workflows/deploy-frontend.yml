@@ -1,0 +1,63 @@
+name: Deploy-FrontEnd
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - src/frontend/**
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '18.x'
+  AZURE_WEBAPP_NAME: 'someroc'
+  AZURE_WEBAPP_PACKAGE_PATH: src/frontend
+  CI: false
+
+# gh workflow run deploy-frontend.yml --ref SOM-67-Create-sample-static-webapp-and-deploy-to-Azure
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@v3
+
+    - name: Login via Azure CLI
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS_DEV }}
+
+    - name: Setup Node ${{ env.NODE_VERSION }} Environment
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+
+    - name: 'Resolve Project Dependencies Using Npm'
+      shell: bash # For Linux, use bash
+      run: |
+
+        echo "REACT_APP_MATCH_API=${{ secrets.MATCH_API }}" >> .env
+        echo "REACT_APP_SESSION_API=${{ secrets.SESSION_API }}" >> .env
+        echo "REACT_APP_GAME_API=${{ secrets.GAME_API }}" >> .env
+        echo "REACT_APP_USER_API=${{ secrets.USER_API }}" >> .env
+
+        npm install
+        npm run build --passWithNoTests
+        npm run test --passWithNoTests
+      working-directory: src/frontend
+      continue-on-error: true
+
+    # deploy web app using Azure credentials
+    - uses: azure/webapps-deploy@v2.2.6
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        package: "src/frontend/build"
+        resource-group-name: "rg-someroc-frontEnd-dev"
+        startup-command: "pm2 serve /home/site/wwwroot --no-daemon --spa"
+
+    # Azure logout
+    - name: logout
+      run: |
+        az logout
