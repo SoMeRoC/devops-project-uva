@@ -1,9 +1,10 @@
 import { Context } from "@azure/functions"
-const sql = require('mssql');
+import * as sql from 'mssql';
 
 const connectionString = process.env.SqlConnectionString
 
 export interface Session {
+  id: undefined | Number
   start: Date,
   black: string,
   blackConId?: string,

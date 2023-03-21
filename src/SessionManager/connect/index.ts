@@ -19,7 +19,6 @@ const ConnectUser: AzureFunction = async function (context: Context, req: HttpRe
   const result = await pool.request()
   .input('sessionId', sql.Int, sessionId)
   .query('SELECT * FROM dbo.ChessGames WHERE id = @sessionId');
-  context.log('result: ', result);
   if (!result || result.recordset.length !== 1) {
     return {
       status: 400,
