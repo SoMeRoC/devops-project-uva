@@ -1,6 +1,6 @@
 import EventEmitter from "events";
 
-const hub = 'session_hub_dev';
+const hub = 'session_hub';
 
 export default class GameAPI extends EventEmitter {
   sessionId: string

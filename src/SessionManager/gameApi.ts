@@ -1,8 +1,15 @@
 import axios from "axios";
-import { gameService as gameConf } from './config.js';
+
+const gameConf = {
+  url: process.env.GAME_URL || 'https://func-someroc-gameengine-dev.azurewebsites.net/api',
+  apiToken: process.env.API_TOKEN || '', // ?code=
+}
 
 const gameService = axios.create({
   baseURL: gameConf.url,
+  params: {
+    code: gameConf.apiToken,
+  },
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
@@ -11,8 +18,8 @@ const gameService = axios.create({
 });
 
 const gameApi = {
-  action: (gameId: number | string, color: string, move: string) => {
-    return gameService.get('/makeMove', {
+  action: (gameId: Number | String, color: String, move: String) => {
+    return gameService.get('/MakeMove', {
       data: {
         gameId,
         color,
