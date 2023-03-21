@@ -16,7 +16,9 @@ export class Session extends Model { };
 Session.init({
   start: DataTypes.DATE,
   black: DataTypes.STRING,
+  blackConId: DataTypes.STRING,
   white: DataTypes.STRING,
+  whiteConId: DataTypes.STRING,
 }, { sequelize, modelName: 'session' });
 
 sequelize.sync({ force: process.env.NODE_ENV === 'development' })

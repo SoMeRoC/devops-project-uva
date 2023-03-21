@@ -1,26 +1,44 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions"
+import { Op } from "sequelize";
+import { Session } from "../db";
 
-const ConnectUser: AzureFunction = async function (context: Context, req: HttpRequest, wpsReq): Promise<void> {
-  // context.log('connected', wpsReq);
-  return;
-  const { sessionId, userId, color } = context.bindingData.connectionContext;
-  console.log('Connected', sessionId, userId, color)
+const ConnectUser: AzureFunction = async function (context: Context, req: HttpRequest, wpsReq): Promise<Object> {
+  const { connectionId } = wpsReq.request.connectionContext;
 
-  context.bindings.actions = [];
-  context.bindings.actions.push({
-    actionName: 'addUserToGroup',
-    userId: userId,
-    group: `session-${sessionId}`,
+  const session = await Session.findOne({
+    where:
+    {
+      [Op.or]: [
+        { blackConId: connectionId },
+        { whiteConId: connectionId }
+      ]
+    }
   });
+  if (!session) {
+    context.res = { status: 404, body: 'Session not found.' }
+    return;
+  }
 
-  context.bindings.actions.push({
-    actionName: 'SendToUser',
-    userId: userId,
-    data: {
-      color
+  const sessionId = session.dataValues.id;
+  const color = session.dataValues.whiteConId === connectionId ? 'w' : 'b';
+
+  context.bindings.actions = [
+    {
+      actionName: 'sendToConnection',
+      connectionId,
+      data: JSON.stringify({ event: 'handshake', color })
     },
-    dataType: 'json',
-  })
+    {
+      actionName: 'AddConnectionToGroup',
+      connectionId: connectionId,
+      group: `session-${sessionId}`,
+    },
+    {
+    actionName: 'sendToGroup',
+    group: `session-${sessionId}`,
+    data: JSON.stringify({ event: 'playerConnected', color: color }),
+  },
+  ];
 };
 
 export default ConnectUser;

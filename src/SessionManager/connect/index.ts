@@ -3,7 +3,7 @@ import { Session } from "../db";
 
 const ConnectUser: AzureFunction = async function (context: Context, req: HttpRequest, wpsReq): Promise<Object> {
   let { sessionId } = wpsReq.request.query;
-  const { userId } = wpsReq.request.connectionContext;
+  const { userId, connectionId } = wpsReq.request.connectionContext;
 
   if (!sessionId || sessionId.length !== 1) {
     return {
@@ -30,19 +30,7 @@ const ConnectUser: AzureFunction = async function (context: Context, req: HttpRe
 
   const color = session.dataValues.white === userId ? 'w' : 'b';
 
-  context.bindings.actions = [{
-    actionName: 'addUserToGroup',
-    userId: userId,
-    group: `session-${sessionId}`,
-  }, {
-    actionName: 'sendToGroup',
-    group: `session-${sessionId}`,
-    data: JSON.stringify({ event: 'playerConnected', color: color }),
-    dataType: 'json',
-  }];
-
-
-  return { status: 200 };
+  await Session.update(color === 'w' ? { whiteConId: connectionId } : { blackConId: connectionId }, { where: { id: sessionId } })
 };
 
 export default ConnectUser;
