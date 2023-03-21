@@ -5,6 +5,7 @@ import { Api as cgApi } from 'chessground/api';
 import * as cg from 'chessground/types';
 import * as fen from 'chessground/fen';
 import {Alert, Modal, Card, CardGroup} from 'react-bootstrap/';
+import {  } from "react-router";
 
 import "./full-page-background.scss"
 import "./game.scss"
@@ -16,7 +17,7 @@ interface user {
   username: string
 }
 interface rule {
-  id: number,
+  className: string,
   title: string,
   color: "b"|"w"|" ",
   description: string
@@ -26,17 +27,12 @@ interface score {
   white: number
 }
 interface boardstate {
-  state: cg.FEN,
+  fen: cg.FEN,
   won: "b"|"w"|" "
 }
 
-type props = { 
-  gameId: string,
-  orientation: "black" | "white",
-  player: user,
-  opponent: user
-};
 type state = { 
+  color: "black" | "white",  
   cgApi: cgApi | null,
   white: number,  // Did this as nested interfaces first but was not desirable. See: https://stackoverflow.com/a/51136076
   black: number,
@@ -45,19 +41,23 @@ type state = {
   proposedRules: rule[]
   activeRules: rule[]
 };
-class Game extends React.Component<props, state> {
-
+class Game extends React.Component<{}, state> {
   constructor(props:any) {
     super(props);
 
+    // I have given up on react routing and have added a url search param
+    // I apologize 😿
+    const color = (new URLSearchParams(window.location.search)).get("color") as "black" | "white";
+
     this.state = {
+      color: color,
       cgApi: null, 
       white: 0,
       black: 0,
       alertText: "", 
       showProposedRules: false,
-      proposedRules: [{id: 0, color:"b", title:"Test rule", description:"This rule doesn't do anything"}, {id: 1, color:"w", title:"Test rule", description:"This rule doesn't do anything"}],
-      activeRules: [{id: 0, color:"b", title:"Test rule", description:"This rule doesn't do anything"}],
+      proposedRules: [],
+      activeRules: [],
     };
 
     // This binding is necessary to make `this` work in the callback
@@ -70,9 +70,9 @@ class Game extends React.Component<props, state> {
   }
 
   private getOpponent(): cg.Color {
-    if (this.props.orientation === "black")
+    if (this.state.color === "black")
       return "white";
-    if (this.props.orientation === "white")
+    if (this.state.color === "white")
       return "black";
     throw new Error("Invalid orientation");
   }
@@ -87,22 +87,28 @@ class Game extends React.Component<props, state> {
   
   // Example programmatic move
   buttonClick() {
-    // this.state.cgApi?.move("a1", "a5");
     console.log("clicked");
-    // this.onGameEnd({state: fen.initial, won: "w"}, {black: 0, white: 0}, [{id: 0, color:"w", title: "Test title", description: "Test text"}]);
-    // this.onOpponentMove({state: fen.initial, won: " "}, {black: 0, white: 0}, [{id: 0, color:"w", title: "Test title", description: "Test text"}]);
-    // this.onRoundEnd({state: fen.initial, won: "b"}, {black: 0, white: 0}, [{id: 0, color:"w", title: "Test title", description: "Test text"}]);
 
-    // this.onRoundEnd("white");
+
+    this.onOpponentMove({fen:"rnbqkbnr/pppppppp/11111111/11111111/11111111/11N11N11/PPPPPPPP/R1BQKB1R w - - 14 8","won":" "}
+    ,{black:1,white:1},
+    [{"color":" ", "className":"MoveInBounds", "title":"Move within bounds","description":"A piece cannot be moved outside the chess board"},
+    {"color":" ","className":"Bishop","title":"Bishops","description":"Bishops move according to chess rules"},
+    {"color":" ","className":"Rook","title":"Rooks","description":"Rooks move according to chess rules"},
+    {"color":" ","className":"Knight","title":"Knights","description":"Knights move according to chess rules"},
+    {"color":" ","className":"Queen","title":"Queens","description":"Queens move according to chess rules"},
+    {"color":" ","className":"Pawn","title":"Pawns","description":"Pawns move according to chess rules"},
+    {"color":" ","className":"King","title":"Kings","description":"Kings move according to chess rules"},
+    {"color":" ","className":"WinCondition","title":"Win condition","description":"A player who has no king on the board loses"}])
   }
 
 
   onOpponentMove(boardstate: boardstate, score: score, activerules: rule[]) {
     this.state.cgApi?.set({
-      fen: boardstate.state, // Move all pieces to newly updated board
-      turnColor: this.props.orientation, // Make it so the pieces are moveable again
+      fen: boardstate.fen, // Move all pieces to newly updated board
+      turnColor: this.state.color, // Make it so the pieces are moveable again
       movable: {
-        color: this.props.orientation // Make it so the pieces are moveable again
+        color: this.state.color // Make it so the pieces are moveable again
       },
       selectable: {
         enabled: true,
@@ -111,16 +117,22 @@ class Game extends React.Component<props, state> {
         enabled: true,
       },
     }); 
+
+    this.setState({
+      black: score.black, 
+      white: score.white,
+      activeRules: activerules
+    });
   }
 
 
-  onRoundEnd(boardstate: boardstate, score: score, rules: rule[]) {
+  onRoundEnd(boardstate: boardstate, score: score, activerules: rule[]) {
     if (boardstate.won === " ") 
       throw new Error ("Round ended without winner, this is not possible and should likely be onOpponentMove instead")
 
     // Update game state and don't allow movement
     this.state.cgApi?.set({
-      fen: boardstate.state,
+      fen: boardstate.fen,
       turnColor: undefined,
       movable: {
         color: undefined 
@@ -138,47 +150,48 @@ class Game extends React.Component<props, state> {
     this.setState({
       black: score.black, 
       white: score.white,
+      activeRules: activerules,
       alertText: `${winner} WON ROUND ${this.state.black + this.state.white + 1}!`.toUpperCase()
     });
 
     // TODO: retrieve rules if enemy won 
-    if (winner !== this.props.orientation) {
+    if (winner !== this.state.color) {
       this.handleShow();
     }
   }
 
 
-  onRoundStart(boardstate: boardstate, score: score, activeRules: rule[]) {
+  onRoundStart(boardstate: boardstate, score: score, activerules: rule[]) {
     // Update score and active rules (score should already be correct but why not update again if we get the values 🤷‍♂️)
     this.setState({
-      activeRules: activeRules,
-      black: score.black,
-      white: score.white
+      black: score.black, 
+      white: score.white,
+      activeRules: activerules,
     });
 
     this.state.cgApi?.set({
-      fen: boardstate.state,
+      fen: boardstate.fen,
       turnColor: "white",
       movable: {
-        color: this.props.orientation === "white" ? "white" as cg.Color : undefined, // Can only play if they are white because white starts the game
+        color: this.state.color === "white" ? "white" as cg.Color : undefined, // Can only play if they are white because white starts the game
       }
     })
   }
 
 
-  onGameEnd(boardstate: boardstate, score: score, activeRules: rule[]) {
+  onGameEnd(boardstate: boardstate, score: score, activerules: rule[]) {
     if (boardstate.won === " ") 
     throw new Error ("Game ended without winner, this is not possible and should likely be onOpponentMove instead")
 
     // Disable board
-    this.state.cgApi?.set({fen: boardstate.state});
+    this.state.cgApi?.set({fen: boardstate.fen});
     this.state.cgApi?.stop();
 
     // Update score for the last time
     this.setState({
-      activeRules: activeRules,
-      black: score.black,
+      black: score.black, 
       white: score.white,
+      activeRules: activerules,
       alertText: `${this.getCgColor(boardstate.won)} WON!`.toUpperCase()
     });
   }
@@ -217,10 +230,10 @@ class Game extends React.Component<props, state> {
         enabled: true,
         duration: 1000
       },
-      orientation: this.props.orientation,
+      orientation: this.state.color,
       turnColor: "white" as cg.Color,
       movable: {
-        color: this.props.orientation === "white" ? "white" as cg.Color : undefined, // Can only move pieces if they are white
+        color: this.state.color === "white" ? "white" as cg.Color : undefined, // Can only move pieces if they are white
         events: {
           after: this.onPlayerMove
         }
@@ -238,7 +251,7 @@ class Game extends React.Component<props, state> {
             <div className="score-sidebar text-monospace font-weight-bold lh-1" style={{}}>
               <div className="user-container">
                 <div className="username">
-                  {this.props.opponent.username}
+                  {/* {this.props.opponent.username} */}
                 </div>
                 <div className="score-number">
                   {this.state[this.getOpponent()]}
@@ -246,24 +259,23 @@ class Game extends React.Component<props, state> {
               </div>
               <div className="user-container" style={{position: "absolute", bottom: "0px"}}>
                 <div className="score-number">
-                  {this.state[this.props.orientation]}
+                  {this.state[this.state.color]}
                 </div>
                 <div className="username">
-                  {this.props.player.username}
+                  {/* {this.props.player.username} */}
                 </div>
               </div>
             </div>
             <div className="rule-sidebar">
               {
                 this.state.activeRules.map((rule) => (
-                  <Card bg="light" text="dark" style={{ width: "18rem"}}>
+                  rule.color !== " " && 
+                  <Card key={rule.className} bg="light" text="dark" style={{ width: "18rem", marginBottom: "10px"}}>
                     <Card.Body>
                       <Card.Title>{rule.title}</Card.Title>
-                      {rule.color !== " " && 
-                        <Card.Subtitle className="mb-2 text-muted">
-                          {this.getCgColor(rule.color)}
-                        </Card.Subtitle>
-                      }
+                      <Card.Subtitle className="mb-2 text-muted">
+                        {this.getCgColor(rule.color)}
+                      </Card.Subtitle>
                       <Card.Text>{rule.description}</Card.Text>
                     </Card.Body>
                   </Card>
@@ -278,7 +290,7 @@ class Game extends React.Component<props, state> {
           <CardGroup>
             {
                this.state.proposedRules.map((rule) => (
-                <Card onClick={() => this.handleRuleClicked(rule)} style={{ width: "18rem", cursor: "pointer"}}>
+                <Card key={rule.className} onClick={() => this.handleRuleClicked(rule)} style={{ width: "18rem", cursor: "pointer"}}>
                   <Card.Body>
                     <Card.Title>{rule.title}</Card.Title>
                     <Card.Text>{rule.description}</Card.Text>
@@ -290,9 +302,6 @@ class Game extends React.Component<props, state> {
         </Modal>
         {/* TODO: remove this button */}
         <button style={{position: "absolute", bottom: "10px"}} onClick={this.buttonClick}>Test button</button>
-        {/* <button style={{position: "absolute", bottom: "10px", left: "10px" }} onClick={this.onOpponentMove()}>Test button</button> */}
-        {/* <button style={{position: "absolute", bottom: "10px", left: "30px"}} onClick={this.onRoundEnd}>Test button</button> */}
-        {/* <button style={{position: "absolute", bottom: "10px", left: "50px"}} onClick={this.onGameEnd}>Test button</button> */}
       </div>
     );
   }

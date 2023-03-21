@@ -12,6 +12,7 @@ interface Props {
   api?: cgApi | null
   setApi?: (api: cgApi) => void;
 }
+
 async function callAzureFunction(): Promise<void> {
   const functionUrl = "https://func-someroc-usermanagement-dev.azurewebsites.net/api/validate";
   const requestBody = {
@@ -52,7 +53,6 @@ function Chessground({
 
 
   const ref = useRef<HTMLDivElement>(null);
-  callAzureFunction();
 
   useEffect(() => {
     if (ref && ref.current && !api) {

@@ -21,39 +21,34 @@ export const RequireAuth: React.FC<{ children: JSX.Element }> = ({ children }) =
     scopes: ["openid", "profile"]
   };
 
-
-  // const { error } = useMsalAuthentication(InteractionType.Redirect, authRequest);
+  const { error } = useMsalAuthentication(InteractionType.Redirect, authRequest);
   const navigate = useNavigate();
   
-  // useEffect(() => {
-      // if (error) {
-        // navigate("/error");
-      // }
-  // }, [error, navigate]);
+  useEffect(() => {
+      if (error) {
+        navigate("/error");
+      }
+  }, [error, navigate]);
 
   return  (
     <Fragment>
-      {/* <AuthenticatedTemplate> */}
+      <AuthenticatedTemplate>
         {children}
-      {/* </AuthenticatedTemplate> */}
-      {/* <UnauthenticatedTemplate> */}
-      {/* <p>Not signed in, attempting to sign you in.</p> */}
-      {/* </UnauthenticatedTemplate> */}
+      </AuthenticatedTemplate>
+      <UnauthenticatedTemplate>
+        <p>Not signed in, attempting to sign you in.</p>
+      </UnauthenticatedTemplate>
     </Fragment>
   )
 };
 
 function App(props:any) {
-  //TODO: Retrieve from matchmaking
-  const player = {id: "123", username: "yannick"};
-  const opponent = {id: "321", username: "jorrit"};
-
   return (
     <MsalProvider instance={props.instance}>
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Page page={<Home />} />} />
-          <Route path='/game/*' element={<RequireAuth><Game orientation="white" gameId="123" player={player} opponent={opponent} /></RequireAuth>} />
+          <Route path='/game/*' element={<RequireAuth><Game /></RequireAuth>} />
           <Route path='/error'element={<Page page={<Error />} />} />
           <Route path='/success'element={<Page page={<Success />} />} />
           <Route path='*' element={<Page page={<Error />} />} />
