@@ -1,13 +1,10 @@
 import React from "react"
 import Chessground from "./chessground";
-import { useNavigate } from "react-router-dom";
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
 import { Navigate } from "react-router-dom";
 
 import "./home.scss"
 
-class Home extends React.Component<{}, {show: boolean, gameId?: number, color?: "white"|"black"}> {
+class Home extends React.Component<{}, {show: boolean, gameId?: number}> {
   constructor(props:any) {
     super(props);
 
@@ -21,8 +18,7 @@ class Home extends React.Component<{}, {show: boolean, gameId?: number, color?: 
   }
 
   findMatch() {
-    
-    this.setState({gameId: 0, color: "white"})
+    this.setState({gameId: 0})
     
     // this.handleShow();
     // TODO: fix endpoint
@@ -77,27 +73,20 @@ class Home extends React.Component<{}, {show: boolean, gameId?: number, color?: 
         </div>
         <div className="content-container container flex-grow-1">
           <div className="content">
-            <h2>Rules</h2>
+            <h1>Chess with more rules!</h1>
+            <h2>The new game <b className="purple-text">no one</b> asked for.</h2>
+
+            <h3 className="par">- <b className="purple-text">Always losing</b> at chess?</h3>
+            <h3>- Opponents <b className="purple-text">baiting and outsmarting you?</b></h3>
+            <h3>- Want to blame some <b className="purple-text">RNG</b> on your losses?</h3>
+
+            <h2 className="par">Try now: <b className="purple-text">SoMeRoC!</b></h2>
+            <h2>Chess where you get <b className="purple-text">stronger by losing</b>!</h2>
           </div>
         </div>
-        <>
-          <Modal
-            show={this.state.show}
-            onHide={this.handleClose}
-            backdrop="static"
-            keyboard={false}
-          >
-            <Modal.Header closeButton>
-              <Modal.Title>Looking for a match</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              Please wait...
-            </Modal.Body>
-          </Modal>
-          {this.state.gameId !== undefined && this.state.color !== undefined && (
-            <Navigate to={`/game/${this.state.gameId}?color=${this.state.color}`} replace={false}/>
-          )}
-        </>
+        {this.state.gameId !== undefined && (
+          <Navigate to={`/game/${this.state.gameId}`} replace={false}/>
+        )}
       </div>
     );
   }
