@@ -10,6 +10,8 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 
 
     PrintSomething(context);
+    const apiKey = (process.env.sessionApi as string)
+    context.log(apiKey);
     context.res = {
         // status: 200, /* Defaults to 200 */
         body: responseMessage
