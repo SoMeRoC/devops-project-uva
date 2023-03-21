@@ -32,3 +32,9 @@
     position: absolute !important;
     bottom: 100%;
 }
+
+.spinner-grow {
+    position: absolute;
+    width: 32px;
+    left: calc( 50% - ( 32px / 2) )
+}
