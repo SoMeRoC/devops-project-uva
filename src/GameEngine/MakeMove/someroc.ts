@@ -12,13 +12,12 @@ export class Game {
 	constructor() {
 		this.wins = [];
 		this.cardSelection = [];
-		this.cards = Array.from(DEFAULT_CARDS.map(c => new c(Color.None)));
-		this.cards.map(e => e.serialize());
+		this.cards = Array.from(DEFAULT_CARDS.map(c => new c));
 		this.setupBoard();
 	}
 
 	setupBoard() {
-		this.board = new Board();
+		this.board = new Board;
 		this.evalMove({
 			type: Action.StartGame,
 			color: Color.None,
@@ -35,21 +34,20 @@ export class Game {
 		const prior = this.board.clone();
 
 		for (const card of this.cards) {
-			console.log(card.title);
 			if (!card.applies(this.board, move)) {
-				console.log("not applied")
 				continue;
 			}
 
 			if (!card.legal(this.board, move)) {
-				console.log("illegal")
 				this.board = prior;
 				return;
 			}
 
-			console.log("computed")
 			card.compute(this.board, move);
 		}
+
+		if (move.type == Action.StartGame)
+			return;
 
 		this.board.ply++;
 		
@@ -91,6 +89,9 @@ export class Game {
 	}
 
 	chooseCard(index: number) {
+		if (this.cardSelection.length == 0)
+			return;
+
 		this.cards.push(this.cardSelection[index]);
 		this.cardSelection = [];
 		this.setupBoard();

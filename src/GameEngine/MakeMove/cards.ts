@@ -64,13 +64,41 @@ function isPiece(piece: Piece) {
 		// This card applies if the piece being moved matches with the given
 		// piece and the color of the piece matches with who is to move
 		const from = move.pieceMove.from;
-		console.log(from);
-		console.log(board.grid[from.row][from.col]);
-		console.log(board.color);
-		return board.pieceAt(from).piece == piece &&
+		return move.color == board.color &&
+			   board.pieceAt(from).piece == piece &&
 			   board.pieceAt(from).color == board.color;
 	}
 }
+
+// Helper compute funcion that puts the given piece with the class color on
+// some spot
+function addPiece(piece: Piece, color: Color) {
+	return (board: Board, _move: Move) => {
+		const empties = []
+
+		for (const [row, rowElement] of board.grid.entries()) {
+			for (const [col, piece] of rowElement.entries()) {
+				if (piece.piece == Piece.Empty) {
+					empties.push({
+						row: row,
+						col: col,
+					});
+				}
+			}
+		}
+
+		board.grid[empties[0].row][empties[0].col] = {
+			piece: piece,
+			color: color,
+		};
+	}
+}
+
+// Preset for applies which says the card only applies at the start of the game
+function atGameStart(_board: Board, move: Move) {
+	return move.type == Action.StartGame;
+}
+
 
 type CardSerialization = {
 	color: Color,
@@ -133,29 +161,26 @@ export class AddOneKnight extends Card {
 	title = "Add one knight";
 	description = "Add one knight of your color to the board";
 
-	applies(_board: Board, move: Move) {
-		return move.type == Action.StartGame;
-	}
+	applies = atGameStart;
+	compute = addPiece(Piece.Knight, this.color);
+}
 
-	compute(board: Board, _move: Move) {
-		const empties = []
+@card
+export class AddOneBishop extends Card {
+	title = "Add one bishop";
+	description = "Add one bishop of your color to the board";
 
-		for (const [row, rowElement] of board.grid.entries()) {
-			for (const [col, piece] of rowElement.entries()) {
-				if (piece.piece == Piece.Empty) {
-					empties.push({
-						row: row,
-						col: col,
-					});
-				}
-			}
-		}
+	applies = atGameStart;
+	compute = addPiece(Piece.Bishop, this.color);
+}
 
-		board.grid[empties[0].row][empties[0].col] = {
-			piece: Piece.Knight,
-			color: this.color,
-		};
-	}
+@card
+export class AddOneRook extends Card {
+	title = "Add one rook";
+	description = "Add one rook of your color to the board";
+
+	applies = atGameStart;
+	compute = addPiece(Piece.Rook, this.color);
 }
 
 @defaultCard
@@ -177,8 +202,11 @@ export class MoveInBounds extends Card {
 	title = "Move within bounds";
 	description = "A piece cannot be moved outside the chess board";
 
+	applies(_board: Board, move: Move) {
+		return move.type == Action.Move;
+	}
+
 	legal(_board: Board, move: Move) {
-		console.log(move);
 		return move.pieceMove == undefined || (
 			   move.pieceMove.to.row >= 0 &&
 			   move.pieceMove.to.row < 8 &&

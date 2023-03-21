@@ -117,6 +117,7 @@ export class Board {
 	clone(): Board {
 		const clone = new Board();
 
+		clone.ply = this.ply;
 		clone.color = this.color;
 		clone.enPassant = this.enPassant;
 		clone.grid = this.grid;
