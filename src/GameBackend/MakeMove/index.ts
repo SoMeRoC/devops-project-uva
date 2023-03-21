@@ -16,7 +16,8 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 	// Read mandatory query variables
 	const gameid = req.query.gameid;
 	const color = req.query.color;
-	const action = req.query.action;
+	const action = Number(req.query.action) as Action;
+	const choice = Number(req.query.choice) as number;
 	const serializedMove = req.query.move;
 
 	console.log(gameid)
@@ -37,6 +38,8 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 
 		game.wins = JSON.parse(entity["wins"]);
 		game.cards = JSON.parse(entity["cards"]).map(e => Card.deserialize(e));
+		game.cardSelection = JSON.parse(entity["cards"])
+		                     .map(e => Card.deserialize(e));
 		game.board = Board.fromFEN(entity["fen"]);
 	} catch (_e) {
 		// Simply keep the game completely new if there is no entry for it
@@ -62,7 +65,14 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 	}
 
 	// Attempt to put the move on the board
-	game.eval_move(move);
+	switch (action) {
+		case Action.Move:
+			game.evalMove(move);
+			break;
+		case Action.ChooseCard:
+			game.chooseCard(choice);
+			break;
+	}
 
 	// Get the result to the client
 	context.res = {
@@ -77,6 +87,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 				white: game.wins.filter(e => e == Color.White).length,
 			},
 			rules: game.cards.map(e => e.serialize()),
+			cardSelection: game.cardSelection,
 		}),
 	};
 
@@ -91,6 +102,8 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 		// Game information
 		wins: JSON.stringify(game.wins),
 		cards: JSON.stringify(game.cards.map(e => e.serialize())),
+		cardSelection: JSON.stringify(game.cardSelection
+									  .map(e => e.serialize())),
     });
 };
 

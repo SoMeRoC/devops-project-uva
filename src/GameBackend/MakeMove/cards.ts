@@ -4,6 +4,7 @@ export enum Action {
 	Resign,
 	Timeout,
 	Move,
+	ChooseCard,
 }
 
 export type Move = {
@@ -18,8 +19,9 @@ type PieceMove = {
 	promotion?: Piece,
 };
 
+export const CARDS: Map<string, typeof Card> = new Map();
+
 const empty = {piece: Piece.Empty, color: Color.None};
-const CARDS: Map<string, typeof Card> = new Map();
 
 // This is a naive algorithm to find squares between two given squares,
 // it works for bishop, rook, and kight-type moves but not much else
