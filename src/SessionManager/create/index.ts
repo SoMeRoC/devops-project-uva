@@ -16,14 +16,21 @@ const CreateSessions: AzureFunction = async function (context: Context, req: Htt
     return;
   }
 
-  const session = await Session.create({
-    start: new Date(),
-    white: players[0],
-    black: players[1],
-  })
+  try {
+    const session = await Session.create({
+      start: new Date(),
+      white: players[0],
+      black: players[1],
+    })
 
-  context.res = {
-    body: session.dataValues.id,
+    context.res = {
+      body: session.dataValues.id,
+    }
+  } catch (error) {
+    context.res = {
+      status: 200,
+      body: error.toString(),
+    }
   }
   return;
 };
