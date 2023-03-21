@@ -20,6 +20,7 @@ type PieceMove = {
 };
 
 export const CARDS: Map<string, typeof Card> = new Map();
+export const DEFAULT_CARDS: typeof Card[] = [];
 
 const empty = {piece: Piece.Empty, color: Color.None};
 
@@ -94,12 +95,12 @@ export class Card {
 	// Takes in a board state and a move that is made and then
 	// determines whether this card applies in these circumstances
 	applies(_board: Board, _move: Move): boolean {
-		return true
+		return true;
 	}
 
 	// Returns true if it considers this move legal, false otherwise
 	legal(_board: Board, _move: Move): boolean {
-		return true
+		return true;
 	}
 
 	// Changes the state of the given "board" object according to the results
@@ -121,7 +122,26 @@ function card(constructor: typeof Card) {
 	CARDS.set(constructor.name, constructor);
 }
 
-@card
+function defaultCard(constructor: typeof Card) {
+	card(constructor);
+	DEFAULT_CARDS.push(constructor);
+}
+
+@defaultCard
+export class MoveAPiece extends Card {
+	title = "Move a piece";
+	description = "Every move must actually be moving a piece";
+
+	applies(_board: Board, move: Move) {
+		return move.type == Action.Move && move.pieceMove != undefined;
+	}
+
+	legal(board: Board, move: Move) {
+		return board.pieceAt(move.pieceMove!.from).piece != Piece.Empty;
+	}
+}
+
+@defaultCard
 export class MoveInBounds extends Card {
 	title = "Move within bounds";
 	description = "A piece cannot be moved outside the chess board";
@@ -136,7 +156,7 @@ export class MoveInBounds extends Card {
 	}
 }
 
-@card
+@defaultCard
 export class Bishop extends Card {
 	title = "Bishops";
 	description = "Bishops move according to chess rules";
@@ -166,7 +186,7 @@ export class Bishop extends Card {
 	}
 }
 
-@card
+@defaultCard
 export class Rook extends Card {
 	title = "Rooks";
 	description = "Rooks move according to chess rules";
@@ -196,7 +216,7 @@ export class Rook extends Card {
 	}
 }
 
-@card
+@defaultCard
 export class Knight extends Card {
 	title = "Knights";
 	description = "Knights move according to chess rules";
@@ -218,7 +238,7 @@ export class Knight extends Card {
 	}
 }
 
-@card
+@defaultCard
 export class Queen extends Card {
 	title = "Queens";
 	description = "Queens move according to chess rules";
@@ -230,7 +250,7 @@ export class Queen extends Card {
 	}
 }
 
-@card
+@defaultCard
 export class Pawn extends Card {
 	title = "Pawns";
 	description = "Pawns move according to chess rules";
@@ -294,7 +314,7 @@ export class Pawn extends Card {
 	}
 }
 
-@card
+@defaultCard
 export class King extends Card {
 	title = "Kings";
 	description = "Kings move according to chess rules";
@@ -330,7 +350,7 @@ export class King extends Card {
 	}
 }
 
-@card
+@defaultCard
 export class WinCondition extends Card {
 	title = "Win condition";
 	description = "A player who has no king on the board loses";

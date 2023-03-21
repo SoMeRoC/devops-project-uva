@@ -20,10 +20,45 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 	const choice = Number(req.query.choice) as number;
 	const serializedMove = req.query.move;
 
-	console.log(gameid)
-	console.log(color)
-	console.log(action)
-	console.log(serializedMove)
+	if (gameid == undefined) {
+		context.res = {
+			status: 400,
+			body: "GameID is a mandatory parameter",
+		}
+		return;
+	}
+
+	if (req.query.action == undefined) {
+		context.res = {
+			status: 400,
+			body: "Action is a mandatory parameter",
+		}
+		return;
+	}
+
+	if (action == Action.Move && serializedMove == undefined) {
+		context.res = {
+			status: 400,
+			body: "For move action, move is required",
+		}
+		return;
+	}
+
+	if (action == Action.Move && color == undefined) {
+		context.res = {
+			status: 400,
+			body: "For move action, color is required",
+		}
+		return;
+	}
+
+	if (action == Action.ChooseCard && choice == undefined) {
+		context.res = {
+			status: 400,
+			body: "For choose action, color is required",
+		}
+		return;
+	}
 
 	// Make sure the table storing game states exists
     // await service.createTable("gameStates");
@@ -38,7 +73,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 
 		game.wins = JSON.parse(entity["wins"]);
 		game.cards = JSON.parse(entity["cards"]).map(e => Card.deserialize(e));
-		game.cardSelection = JSON.parse(entity["cards"])
+		game.cardSelection = JSON.parse(entity["cardSelection"])
 		                     .map(e => Card.deserialize(e));
 		game.board = Board.fromFEN(entity["fen"]);
 	} catch (_e) {
@@ -46,29 +81,19 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 		// already
 	}
 
-	// Get the move in IR
-	let move: Move;
-	if (serializedMove) {
-		move = {
-			type: Number(action) as Action,
-			color: color as Color,
-			pieceMove: {
-				from: Square.deserialize(serializedMove.split("-")[0]),
-				to: Square.deserialize(serializedMove.split("-")[1]),
-			},
-		};
-	} else {
-		move = {
-			type: Number(action) as Action,
-			color: color as Color,
-		};
-	}
-
 	// Attempt to put the move on the board
 	switch (action) {
 		case Action.Move:
-			game.evalMove(move);
+			game.evalMove({
+				type: Number(action) as Action,
+				color: color as Color,
+				pieceMove: {
+					from: Square.deserialize(serializedMove.split("-")[0]),
+					to: Square.deserialize(serializedMove.split("-")[1]),
+				},
+			});
 			break;
+
 		case Action.ChooseCard:
 			game.chooseCard(choice);
 			break;
@@ -87,7 +112,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 				white: game.wins.filter(e => e == Color.White).length,
 			},
 			rules: game.cards.map(e => e.serialize()),
-			cardSelection: game.cardSelection,
+			cardSelection: game.cardSelection.map(e => e.serialize()),
 		}),
 	};
 
