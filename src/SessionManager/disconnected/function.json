@@ -19,6 +19,11 @@
       "type": "webPubSubContext",
       "name": "wpsReq",
       "direction": "in"
+    },
+    {
+      "type": "webPubSub",
+      "name": "actions",
+      "direction": "out"
     }
   ],
   "scriptFile": "../dist/disconnected/index.js"
