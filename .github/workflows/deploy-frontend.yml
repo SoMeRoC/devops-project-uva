@@ -9,7 +9,7 @@ on:
 
 env:
   NODE_VERSION: '18.x'
-  AZURE_WEBAPP_NAME: 'web-someroc-FrontEnd-dev'
+  AZURE_WEBAPP_NAME: 'someroc'
   AZURE_WEBAPP_PACKAGE_PATH: src/frontend
   CI: false
 

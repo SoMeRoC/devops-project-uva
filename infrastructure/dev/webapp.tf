@@ -8,7 +8,7 @@ resource "azurerm_service_plan" "app" {
 }
 
 resource "azurerm_linux_web_app" "fe" {
-  name                = "web-${var.workload_name}-FrontEnd-${var.env}"
+  name                = "${var.workload_name}"
   resource_group_name = azurerm_resource_group.frontend.name
   location            = azurerm_service_plan.app.location
   service_plan_id     = azurerm_service_plan.app.id
