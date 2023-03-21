@@ -43,6 +43,12 @@ resource "azurerm_linux_function_app" "func" {
     application_stack {
       node_version = 18
     }
+
+    cors {
+      allowed_origins     = [
+        "https://someroc.azurewebsites.net/",
+      ]
+    }
   }
 
   identity {
