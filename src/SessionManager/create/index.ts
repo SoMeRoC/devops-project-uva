@@ -1,5 +1,29 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions"
-import { Session } from "../db";
+// import { Session } from "../db";
+
+
+const sql = require('mssql');
+
+const connectionString = (process.env.SqlConnectionString as string)
+
+interface schema {
+  start: Date,
+  black: string,
+  blackConId?: string,
+  white: string,
+  whiteConId?: string
+}
+
+async function connectToDatabase(context: Context, connectionString) {
+    try {
+        const pool = await sql.connect(connectionString);
+        context.log('Successfully connected to the database.');
+        return pool;
+    } catch (error) {
+        context.log('Error connecting to the database:', error);
+        throw error;
+    }
+}
 
 const CreateSessions: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
   context.log("1");
@@ -17,14 +41,28 @@ const CreateSessions: AzureFunction = async function (context: Context, req: Htt
   }
 
   try {
-    const session = await Session.create({
+    const pool = await connectToDatabase(context, connectionString);
+
+    const session: schema = {
       start: new Date(),
       white: players[0],
-      black: players[1],
-    })
+      black: players[1]
+    };
+
+    const result = await pool.request()
+    .input('start', sql.Date, session.start)
+    .input('white', sql.VarChar(100), session.white)
+    .input('black', sql.VarChar(100), session.black)
+    .query('INSERT INTO dbo.ChessGames OUTPUT INSERTED.ID (start, white, black) VALUES (@start, @white, @black)');
+
+    // const session : schema = {
+    //   start: new Date(),
+    //   white: players[0],
+    //   black: players[1],
+    // };
 
     context.res = {
-      body: session.dataValues.id,
+      body: result.recordset[0].ID
     }
   } catch (error) {
     context.res = {
