@@ -13,15 +13,20 @@ const CreateSessions: AzureFunction = async function (context: Context, req: Htt
     return;
   }
 
-  const session = await Session.create({
-    start: new Date(),
-    white: players[0],
-    black: players[1],
-  })
-
   context.res = {
-    body: session.dataValues.id,
+    status: 200,
+    body: `Got it: ${!!process.env.SqlConnectionString}`
   }
+
+  // const session = await Session.create({
+  //   start: new Date(),
+  //   white: players[0],
+  //   black: players[1],
+  // })
+
+  // context.res = {
+  //   body: session.dataValues.id,
+  // }
   return;
 };
 
