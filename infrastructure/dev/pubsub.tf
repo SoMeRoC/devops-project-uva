@@ -14,7 +14,7 @@ resource "azurerm_web_pubsub" "pubsub" {
   live_trace {
     enabled                   = true
     messaging_logs_enabled    = true
-    connectivity_logs_enabled = false
+    connectivity_logs_enabled = true
   }
 
   identity {
@@ -32,10 +32,6 @@ resource "azurerm_web_pubsub" "pubsub" {
 resource "azurerm_web_pubsub_hub" "hub" {
   name          = "session_hub"
   web_pubsub_id = azurerm_web_pubsub.pubsub.id
-
-  live_trace {
-        connectivity_logs_enabled = true
-  }
 
   event_handler {
     url_template       = "https://${module.session_management.default_hostname}/api/{event}"
