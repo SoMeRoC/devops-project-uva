@@ -32,7 +32,7 @@ class Test extends React.Component {
 
   send = () => {
     const input = this.ref.current as HTMLInputElement
-    // api.action(input.value);
+    api.action({ action: 2, move: input.value });
   }
 
   render() {
