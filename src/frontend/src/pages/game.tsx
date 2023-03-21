@@ -9,10 +9,49 @@ import "./full-page-background.scss"
 import "./game.scss"
 
 import GameAPI from "../api";
+import BackendGampeApi from "./gameApi";
 
 const sessionId = '1';
 const apiToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ3c3M6Ly93cHMtc29tZXJvYy1kZXYud2VicHVic3ViLmF6dXJlLmNvbS9jbGllbnQvaHVicy9zZXNzaW9uX2h1Yl9kZXYiLCJpYXQiOjE2NzkzOTcwMjUsImV4cCI6MTY3OTQzMzAyNSwic3ViIjoiMSJ9.y-z_wvvM1SS3hCcHAoFjsMvSUnosZb4r56cmJI329Iw';
 const api = new GameAPI(sessionId, apiToken);
+
+
+async function callAzureFunction(query: string): Promise<any> {
+  // 0 resign
+  // 1 timeout
+  // 2 make move
+  // 3 choose card
+  const functionUrl = `https://func-someroc-gameengine-dev.azurewebsites.net/api/MakeMove?${query}`;
+
+  try {
+    const response = await fetch(functionUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-functions-key": (process.env.REACT_APP_USER_API as string)
+      },
+      body: JSON.stringify({}),
+    });
+
+    if (response.ok) {
+      const contentType = response.headers.get("Content-Type");
+      let responseData;
+      if (contentType && contentType.includes("application/json")) {
+        responseData = await response.json();
+        console.log(responseData);
+        return responseData;
+      } else {
+        responseData = await response.json();
+        console.log(responseData);
+        return responseData;
+      }
+    } else {
+      console.error(`Error calling Azure Function: ${response.statusText}`);
+    }
+  } catch (error) {
+    console.error("Error calling Azure Function:", error);
+  }
+}
 
 interface rule {
   className: string,
@@ -29,21 +68,24 @@ interface boardstate {
   won: "b"|"w"|" "
 }
 type state = { 
+  gameId: number,
   color: "black" | "white" | undefined,  
   cgApi: cgApi | null,
   white: number,  // Did this as nested interfaces first but was not desirable. See: https://stackoverflow.com/a/51136076
   black: number,
   alertText: string,
   showProposedRules: boolean,
-  proposedRules: rule[]
-  activeRules: rule[]
+  proposedRules: rule[],
+  activeRules: rule[],
+  waitingOnNextRound: boolean
 };
 class Game extends React.Component<{}, state> {
   constructor(props:any) {
     super(props);
 
     this.state = {
-      color: undefined,
+      gameId: 2,
+      color: "white",
       cgApi: null, 
       white: 0,
       black: 0,
@@ -51,20 +93,19 @@ class Game extends React.Component<{}, state> {
       showProposedRules: false,
       proposedRules: [],
       activeRules: [],
+      waitingOnNextRound: false,
     };
 
     // This binding is necessary to make `this` work in the callback
-    // TODO: REMOVE
     this.buttonClick = this.buttonClick.bind(this);
     this.getOpponent = this.getOpponent.bind(this);
-
+    this.onPlayerMove = this.onPlayerMove.bind(this);
   }
 
   componentDidMount(): void {
     api.on('handshake', (color: "b"|"w") => {
       const cgColor = this.getCgColor(color); 
       this.setState({ color: cgColor });
-      console.log(cgColor);
       
       this.state.cgApi?.set({
         orientation: cgColor,
@@ -78,7 +119,7 @@ class Game extends React.Component<{}, state> {
     api.connect();
   }
 
-  onOpponentMove(boardstate: boardstate, score: score, activerules: rule[]) {
+  onOpponentMove(boardstate: boardstate, score: score, activerules: rule[], proposedrules: rule[]) {
     this.state.cgApi?.set({
       fen: boardstate.fen, // Move all pieces to newly updated board
       turnColor: this.state.color, // Make it so the pieces are moveable again
@@ -100,7 +141,7 @@ class Game extends React.Component<{}, state> {
     });
   }
 
-  onRoundEnd(boardstate: boardstate, score: score, activerules: rule[]) {
+  onRoundEnd(boardstate: boardstate, score: score, activerules: rule[], proposedrules: rule[]) {
     if (boardstate.won === " ") 
       throw new Error ("Round ended without winner, this is not possible and should likely be onOpponentMove instead")
 
@@ -125,6 +166,7 @@ class Game extends React.Component<{}, state> {
       black: score.black, 
       white: score.white,
       activeRules: activerules,
+      proposedRules: proposedrules,
       alertText: `${winner} WON ROUND ${this.state.black + this.state.white + 1}!`.toUpperCase()
     });
 
@@ -134,7 +176,7 @@ class Game extends React.Component<{}, state> {
     }
   }
 
-  onRoundStart(boardstate: boardstate, score: score, activerules: rule[]) {
+  onRoundStart(boardstate: boardstate, score: score, activerules: rule[], proposedrules: rule[]) {
     // Update score and active rules (score should already be correct but why not update again if we get the values 🤷‍♂️)
     this.setState({
       black: score.black, 
@@ -151,9 +193,9 @@ class Game extends React.Component<{}, state> {
     })
   }
 
-  onGameEnd(boardstate: boardstate, score: score, activerules: rule[]) {
+  onGameEnd(boardstate: boardstate, score: score, activerules: rule[], proposedrules: rule[]) {
     if (boardstate.won === " ") 
-    throw new Error ("Game ended without winner, this is not possible and should likely be onOpponentMove instead")
+      throw new Error ("Game ended without winner, this is not possible and should likely be onOpponentMove instead")
 
     // Disable board
     this.state.cgApi?.set({fen: boardstate.fen});
@@ -171,30 +213,41 @@ class Game extends React.Component<{}, state> {
   onPlayerMove(from: cg.Key, to: cg.Key) {
     //TODO: Send move to api, if valid -> change board, otherwise retry
     const move = `${from}-${to}`;
-    const valid = true;
 
-    api.action(move);
+    callAzureFunction(`gameid=${5}&color=${this.state.color?.charAt(0)}&action=${2}&move=${move}`).then(value => {
+      const currentPlayer = this.getCgColor(value.boardstate.fen.split(" ")[1]); 
+      const moveHasGoneThrough = currentPlayer !== this.state.color;
 
-    if (valid) {
-      // Give move to opponent, make player unable to move
-      const opponent = this.getOpponent();
-      this.state.cgApi?.set({
-        turnColor: opponent,
-        selectable: {
-          enabled: false,
-        },
-        draggable: {
-          enabled: false,
-        },
-
-      });
-    } else {
-      this.setState({alertText: `INVALID MOVE ${move}!`});
+      if (moveHasGoneThrough) {
+        // Give move to opponent, make player unable to move
+        const opponent = this.getOpponent();
+        this.state.cgApi?.set({
+          turnColor: opponent,
+          selectable: {
+            enabled: false,
+          },
+          draggable: {
+            enabled: false,
+          },
+        });
+      } else {
+        this.setState({alertText: `INVALID MOVE ${move}!`});
+        this.state.cgApi?.move(to, from)
+      }
+    }).catch((error) => {
+      this.setState({alertText: `ERROR SENDING MOVE: ${error}`});
       this.state.cgApi?.move(to, from)
-    }
+    });
   }
 
-  handleRuleClicked = (rule:any) => {console.log(rule); this.handleClose(); /*TODO: send rule choice to backend */}
+  onRuleChoose(ruleIndex: number) {
+    callAzureFunction(`gameid=${this.state.gameId}&color=${this.state.color?.charAt(0)}&action=${3}&choice=${ruleIndex}`).then(value =>{
+      console.log(value);
+      this.handleClose()
+    });
+  }
+  
+  handleRuleClicked = (ruleIndex:number) => {this.onRuleChoose(ruleIndex)}
   handleClose = () => this.setState({showProposedRules: false});
   handleShow = () => this.setState({showProposedRules: true});
 
@@ -216,7 +269,7 @@ class Game extends React.Component<{}, state> {
     return (
       <div className="full-background h-100 d-flex flex-column min-vh-100 justify-content-center align-items-center">
         {
-          this.state.color ? (
+          this.state.color !== undefined ? (
             <>
               <div style={{position:"absolute"}}>
                 <div style={{position: "relative"}}>
@@ -264,8 +317,8 @@ class Game extends React.Component<{}, state> {
               <Modal show={this.state.showProposedRules} onHide={this.handleClose} animation={true} centered>
                 <CardGroup>
                   {
-                    this.state.proposedRules.map((rule) => (
-                      <Card key={rule.className} onClick={() => this.handleRuleClicked(rule)} style={{ width: "18rem", cursor: "pointer"}}>
+                    this.state.proposedRules.map((rule, i) => (
+                      <Card key={i} onClick={() => this.handleRuleClicked(i)} style={{ width: "18rem", cursor: "pointer"}}>
                         <Card.Body>
                           <Card.Title>{rule.title}</Card.Title>
                           <Card.Text>{rule.description}</Card.Text>
@@ -278,12 +331,12 @@ class Game extends React.Component<{}, state> {
               {/* TODO: remove this button */}
               <button style={{position: "absolute", bottom: "10px"}} onClick={this.buttonClick}>Test button</button>
             </>
-          ) :
-          <div>
-            <h1> Waiting for opponent </h1>
-            <Spinner animation="grow" variant="light" />
-          </div>
-          }
+          ) : (
+            <div>
+              <h1> Waiting for opponent </h1>
+              <Spinner animation="grow" variant="light" />
+            </div>
+          )}
       </div>
     );
   }
@@ -311,7 +364,7 @@ class Game extends React.Component<{}, state> {
   buttonClick() {
     console.log("clicked");
 
-    this.onOpponentMove({fen:"rnbqkbnr/pppppppp/11111111/11111111/11111111/11N11N11/PPPPPPPP/R1BQKB1R w - - 14 8","won":" "}
+    this.onRoundEnd({fen:"rnbqkbnr/pppppppp/11111111/11111111/11111111/11N11N11/PPPPPPPP/R1BQKB1R w - - 14 8","won":"b"}
     ,{black:1,white:1},
     [{"color":" ", "className":"MoveInBounds", "title":"Move within bounds","description":"A piece cannot be moved outside the chess board"},
     {"color":" ","className":"Bishop","title":"Bishops","description":"Bishops move according to chess rules"},
@@ -320,7 +373,10 @@ class Game extends React.Component<{}, state> {
     {"color":" ","className":"Queen","title":"Queens","description":"Queens move according to chess rules"},
     {"color":" ","className":"Pawn","title":"Pawns","description":"Pawns move according to chess rules"},
     {"color":" ","className":"King","title":"Kings","description":"Kings move according to chess rules"},
-    {"color":" ","className":"WinCondition","title":"Win condition","description":"A player who has no king on the board loses"}])
+    {"color":" ","className":"WinCondition","title":"Win condition","description":"A player who has no king on the board loses"}],
+    [{"color":"b", "className":"MoveInBounds", "title":"Move within bounds","description":"A piece cannot be moved outside the chess board"},
+    {"color":"w","className":"Bishop","title":"Bishops","description":"Bishops move according to chess rules"},
+    {"color":"b","className":"Rook","title":"Rooks","description":"Rooks move according to chess rules"}])
   }
 
 }

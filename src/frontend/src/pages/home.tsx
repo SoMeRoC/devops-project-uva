@@ -77,10 +77,10 @@ class Home extends React.Component<{}, {show: boolean, gameId?: number}> {
             <h2>The new game <b className="purple-text">no one</b> asked for.</h2>
 
             <h3 className="par">- <b className="purple-text">Always losing</b> at chess?</h3>
-            <h3>- Opponents <b className="purple-text">baiting and outsmarting you?</b></h3>
-            <h3>- Want to blame some <b className="purple-text">RNG</b> on your losses?</h3>
+            <h3>- Opponents <b className="purple-text">baiting and outsmarting </b>you?</h3>
+            <h3>- Would you rather blame <b className="purple-text">RNG</b> on your losses?</h3>
 
-            <h2 className="par">Try now: <b className="purple-text">SoMeRoC!</b></h2>
+            <h2 className="par">Try now: <b className="purple-text">SoMeRoC</b>!</h2>
             <h2>Chess where you get <b className="purple-text">stronger by losing</b>!</h2>
           </div>
         </div>
