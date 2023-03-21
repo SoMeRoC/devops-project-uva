@@ -6,7 +6,6 @@ type SQLConfig = {
   password: string
   database: string
   dialect: Dialect
-  dialectOptions: Object
 }
 
 export const sql: SQLConfig = {
@@ -15,7 +14,6 @@ export const sql: SQLConfig = {
   password: process.env.MYSQL_PASSWORD || 'root',
   database: process.env.MYSQL_DATABASE || 'sessionManager',
   dialect: process.env.MYSQL_DIALECT as Dialect || 'mysql', // mssql for azure
-  dialectOptions: process.env.MYSQL_DIALECT_OPTIONS ? JSON.parse(process.env.MYSQL_DIALECT_OPTIONS) : {}, // { encrypt: true } for azure
 }
 
 export const gameService = {
