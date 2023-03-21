@@ -32,19 +32,19 @@ export class Game {
 		const prior = this.board.clone();
 
 		for (const card of this.cards) {
-			console.log(card.title);
+			context.log(card.title);
 			if (!card.applies(this.board, move)) {
-				console.log("not applied")
+				context.log("not applied")
 				continue;
 			}
 
 			if (!card.legal(this.board, move)) {
-				console.log("illegal")
+				context.log("illegal")
 				this.board = prior;
 				break;
 			}
 
-			console.log("computed")
+			context.log("computed")
 			card.compute(this.board, move);
 		}
 
@@ -53,7 +53,7 @@ export class Game {
 		if (this.board.win != Color.None)
 			this.offerCards();
 	}
-	
+
 	offerCards() {
 		const options: typeof Card[] = Array.from(CARDS.values()).filter(
 			e => !this.cards.map(e => e.constructor).includes(e)

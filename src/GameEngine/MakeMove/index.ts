@@ -20,10 +20,10 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 	const choice = Number(req.query.choice) as number;
 	const serializedMove = req.query.move;
 
-	console.log(gameid)
-	console.log(color)
-	console.log(action)
-	console.log(serializedMove)
+	context.log(gameid)
+	context.log(color)
+	context.log(action)
+	context.log(serializedMove)
 
 	// Make sure the table storing game states exists
     // await service.createTable("gameStates");
@@ -98,7 +98,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 
 		// Round information
 		fen: game.board.toFEN(),
-		
+
 		// Game information
 		wins: JSON.stringify(game.wins),
 		cards: JSON.stringify(game.cards.map(e => e.serialize())),

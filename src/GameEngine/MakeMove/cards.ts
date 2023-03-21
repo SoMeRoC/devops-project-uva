@@ -62,9 +62,9 @@ function isPiece(piece: Piece) {
 		// This card applies if the piece being moved matches with the given
 		// piece and the color of the piece matches with who is to move
 		const from = move.pieceMove.from;
-		console.log(from);
-		console.log(board.grid[from.row][from.col]);
-		console.log(board.color);
+		context.log(from);
+		context.log(board.grid[from.row][from.col]);
+		context.log(board.color);
 		return board.pieceAt(from).piece == piece &&
 			   board.pieceAt(from).color == board.color;
 	}
@@ -80,7 +80,7 @@ type CardSerialization = {
 export class Card {
 	title = "Dummy card";
 	description = "Dummy card";
-	
+
 	color = Color.None;
 
 	constructor(color: Color = Color.None) {
@@ -127,7 +127,7 @@ export class MoveInBounds extends Card {
 	description = "A piece cannot be moved outside the chess board";
 
 	legal(_board: Board, move: Move) {
-		console.log(move);
+		context.log(move);
 		return move.pieceMove == undefined || (
 			   move.pieceMove.to.row >= 0 &&
 			   move.pieceMove.to.row < 8 &&
@@ -275,7 +275,7 @@ export class Pawn extends Card {
 
 		// If the pawn moves one square diagonally, there must be an enemy
 		// piece OR there must be an en passant square there, in which case the
-		// pawn also must not be on row 4 or 5 
+		// pawn also must not be on row 4 or 5
 		else if (diff.row == 1 && diff.col == 1) {
 			if (board.enPassant &&
 				(from.row == 3 || from.row == 4) &&
