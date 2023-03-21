@@ -2,6 +2,7 @@ import './app.css';
 
 // import api from './api';
 import Page from './page';
+import Test from './pages/test';
 import Game from './pages/game';
 import Home from './pages/home';
 import Error from './pages/error';
@@ -29,7 +30,6 @@ export const RequireAuth: React.FC<{ children: JSX.Element }> = ({ children }) =
       if (error) {
         navigate("/error");
       }
-      console.log(result)
   }, [result, error, navigate]);
 
 
@@ -52,7 +52,8 @@ function App(props:any) {
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Page page={<Home />} />} />
-          <Route path='/game/*' element={<RequireAuth><Game/></RequireAuth>} />
+          <Route path='/game/*' element={<RequireAuth><Game /></RequireAuth>} />
+          <Route path='/test' element={<RequireAuth><Test /></RequireAuth>} />
           <Route path='/error'element={<Page page={<Error />} />} />
           <Route path='/success'element={<Page page={<Success />} />} />
           <Route path='*' element={<Page page={<Error />} />} />

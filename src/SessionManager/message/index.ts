@@ -32,7 +32,7 @@ const GameAction: AzureFunction = async function (context: Context, req: HttpReq
     {
       actionName: 'sendToGroup',
       group: `session-${sessionId}`,
-      data: JSON.stringify(res),
+      data: JSON.stringify({ event: 'newState', newState: res }),
     }
   ];
 };
