@@ -33,11 +33,15 @@ resource "azurerm_web_pubsub_hub" "hub" {
   name          = "session_hub"
   web_pubsub_id = azurerm_web_pubsub.pubsub.id
 
-  # event_handler {
-  #   url_template       = "https://${module.session_management}/api/{event}"
-  #   user_event_pattern = "*"
-  #   system_events      = ["connect", "connected", "disconnected"]
-  # }
+  live_trace {
+        connectivity_logs_enabled = true -> false
+  }
+
+  event_handler {
+    url_template       = "https://${module.session_management.default_hostname}/api/{event}"
+    user_event_pattern = "*"
+    system_events      = ["connect", "connected", "disconnected"]
+  }
 
   # event_handler {
   #   url_template       = "https://test.com/api/{hub}/{event}"
@@ -55,7 +59,7 @@ resource "azurerm_web_pubsub_hub" "hub" {
   ]
 }
 
-resource "azurerm_web_pubsub_hub" "hub" {
+resource "azurerm_web_pubsub_hub" "hub_dev" {
   name          = "session_hub_dev"
   web_pubsub_id = azurerm_web_pubsub.pubsub.id
 
