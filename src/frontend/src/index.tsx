@@ -26,11 +26,9 @@ msalInstance.addEventCallback((event: EventMessage) => {
   if (event.eventType === EventType.LOGIN_SUCCESS && event.payload) {
       const payload = event.payload as AuthenticationResult;
       const account = payload.account;
-      console.log(payload.idToken)
-
-      console.log(payload.accessToken)
-
-      console.log(payload.idTokenClaims)
+      // console.log(payload.idToken)
+      // console.log(payload.accessToken)
+      // console.log(payload.idTokenClaims)
       msalInstance.setActiveAccount(account);
   }
 });
