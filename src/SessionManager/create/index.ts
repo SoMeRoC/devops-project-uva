@@ -3,7 +3,7 @@ import { Session } from "../db";
 
 const CreateSessions: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
   const { players } = req.query;
-  if (players.length !== 2) {
+  if (!players || players.length !== 2) {
     context.res = {
       status: 400,
       body: 'Specify exactly two players',

@@ -1,0 +1,14 @@
+{
+  "disabled": false,
+  "bindings": [
+    {
+      "type": "webPubSubTrigger",
+      "name": "req",
+      "direction": "in",
+      "hub": "session_hub",
+      "eventName": "connect",
+      "eventType": "system"
+    }
+  ],
+  "scriptFile": "../dist/connect/index.js"
+}

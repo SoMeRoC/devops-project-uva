@@ -1,9 +1,10 @@
-import { AzureFunction, Context, HttpRequest } from "@azure/functions"
+import { AzureFunction, Context } from "@azure/functions"
 import { Session } from "../db";
 import gameApi from "../gameApi";
 
-const ConnectUser: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
-  const { sessionId, uid, move } = req.query;
+const GameAction: AzureFunction = async function (context: Context, data): Promise<void> {
+  console.log(data);
+  const { sessionId, uid, move } = context.bindingData.connectionContext;
 
   const session = await Session.findOne({ where: { id: sessionId } });
   if (!session) {
@@ -19,14 +20,18 @@ const ConnectUser: AzureFunction = async function (context: Context, req: HttpRe
   const color = session.dataValues.white === uid ? 'w' : 'b';
 
 
-  // Propagate action, return result.
+  // Propagate action, broadcast result.
   const res = await gameApi.action(sessionId, color, move);
 
-  context.res = {
-    status: res.status,
-    body: res.data,
-  }
+  context.bindings.actions = [
+    {
+      actionName: 'sendToGroup',
+      group: `session-${sessionId}`,
+      data: res,
+      dataType: 'json',
+    }
+  ];
   return;
 };
 
-export default ConnectUser;
+export default GameAction;

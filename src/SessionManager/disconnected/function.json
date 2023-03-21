@@ -1,0 +1,20 @@
+{
+  "disabled": false,
+  "bindings": [
+    {
+      "type": "webPubSubTrigger",
+      "direction": "in",
+      "name": "request",
+      "hub": "session_hub",
+      "eventName": "disconnected",
+      "eventType": "system"
+    },
+    {
+      "type": "webPubSub",
+      "name": "actions",
+      "hub": "session_hub",
+      "direction": "out"
+    }
+  ],
+  "scriptFile": "../dist/disconnected/index.js"
+}
