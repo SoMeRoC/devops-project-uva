@@ -21,7 +21,7 @@ export class Game {
 		if (this.board.win != Color.None)
 			return;
 
-		if (this.board.cardSelection)
+		if (this.cardSelection.length > 0)
 			return;
 
 		const prior = this.board.clone();
@@ -79,7 +79,7 @@ export class Game {
 				loser = Color.None
 		}
 
-		this.cardSelection = selection.map(e => new e(loser));
+		this.cardSelection = Array.from(selection.map(e => new e(loser)));
 	}
 
 	chooseCard(index: number) {
