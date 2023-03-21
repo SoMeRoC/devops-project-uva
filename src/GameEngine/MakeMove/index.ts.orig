@@ -20,6 +20,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 	const choice = Number(req.query.choice) as number;
 	const serializedMove = req.query.move;
 
+<<<<<<< HEAD:src/GameBackend/MakeMove/index.ts
 	if (gameid == undefined) {
 		context.res = {
 			status: 400,
@@ -59,6 +60,12 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 		}
 		return;
 	}
+=======
+	context.log(gameid)
+	context.log(color)
+	context.log(action)
+	context.log(serializedMove)
+>>>>>>> dev:src/GameEngine/MakeMove/index.ts
 
 	// Make sure the table storing game states exists
     // await service.createTable("gameStates");
