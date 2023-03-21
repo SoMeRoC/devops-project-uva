@@ -51,6 +51,7 @@ resource "azurerm_linux_function_app" "func" {
     cors {
       allowed_origins     = [
         "https://someroc.azurewebsites.net/",
+        "http://localhost:3000",
       ]
     }
   }
