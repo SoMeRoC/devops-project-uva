@@ -1,70 +1,86 @@
-import axios from 'axios';
+import EventEmitter from "events";
 
-const browser = typeof localStorage !== 'undefined';
-let apiCallback = (tokenData:any) => { };
-let token = null;
-let tokenData:any = null
+const hub = 'session_hub_dev';
 
-const server = axios.create({
-  baseURL: 'http://localhost:3001/api', // TODO: Make this the correct endpoint
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-    'Authorization': token,
-  },
-});
+export default class GameAPI extends EventEmitter {
+  sessionId: string
+  apiToken: string
+  socket: undefined | WebSocket
+  connecting: boolean
+  connected: boolean
+  game: undefined | { color: 'w' | 'b' }
 
-server.interceptors.response.use((response) => {
-  if (response.data.error) { throw new Error(response.data.error); }
-  if (response.status !== 200) { return response; }
-
-  return response.data;
-});
-
-const unpackToken = (token:any) => {
-  if (!token) { return null; }
-
-  const split = token.split('.');
-  if (split.length !== 3) {
-    throw new Error(`Received invalid token. Token has ${split.length} parts, expected 3.`);
+  constructor(sessionId: string, apiToken: string) {
+    super();
+    if (!sessionId || !apiToken) { throw new Error('No sessionId and/or apiToken supplied!') }
+    this.sessionId = sessionId;
+    this.apiToken = apiToken;
+    this.connecting = false;
+    this.connected = false;
   }
 
-  const payload = browser ? atob(split[1]) : (Buffer.from(split[1], 'base64')).toString();
-  return JSON.parse(payload);
-}
+  connect() {
+    if (this.connecting || this.connected) { return; }
 
-const setToken = (newToken:any) => {
-  token = newToken;
-  tokenData = unpackToken(newToken);
-}
+    this.connecting = true;
+    this.socket = new WebSocket(`wss://wps-someroc-dev.webpubsub.azure.com/client/hubs/${hub}?sessionId=${this.sessionId}&access_token=${this.apiToken}`); //, 'json.webpubsub.azure.v1');
 
-setToken(localStorage.getItem('apiToken'))
-const api = {
-  setTokenChangeCallback: (fn:any) => {
-    apiCallback = fn;
-  },
+    this.socket.addEventListener('open', this.onOpen);
+    this.socket.addEventListener('message', this.onMessage);
+    this.socket.addEventListener('error', this.onError);
+    this.socket.addEventListener('close', this.onClose);
+  }
 
-  getApiTokenData: () => {
-    return tokenData;
+  onOpen = () => {
+    this.connecting = false;
+    this.connected = true;
+    console.info(`WebSocket session ${this.sessionId} connected.`);
+  }
+
+  onMessage = (event: MessageEvent) => {
+    let { data } = event;
+    data = JSON.parse(data);
+
+    switch (data.event) {
+      case 'handshake':
+        this.game = {
+          color: data.color,
+        };
+        this.emit(data.event, this.color);
+        break;
+
+      case 'playerConnected':
+      case 'playerDisconnected':
+        this.emit(data.event);
+        break;
+
+      case 'newState':
+        this.emit(data.event, data.newState);
+        break;
+
+      default:
+        console.warn(`Unkown event received ${data.event}.`, data);
+        break;
+    }
+
+  }
+
+  onError = (event: Event) => {
+    console.error(`WebSocket error for session ${this.sessionId}: `, event);
+  }
+
+  onClose = () => {
+    this.connected = false;
+    console.info(`WebSocket session ${this.sessionId} closed.`);
+  }
+
+  get color() {
+    return this.game?.color;
+  }
+
+  action(input: string) {
+    if (!this.socket || !this.connected) { throw new Error('Socket not connected!'); }
+
+    this.socket.send(JSON.stringify(input));
   }
 }
-
-/* Socket payloads:
-
-Make move: Payload with space is a move, single word is command
-{ action: 'move', payload: 'e4 e5' }
-{ action: 'move', payload: 'forfeitByTime' }
-{ action: 'move', payload: 'forfeit' }
-
-Receive move made:
-{ action: 'updateState', payload: { FEN: '<FEN game board>' } }
-
-Receive round end
-{ action: 'roundEnd', payload: { winner: 'b' | 'w' } }
-
-Receive game end
-{ action: 'gameEnd', payload: { winner: 'b' | 'w' }}
-
- */
-
-export default api;
