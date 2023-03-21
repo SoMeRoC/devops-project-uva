@@ -37,6 +37,12 @@ jobs:
     - name: 'Resolve Project Dependencies Using Npm'
       shell: bash # For Linux, use bash
       run: |
+
+        echo "REACT_APP_MATCH_API=${{ secrets.MATCH_API }}" >> .env
+        echo "REACT_APP_SESSION_API=${{ secrets.SESSION_API }}" >> .env
+        echo "REACT_APP_GAME_API=${{ secrets.GAME_API }}" >> .env
+        echo "REACT_APP_USER_API=${{ secrets.USER_API }}" >> .env
+
         npm install
         npm run build --passWithNoTests
         npm run test --passWithNoTests

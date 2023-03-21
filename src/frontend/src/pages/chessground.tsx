@@ -12,6 +12,39 @@ interface Props {
   api?: cgApi | null
   setApi?: (api: cgApi) => void;
 }
+async function callAzureFunction(): Promise<void> {
+  const functionUrl = "https://func-someroc-usermanagement-dev.azurewebsites.net/api/validate";
+  const requestBody = {
+    key1: "value1"
+  };
+
+  try {
+    const response = await fetch(functionUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-functions-key": (process.env.REACT_APP_USER_API as string)
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (response.ok) {
+      const contentType = response.headers.get("Content-Type");
+      let responseData;
+      if (contentType && contentType.includes("application/json")) {
+        responseData = await response.json();
+        console.log(responseData);
+      } else {
+        responseData = await response.text();
+        console.log(responseData);
+      }
+    } else {
+      console.error(`Error calling Azure Function: ${response.statusText}`);
+    }
+  } catch (error) {
+    console.error("Error calling Azure Function:", error);
+  }
+}
 
 function Chessground({
   width = 900, height = 900, config = {}, contained = false, api = null, setApi = () => {}
@@ -19,6 +52,7 @@ function Chessground({
 
 
   const ref = useRef<HTMLDivElement>(null);
+  callAzureFunction();
 
   useEffect(() => {
     if (ref && ref.current && !api) {
