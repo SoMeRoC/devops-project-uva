@@ -24,7 +24,7 @@ export const RequireAuth: React.FC<{ children: JSX.Element }> = ({ children }) =
 
   const { error } = useMsalAuthentication(InteractionType.Redirect, authRequest);
   const navigate = useNavigate();
-  
+
   useEffect(() => {
       if (error) {
         navigate("/error");

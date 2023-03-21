@@ -1,24 +1,24 @@
-import { Sequelize, DataTypes, Model } from "sequelize";
-import { sql } from './config.js';
+import { Context } from "@azure/functions"
+import * as sql from 'mssql';
 
-const sequelize = new Sequelize(sql.database, sql.userName, sql.password, {
-  host: sql.hostName,
-  dialect: sql.dialect,
-  pool: {
-    max: 5,
-    min: 0,
-    idle: 10000
-  },
-  dialectOptions: sql.dialectOptions
-});
+const connectionString = process.env.SqlConnectionString
 
-export class Session extends Model { };
-Session.init({
-  start: DataTypes.DATE,
-  black: DataTypes.STRING,
-  blackConId: DataTypes.STRING,
-  white: DataTypes.STRING,
-  whiteConId: DataTypes.STRING,
-}, { sequelize, modelName: 'session' });
+export interface Session {
+  id?: Number
+  start: Date,
+  black: string,
+  blackConId?: string,
+  white: string,
+  whiteConId?: string
+}
 
-sequelize.sync({ force: process.env.NODE_ENV === 'development' })
+export default async function connectToDatabase(context: Context) {
+  try {
+      const pool = await sql.connect(connectionString);
+      return pool;
+  } catch (error) {
+      context.log('Error connecting to the database:', error);
+      throw error;
+  }
+}
+

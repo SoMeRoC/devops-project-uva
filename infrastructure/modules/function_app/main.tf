@@ -28,6 +28,10 @@ resource "azurerm_linux_function_app" "func" {
   app_settings = {
     "AZURE_APP_CONFIG_CONNECTION_STRING" = var.app_conf_connection_string
     "SqlConnectionString" =  var.sql_connection_string
+    "gameApi" = data.azurerm_key_vault_secret.gameApi.value
+    "sessionApi" = data.azurerm_key_vault_secret.sessionApi.value
+    "userApi" = data.azurerm_key_vault_secret.userApi.value
+    "matchApi" = data.azurerm_key_vault_secret.matchApi.value
   }
 
   connection_string {
@@ -42,6 +46,12 @@ resource "azurerm_linux_function_app" "func" {
 
     application_stack {
       node_version = 18
+    }
+
+    cors {
+      allowed_origins     = [
+        "https://someroc.azurewebsites.net/",
+      ]
     }
   }
 

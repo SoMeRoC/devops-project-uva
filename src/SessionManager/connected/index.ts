@@ -1,26 +1,27 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions"
-import { Op } from "sequelize";
-import { Session } from "../db";
+import connectToDatabase, { Session } from "../db";
+import * as sql from 'mssql';
 
 const ConnectUser: AzureFunction = async function (context: Context, req: HttpRequest, wpsReq): Promise<Object> {
   const { connectionId } = wpsReq.request.connectionContext;
 
-  const session = await Session.findOne({
-    where:
-    {
-      [Op.or]: [
-        { blackConId: connectionId },
-        { whiteConId: connectionId }
-      ]
-    }
-  });
+  const pool = await connectToDatabase(context);
+  const result = await pool.request()
+    .input('connectionId', sql.VarChar(100), connectionId)
+    .query('SELECT * FROM dbo.ChessGames WHERE blackConId = @connectionId OR whiteConId = @connectionId');
+  if (!result || result.recordset.length !== 1) {
+    context.res = { status: 404, body: 'Session not found.' }
+    return;
+  }
+
+  const session: Session = result.recordset[0];
   if (!session) {
     context.res = { status: 404, body: 'Session not found.' }
     return;
   }
 
-  const sessionId = session.dataValues.id;
-  const color = session.dataValues.whiteConId === connectionId ? 'w' : 'b';
+  const sessionId = session.id;
+  const color = session.whiteConId === connectionId ? 'w' : 'b';
 
   context.bindings.actions = [
     {

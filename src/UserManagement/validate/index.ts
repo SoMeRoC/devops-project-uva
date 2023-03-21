@@ -1,4 +1,5 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions"
+import PrintSomething from "../test";
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
     context.log('HTTP trigger function processed a request.');
@@ -7,11 +8,14 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
         ? "Hello, " + name + ". This HTTP triggered function executed successfully."
         : "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.";
 
+
+    PrintSomething(context);
+    const apiKey = (process.env.sessionApi as string)
+    context.log(apiKey);
     context.res = {
         // status: 200, /* Defaults to 200 */
         body: responseMessage
     };
-
 };
 
 export default httpTrigger;

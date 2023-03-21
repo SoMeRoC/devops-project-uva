@@ -33,10 +33,6 @@ resource "azurerm_web_pubsub_hub" "hub" {
   name          = "session_hub"
   web_pubsub_id = azurerm_web_pubsub.pubsub.id
 
-  live_trace {
-        connectivity_logs_enabled = true
-  }
-
   event_handler {
     url_template       = "https://${module.session_management.default_hostname}/api/{event}"
     user_event_pattern = "*"
