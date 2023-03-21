@@ -188,8 +188,7 @@ class Game extends React.Component<{}, state> {
   onPlayerMove(from: cg.Key, to: cg.Key) {
     //TODO: Send move to api, if valid -> change board, otherwise retry
     const move = `${from}-${to}`;
-
-    api.action(`gameid=${this.state.gameId}&color=${this.state.color?.charAt(0)}&action=${2}&move=${move}`);
+    api.action({action:2, move: move});
 
     // callAzureFunction(`gameid=${5}&color=${this.state.color?.charAt(0)}&action=${2}&move=${move}`).then(value => {
     //   const currentPlayer = this.getCgColor(value.boardstate.fen.split(" ")[1]); 
@@ -218,7 +217,7 @@ class Game extends React.Component<{}, state> {
   }
 
   onRuleChoose(ruleIndex: number) {
-    api.action(`gameid=${this.state.gameId}&color=${this.state.color?.charAt(0)}&action=${3}&choice=${ruleIndex}`);
+    api.action({action: 3, choice: ruleIndex});
   }
   
   handleRuleClicked = (ruleIndex:number) => {this.onRuleChoose(ruleIndex)}
