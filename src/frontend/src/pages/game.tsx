@@ -90,6 +90,15 @@ class Game extends React.Component<{}, state> {
         activeRules: rules,
         proposedRules: cardSelection,
       });
+
+      if (boardstate.won !== " ") {
+        const winner = this.getCgColor(boardstate.won);
+        if(score.black >= 5 || score.white >= 5) {
+          this.setState({alertText: `${this.getCgColor(boardstate.won)} WON!`.toUpperCase()})
+        } else {
+          this.setState({alertText: `${winner} WON ROUND ${this.state.black + this.state.white + 1}!`.toUpperCase()})
+        }
+      }
     });
     api.connect();
   }
@@ -301,7 +310,7 @@ class Game extends React.Component<{}, state> {
                 </CardGroup>
               </Modal>
               {/* TODO: remove this button */}
-              <button style={{position: "absolute", bottom: "10px"}} onClick={this.buttonClick}>Test button</button>
+              {/* <button style={{position: "absolute", bottom: "10px"}} onClick={this.buttonClick}>Test button</button> */}
             </>
           ) : (
             <div>
@@ -350,7 +359,6 @@ class Game extends React.Component<{}, state> {
     // {"color":"w","className":"Bishop","title":"Bishops","description":"Bishops move according to chess rules"},
     // {"color":"b","className":"Rook","title":"Rooks","description":"Rooks move according to chess rules"}])
   }
-
 }
 
 export default Game;
