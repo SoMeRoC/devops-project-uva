@@ -37,6 +37,7 @@ export default class GameAPI extends EventEmitter {
     console.info(`WebSocket session ${this.sessionId} connected.`);
   }
 
+
   onMessage = (event: MessageEvent) => {
     let { data } = event;
     data = JSON.parse(data);
