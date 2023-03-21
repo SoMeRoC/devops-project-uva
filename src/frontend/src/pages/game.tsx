@@ -3,14 +3,12 @@ import React from 'react';
 import Chessground from "./chessground";
 import { Api as cgApi } from 'chessground/api';
 import * as cg from 'chessground/types';
-import * as fen from 'chessground/fen';
 import {Alert, Modal, Card, CardGroup} from 'react-bootstrap/';
 import {  } from "react-router";
 
 import "./full-page-background.scss"
 import "./game.scss"
 
-type Winner = "black" | "white";
 
 interface user {
   id: string,
