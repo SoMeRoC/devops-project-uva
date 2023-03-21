@@ -1,9 +1,12 @@
-import { AzureFunction, Context } from "@azure/functions"
+import { AzureFunction, Context, HttpRequest } from "@azure/functions"
 import { Session } from "../db";
 import gameApi from "../gameApi";
 
-const GameAction: AzureFunction = async function (context: Context, data): Promise<void> {
-  console.log(data);
+const GameAction: AzureFunction = async function (context: Context, req: HttpRequest, wpsReq): Promise<Object> {
+  context.log(wpsReq, wpsReq.request.data);
+  return {
+    body: wpsReq.request.data,
+  };
   const { sessionId, uid, move } = context.bindingData.connectionContext;
 
   const session = await Session.findOne({ where: { id: sessionId } });
@@ -31,7 +34,6 @@ const GameAction: AzureFunction = async function (context: Context, data): Promi
       dataType: 'json',
     }
   ];
-  return;
 };
 
 export default GameAction;

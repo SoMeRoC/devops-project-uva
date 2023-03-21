@@ -2,12 +2,23 @@
   "disabled": false,
   "bindings": [
     {
-      "type": "webPubSubTrigger",
-      "name": "req",
+      "authLevel": "anonymous",
+      "type": "httpTrigger",
       "direction": "in",
-      "hub": "session_hub",
-      "eventName": "connect",
-      "eventType": "system"
+      "name": "req",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    },
+    {
+      "type": "webPubSubContext",
+      "name": "wpsReq",
+      "direction": "in"
     }
   ],
   "scriptFile": "../dist/connect/index.js"

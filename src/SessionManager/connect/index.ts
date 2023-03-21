@@ -3,6 +3,7 @@ import { Session } from "../db";
 
 const ConnectUser: AzureFunction = async function (context: Context, req: HttpRequest): Promise<Object> {
   context.log('connecting');
+  context.log(context.req)
 
   return {
     sessionId: 1,

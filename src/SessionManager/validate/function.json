@@ -6,14 +6,16 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
+      "route": "validate",
       "methods": [
-        "post"
+        "options",
+        "get"
       ]
     },
     {
       "type": "http",
       "direction": "out",
-      "name": "res"
+      "name": "$return"
     },
     {
       "type": "webPubSubContext",
@@ -21,5 +23,5 @@
       "direction": "in"
     }
   ],
-  "scriptFile": "../dist/connected/index.js"
+  "scriptFile": "../dist/validate/index.js"
 }
