@@ -5,6 +5,7 @@ export enum Action {
 	Timeout,
 	Move,
 	ChooseCard,
+	StartGame,
 }
 
 export type Move = {
@@ -125,6 +126,36 @@ function card(constructor: typeof Card) {
 function defaultCard(constructor: typeof Card) {
 	card(constructor);
 	DEFAULT_CARDS.push(constructor);
+}
+
+@card
+export class AddOneKnight extends Card {
+	title = "Add one knight";
+	description = "Add one knight of your color to the board";
+
+	applies(_board: Board, move: Move) {
+		return move.type == Action.StartGame;
+	}
+
+	compute(board: Board, _move: Move) {
+		const empties = []
+
+		for (const [row, rowElement] of board.grid.entries()) {
+			for (const [col, piece] of rowElement.entries()) {
+				if (piece.piece == Piece.Empty) {
+					empties.push({
+						row: row,
+						col: col,
+					});
+				}
+			}
+		}
+
+		board.grid[empties[0].row][empties[0].col] = {
+			piece: Piece.Knight,
+			color: this.color,
+		};
+	}
 }
 
 @defaultCard
@@ -320,14 +351,16 @@ export class King extends Card {
 	description = "Kings move according to chess rules";
 
 	applies(board: Board, move: Move) {
+		if (!isPiece(Piece.King)(board, move))
+			 return false;
+
 		const to = move.pieceMove!.to;
 		const from = move.pieceMove!.from;
 
 		// This card only applies to king moves that are not also castling
 		// moves, so the column shift must be 0 or 1 (any more would be
 		// a castling move)
-		return isPiece(Piece.King)(board, move) &&
-			   Math.abs(to.col - from.col) <= 1;
+		return Math.abs(to.col - from.col) <= 1;
 	}
 
 	compute = movePiece;

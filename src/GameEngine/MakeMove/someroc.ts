@@ -1,5 +1,5 @@
 import { Board, Color } from "./board";
-import { Move, Card } from "./cards";
+import { Move, Card, Action } from "./cards";
 import * as Cards from "./cards";
 import { CARDS, DEFAULT_CARDS } from "./cards";
 
@@ -10,11 +10,19 @@ export class Game {
 	wins: Color[];
 
 	constructor() {
-		this.board = new Board;
 		this.wins = [];
 		this.cardSelection = [];
 		this.cards = Array.from(DEFAULT_CARDS.map(c => new c(Color.None)));
 		this.cards.map(e => e.serialize());
+		this.setupBoard();
+	}
+
+	setupBoard() {
+		this.board = new Board();
+		this.evalMove({
+			type: Action.StartGame,
+			color: Color.None,
+		});
 	}
 
 	evalMove(move: Move) {
@@ -85,6 +93,6 @@ export class Game {
 	chooseCard(index: number) {
 		this.cards.push(this.cardSelection[index]);
 		this.cardSelection = [];
-		this.board = new Board();
+		this.setupBoard();
 	}
 }
