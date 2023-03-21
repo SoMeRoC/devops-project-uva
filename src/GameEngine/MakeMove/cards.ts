@@ -62,9 +62,9 @@ function isPiece(piece: Piece) {
 		// This card applies if the piece being moved matches with the given
 		// piece and the color of the piece matches with who is to move
 		const from = move.pieceMove.from;
-		context.log(from);
-		context.log(board.grid[from.row][from.col]);
-		context.log(board.color);
+		console.log(from);
+		console.log(board.grid[from.row][from.col]);
+		console.log(board.color);
 		return board.pieceAt(from).piece == piece &&
 			   board.pieceAt(from).color == board.color;
 	}
@@ -127,7 +127,7 @@ export class MoveInBounds extends Card {
 	description = "A piece cannot be moved outside the chess board";
 
 	legal(_board: Board, move: Move) {
-		context.log(move);
+		console.log(move);
 		return move.pieceMove == undefined || (
 			   move.pieceMove.to.row >= 0 &&
 			   move.pieceMove.to.row < 8 &&

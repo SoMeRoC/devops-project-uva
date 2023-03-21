@@ -32,19 +32,19 @@ export class Game {
 		const prior = this.board.clone();
 
 		for (const card of this.cards) {
-			context.log(card.title);
+			console.log(card.title);
 			if (!card.applies(this.board, move)) {
-				context.log("not applied")
+				console.log("not applied")
 				continue;
 			}
 
 			if (!card.legal(this.board, move)) {
-				context.log("illegal")
+				console.log("illegal")
 				this.board = prior;
 				break;
 			}
 
-			context.log("computed")
+			console.log("computed")
 			card.compute(this.board, move);
 		}
 
