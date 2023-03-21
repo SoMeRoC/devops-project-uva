@@ -19,6 +19,7 @@ type PieceMove = {
 };
 
 const empty = {piece: Piece.Empty, color: Color.None};
+const CARDS: Map<string, typeof Card> = new Map();
 
 // This is a naive algorithm to find squares between two given squares,
 // it works for bishop, rook, and kight-type moves but not much else
@@ -63,29 +64,59 @@ function isPiece(piece: Piece) {
 	}
 }
 
-export abstract class Card {
-	static description = "Dummy card";
+type CardSerialization = {
+	color: Color,
+	className: string,
+};
+
+export class Card {
+	title = "Dummy card";
+	description = "Dummy card";
+	
+	color = Color.None;
+
+	constructor(color: Color = Color.None) {
+		this.color = color;
+	}
+
+	static deserialize(obj: CardSerialization) {
+		return new(CARDS.get(obj.className)!)(obj.color);
+	}
 
 	// Takes in a board state and a move that is made and then
 	// determines whether this card applies in these circumstances
-	static applies(_board: Board, _move: Move): boolean {
+	applies(_board: Board, _move: Move): boolean {
 		return true
 	}
 
 	// Returns true if it considers this move legal, false otherwise
-	static legal(_board: Board, _move: Move): boolean {
+	legal(_board: Board, _move: Move): boolean {
 		return true
 	}
 
 	// Changes the state of the given "board" object according to the results
 	// of this card on this move
-	static compute(_board: Board, _move: Move): void {}
+	compute(_board: Board, _move: Move): void {}
+
+	// Make this card saveable to WebJobsStorage in a semantic way
+	serialize(): CardSerialization {
+		return {
+			color: this.color,
+			className: this.constructor.name,
+		};
+	}
 }
 
-export class MoveInBounds extends Card {
-	static description = "A piece cannot be moved outside the chess board";
+function card(constructor: typeof Card) {
+	CARDS.set(constructor.name, constructor);
+}
 
-	static legal(_board: Board, move: Move) {
+@card
+export class MoveInBounds extends Card {
+	title = "Move within bounds";
+	description = "A piece cannot be moved outside the chess board";
+
+	legal(_board: Board, move: Move) {
 		return move.pieceMove == undefined ||
 			   move.pieceMove.to.row >= 0 &&
 			   move.pieceMove.to.row <= 8 &&
@@ -94,12 +125,15 @@ export class MoveInBounds extends Card {
 	}
 }
 
+@card
 export class Bishop extends Card {
-	static description = "Bishops move according to chess rules";
-	static applies = isPiece(Piece.Bishop);
-	static compute = movePiece;
+	title = "Bishops";
+	description = "Bishops move according to chess rules";
 
-	static legal(board: Board, move: Move) {
+	applies = isPiece(Piece.Bishop);
+	compute = movePiece;
+
+	legal(board: Board, move: Move) {
 		const from = move.pieceMove!.from;
 		const to = move.pieceMove!.to;
 
@@ -121,12 +155,15 @@ export class Bishop extends Card {
 	}
 }
 
+@card
 export class Rook extends Card {
-	static description = "Rooks move according to chess rules";
-	static applies = isPiece(Piece.Rook);
-	static compute = movePiece;
+	title = "Rooks";
+	description = "Rooks move according to chess rules";
 
-	static legal(board: Board, move: Move) {
+	applies = isPiece(Piece.Rook);
+	compute = movePiece;
+
+	legal(board: Board, move: Move) {
 		const from = move.pieceMove!.from;
 		const to = move.pieceMove!.to;
 
@@ -148,12 +185,15 @@ export class Rook extends Card {
 	}
 }
 
+@card
 export class Knight extends Card {
-	static description = "Knights move according to chess rules";
-	static applies = isPiece(Piece.Knight);
-	static compute = movePiece;
+	title = "Knights";
+	description = "Knights move according to chess rules";
 
-	static legal(_board: Board, move: Move) {
+	applies = isPiece(Piece.Knight);
+	compute = movePiece;
+
+	legal(_board: Board, move: Move) {
 		const from = move.pieceMove!.from;
 		const to = move.pieceMove!.to;
 		const diff = {
@@ -167,22 +207,27 @@ export class Knight extends Card {
 	}
 }
 
+@card
 export class Queen extends Card {
-	static description = "Queens move according to chess rules";
-	static applies = isPiece(Piece.Queen);
-	static compute = movePiece;
+	title = "Queens";
+	description = "Queens move according to chess rules";
+	applies = isPiece(Piece.Queen);
+	compute = movePiece;
 
-	static legal(board: Board, move: Move) {
-		return Bishop.legal(board, move) || Rook.legal(board, move);
+	legal(board: Board, move: Move) {
+		return (new Bishop).legal(board, move) || (new Rook).legal(board, move);
 	}
 }
 
+@card
 export class Pawn extends Card {
-	static description = "Pawns move according to chess rules";
-	static applies = isPiece(Piece.Pawn);
-	static compute = movePiece;
+	title = "Pawns";
+	description = "Pawns move according to chess rules";
 
-	static legal(board: Board, move: Move) {
+	applies = isPiece(Piece.Pawn);
+	compute = movePiece;
+
+	legal(board: Board, move: Move) {
 		const from = move.pieceMove!.from;
 		const to = move.pieceMove!.to;
 
@@ -234,9 +279,12 @@ export class Pawn extends Card {
 	}
 }
 
+@card
 export class King extends Card {
-	static description = "Kings move according to chess rules";
-	static applies(board: Board, move: Move) {
+	title = "Kings";
+	description = "Kings move according to chess rules";
+
+	applies(board: Board, move: Move) {
 		const to = move.pieceMove!.to;
 		const from = move.pieceMove!.from;
 
@@ -247,9 +295,9 @@ export class King extends Card {
 			   Math.abs(to.col - from.col) <= 1;
 	}
 
-	static compute = movePiece;
+	compute = movePiece;
 
-	static legal(_board: Board, move: Move) {
+	legal(_board: Board, move: Move) {
 		const to = move.pieceMove!.to;
 		const from = move.pieceMove!.from;
 		const diff = {
@@ -267,9 +315,12 @@ export class King extends Card {
 	}
 }
 
+@card
 export class WinCondition extends Card {
-	static description = "Kings move according to chess rules";
-	static compute(board: Board, _move: Move) {
+	title = "Win condition";
+	description = "A player who has no king on the board loses";
+
+	compute(board: Board, _move: Move) {
 		const kings = board.grid.flat().filter(e => e.piece == Piece.King);
 		const whiteKings = kings.filter(e => e.color == Color.White);
 		const blackKings = kings.filter(e => e.color == Color.Black);

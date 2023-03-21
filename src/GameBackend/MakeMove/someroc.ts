@@ -1,35 +1,39 @@
-import { Board, Square, Piece, Color } from "./board";
-import { Move } from "./cards";
+import { Board, Color } from "./board";
+import { Move, Card } from "./cards";
 import * as Cards from "./cards";
-
-
-const CARDS = [
-	Cards.MoveInBounds,
-	Cards.Bishop,
-	Cards.Rook,
-	Cards.Knight,
-	Cards.Queen,
-	Cards.Pawn,
-	Cards.King,
-	Cards.WinCondition,
-];
 
 export class Game {
 	board: Board;
-	cards: number[];
+	cards: Card[];
+	wins: Color[];
 
 	constructor() {
 		this.board = new Board;
-		this.cards = [0, 1, 2, 3, 4, 5, 6, 7];
+		this.wins = [Color.White, Color.Black];
+		this.cards = [
+			new Cards.MoveInBounds,
+			new Cards.Bishop,
+			new Cards.Rook,
+			new Cards.Knight,
+			new Cards.Queen,
+			new Cards.Pawn,
+			new Cards.King,
+			new Cards.WinCondition,
+		];
 	}
 
 	eval_move(move: Move) {
 		const prior = this.board.clone();
 
-		for (const i of this.cards) {
-			const card = CARDS[i];
-			if (!card.applies(this.board, move)) continue;
-			if (!card.legal(this.board, move)) return prior;
+		for (const card of this.cards) {
+			if (!card.applies(this.board, move)) {
+				continue;
+			}
+
+			if (!card.legal(this.board, move)) {
+				this.board = prior;
+				break;
+			}
 
 			card.compute(this.board, move);
 		}

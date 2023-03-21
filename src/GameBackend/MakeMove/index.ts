@@ -1,9 +1,12 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions"
 import { TableServiceClient, TableClient } from "@azure/data-tables";
 import { Game } from "./someroc";
+import { Card } from "./cards";
+import { Color } from "./board";
 
 const dbConnection = process.env.AzureWebJobsStorage;
 const gameStateTable = "gameStates";
+const partition = "games";
 
 // Set up connection to Azure's table service
 // const service = TableServiceClient.fromConnectionString(dbConnection);
@@ -20,24 +23,30 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 	await client.createTable();
 
 	// Load the game corresponding to the game id
-	let game;
-	let entity;
+	const game = new Game;
 	try {
-		entity = await client.getEntity("games", gameid);
-		game = JSON.parse(entity["game"]);
-	} catch (e) {
-		console.log("ERROR: " + e);
-		game = new Game;
+		const entity = await client.getEntity<{
+				wins: string
+			}>(partition, gameid);
+
+		game.wins = JSON.parse(entity["wins"]);
+		game.cards = JSON.parse(entity["cards"]).map(e => Card.deserialize(e));
+	} catch (_e) {
+		// Simply keep the game completely new if there is no entry for it
+		// already
 	}
 
-	// Request the game state JSON from the game state table according to the
-	// game id in the request header
-    entity = {
-        partitionKey: "games",
+	// Write the game back to the database
+    const entity = {
+        partitionKey: partition,
         rowKey: gameid,
-		game: JSON.stringify(game),
-        // description: "take out the trash",
-        // dueDate: new Date(2015, 6, 20)
+
+		// Round information
+		// FEN: game.board.toFEN(),
+		
+		// Game information
+		wins: JSON.stringify(game.wins),
+		cards: JSON.stringify(game.cards.map(e => e.serialize())),
     };
 
     const result = await client.upsertEntity(entity);
@@ -55,8 +64,6 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
             body: `Not working; inserted/updated unsuccessfully.`
         };
     }
-
-	// await client.deleteTable();
 };
 
 export default httpTrigger;
