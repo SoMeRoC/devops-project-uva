@@ -1,8 +1,9 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions"
-import { Op } from "sequelize";
-import { Session } from "../db";
+// import { Op } from "sequelize";
+// import { Session } from "../db";
 
 const DisconnectUser: AzureFunction = async function (context: Context, req: HttpRequest, wpsReq): Promise<Object> {
+  return;
   const { connectionId } = wpsReq.request.connectionContext;
 
   const session = await Session.findOne({

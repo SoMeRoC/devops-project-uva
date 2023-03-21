@@ -1,10 +1,11 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions"
-import { Op } from "sequelize";
-import { Session } from "../db";
-import gameApi from "../gameApi";
+// import { Op } from "sequelize";
+// import { Session } from "../db";
+// import gameApi from "../gameApi";
 
 
 const GameAction: AzureFunction = async function (context: Context, req: HttpRequest, wpsReq): Promise<Object> {
+  return;
   const { connectionId } = wpsReq.request.connectionContext;
   const move = wpsReq.request.data;
   const session = await Session.findOne({
