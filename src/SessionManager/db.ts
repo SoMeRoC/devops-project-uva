@@ -1,44 +1,23 @@
-import { AzureFunction, Context, HttpRequest } from "@azure/functions"
-// import { Session } from "../db";
-
-
+import { Context } from "@azure/functions"
 const sql = require('mssql');
 
-import { Sequelize, DataTypes, Model } from "sequelize";
-// import { sql } from './config.js';
+const connectionString = process.env.SqlConnectionString
 
-// const sequelize = process.env.SqlConnectionString ?
-//   new Sequelize(`Server=tcp:sql-someroc-shared-dev.database.windows.net,1433;Initial Catalog='sqldb-session-dev';Persist Security Info=False;User ID='someroc_admin';Password='WFvDnllSof9DsDDd';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;`) :
-//   new Sequelize(sql.database, sql.userName, sql.password, {
-//     host: sql.hostName,
-//     dialect: sql.dialect,
-//     pool: {
-//       max: 5,
-//       min: 0,
-//       idle: 10000
-//     }
-//   });
-const sequelize = new Sequelize(process.env.SqlConnectionString as string)
-export class Session extends Model { };
-Session.init({
-  start: DataTypes.DATE,
-  black: DataTypes.STRING,
-  blackConId: DataTypes.STRING,
-  white: DataTypes.STRING,
-  whiteConId: DataTypes.STRING,
-}, { sequelize, modelName: 'session' });
+export interface schema {
+  start: Date,
+  black: string,
+  blackConId?: string,
+  white: string,
+  whiteConId?: string
+}
 
-// sequelize.sync({ force: process.env.NODE_ENV === 'development' })
-
-async function ConnectToDatabase(context: Context, connectionString) {
+export default async function connectToDatabase(context: Context) {
   try {
       const pool = await sql.connect(connectionString);
-      context.log('Successfully connected to the database.');
       return pool;
   } catch (error) {
       context.log('Error connecting to the database:', error);
       throw error;
   }
 }
-export default ConnectToDatabase;
 
