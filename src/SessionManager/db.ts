@@ -4,7 +4,7 @@ import { AzureFunction, Context, HttpRequest } from "@azure/functions"
 
 const sql = require('mssql');
 
-// import { Sequelize, DataTypes, Model } from "sequelize";
+import { Sequelize, DataTypes, Model } from "sequelize";
 // import { sql } from './config.js';
 
 // const sequelize = process.env.SqlConnectionString ?
@@ -18,15 +18,15 @@ const sql = require('mssql');
 //       idle: 10000
 //     }
 //   });
-
-// export class Session extends Model { };
-// Session.init({
-//   start: DataTypes.DATE,
-//   black: DataTypes.STRING,
-//   blackConId: DataTypes.STRING,
-//   white: DataTypes.STRING,
-//   whiteConId: DataTypes.STRING,
-// }, { sequelize, modelName: 'session' });
+const sequelize = new Sequelize(process.env.SqlConnectionString as string)
+export class Session extends Model { };
+Session.init({
+  start: DataTypes.DATE,
+  black: DataTypes.STRING,
+  blackConId: DataTypes.STRING,
+  white: DataTypes.STRING,
+  whiteConId: DataTypes.STRING,
+}, { sequelize, modelName: 'session' });
 
 // sequelize.sync({ force: process.env.NODE_ENV === 'development' })
 
@@ -41,3 +41,4 @@ async function ConnectToDatabase(context: Context, connectionString) {
   }
 }
 export default ConnectToDatabase;
+
