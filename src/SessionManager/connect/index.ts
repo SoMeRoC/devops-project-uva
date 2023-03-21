@@ -13,7 +13,7 @@ const ConnectUser: AzureFunction = async function (context: Context, req: HttpRe
     };
   }
 
-  sessionId = sessionId[0];
+  sessionId = parseInt(sessionId[0]);
 
   const pool = await connectToDatabase(context);
   const result = await pool.request()
