@@ -1,32 +1,27 @@
 import { Board, Color } from "./board";
 import { Move, Card } from "./cards";
 import * as Cards from "./cards";
-import { CARDS } from "./cards";
+import { CARDS, DEFAULT_CARDS } from "./cards";
 
 export class Game {
 	board: Board;
 	cards: Card[];
-	cardSelection: Card[] = [];
+	cardSelection: Card[];
 	wins: Color[];
 
 	constructor() {
 		this.board = new Board;
-		this.wins = [Color.White, Color.Black];
-		this.cards = [
-			new Cards.MoveInBounds,
-			new Cards.Bishop,
-			new Cards.Rook,
-			new Cards.Knight,
-			new Cards.Queen,
-			new Cards.Pawn,
-			new Cards.King,
-			new Cards.WinCondition,
-		];
-		this.offerCards();
+		this.wins = [];
+		this.cardSelection = [];
+		this.cards = Array.from(DEFAULT_CARDS.map(c => new c(Color.None)));
+		this.cards.map(e => e.serialize());
 	}
 
 	evalMove(move: Move) {
 		if (this.board.win != Color.None)
+			return;
+
+		if (this.cardSelection.length > 0)
 			return;
 
 		const prior = this.board.clone();
@@ -41,7 +36,7 @@ export class Game {
 			if (!card.legal(this.board, move)) {
 				console.log("illegal")
 				this.board = prior;
-				break;
+				return;
 			}
 
 			console.log("computed")
@@ -49,16 +44,27 @@ export class Game {
 		}
 
 		this.board.ply++;
-
-		if (this.board.win != Color.None)
+		
+		// Switch color -- next person to move
+		switch (this.board.color) {
+			case Color.White:
+				this.board.color = Color.Black;
+				break;
+			case Color.Black:
+				this.board.color = Color.White
+				break;
+		}
+			
+		if (this.board.win != Color.None) {
+			this.wins.push(this.board.win);
 			this.offerCards();
+		}
 	}
 
 	offerCards() {
-		const options: typeof Card[] = Array.from(CARDS.values()).filter(
-			e => !this.cards.map(e => e.constructor).includes(e)
-		);
-		const shuffled = Array.from(options).sort(() => 0.5 - Math.random());
+		const options: typeof Card[] = Array.from(CARDS.values())
+									   .filter(e => !DEFAULT_CARDS.includes(e));
+		const shuffled = options.sort(() => 0.5 - Math.random());
 		const selection = shuffled.slice(0, 3);
 		let loser: Color;
 
@@ -73,12 +79,12 @@ export class Game {
 				loser = Color.None
 		}
 
-		return selection.map(e => new e(loser));
+		this.cardSelection = Array.from(selection.map(e => new e(loser)));
 	}
 
 	chooseCard(index: number) {
 		this.cards.push(this.cardSelection[index]);
 		this.cardSelection = [];
-		this.board = new Board;
+		this.board = new Board();
 	}
 }
