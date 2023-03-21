@@ -4,7 +4,7 @@ import * as sql from 'mssql';
 const connectionString = process.env.SqlConnectionString
 
 export interface Session {
-  id: undefined | Number
+  id?: Number
   start: Date,
   black: string,
   blackConId?: string,
