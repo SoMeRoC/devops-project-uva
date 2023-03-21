@@ -2,6 +2,7 @@ import './app.css';
 
 // import api from './api';
 import Page from './page';
+import Test from './pages/test';
 import Game from './pages/game';
 import Home from './pages/home';
 import Error from './pages/error';
@@ -23,7 +24,7 @@ export const RequireAuth: React.FC<{ children: JSX.Element }> = ({ children }) =
 
   const { error } = useMsalAuthentication(InteractionType.Redirect, authRequest);
   const navigate = useNavigate();
-  
+
   useEffect(() => {
       if (error) {
         navigate("/error");
@@ -49,6 +50,7 @@ function App(props:any) {
         <Routes>
           <Route path='/' element={<Page page={<Home />} />} />
           <Route path='/game/*' element={<RequireAuth><Game /></RequireAuth>} />
+          <Route path='/test' element={<RequireAuth><Test /></RequireAuth>} />
           <Route path='/error'element={<Page page={<Error />} />} />
           <Route path='/success'element={<Page page={<Success />} />} />
           <Route path='*' element={<Page page={<Error />} />} />

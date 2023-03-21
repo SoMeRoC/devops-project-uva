@@ -7,7 +7,7 @@ on:
       - infrastructure/dev/**
   workflow_dispatch:
 
-# gh workflow run Dev-environment.yaml --ref SOM-67-Create-sample-static-webapp-and-deploy-to-Azure
+# gh workflow run Dev-environment.yaml --ref dev
 
 defaults:
   run:
