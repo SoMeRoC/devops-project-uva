@@ -2,7 +2,7 @@ import { AzureFunction, Context, HttpRequest } from "@azure/functions"
 import { TableServiceClient, TableClient } from "@azure/data-tables";
 import { Game } from "./someroc";
 import { Card } from "./cards";
-import { Color } from "./board";
+import { Board } from "./board";
 
 const dbConnection = process.env.AzureWebJobsStorage;
 const gameStateTable = "gameStates";
@@ -31,10 +31,13 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 
 		game.wins = JSON.parse(entity["wins"]);
 		game.cards = JSON.parse(entity["cards"]).map(e => Card.deserialize(e));
+		game.board = Board.fromFEN(entity["fen"]);
 	} catch (_e) {
 		// Simply keep the game completely new if there is no entry for it
 		// already
 	}
+
+	console.log(game);
 
 	// Write the game back to the database
     const entity = {
@@ -42,7 +45,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
         rowKey: gameid,
 
 		// Round information
-		// FEN: game.board.toFEN(),
+		fen: game.board.toFEN(),
 		
 		// Game information
 		wins: JSON.stringify(game.wins),

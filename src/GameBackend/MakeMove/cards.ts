@@ -266,8 +266,12 @@ export class Pawn extends Card {
 		// piece OR there must be an en passant square there, in which case the
 		// pawn also must not be on row 4 or 5 
 		else if (diff.row == 1 && diff.col == 1) {
-			if ((from.row == 3 || from.row == 4) &&
-				board.enPassants.some(e => e.row == to.row && e.col == to.col))
+			if (board.enPassant &&
+				(from.row == 3 || from.row == 4) &&
+				(from.col == board.enPassant.col - 1 ||
+				 from.col == board.enPassant.col + 1) &&
+				board.enPassant.row == to.row &&
+				board.enPassant.col == to.col)
 				return true;
 
 			if (board.grid[to.row][to.col].piece != Piece.Empty &&

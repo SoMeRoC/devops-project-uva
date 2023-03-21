@@ -37,5 +37,7 @@ export class Game {
 
 			card.compute(this.board, move);
 		}
+
+		this.board.ply++;
 	}
 }
