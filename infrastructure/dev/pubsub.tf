@@ -34,7 +34,7 @@ resource "azurerm_web_pubsub_hub" "hub" {
   web_pubsub_id = azurerm_web_pubsub.pubsub.id
 
   live_trace {
-        connectivity_logs_enabled = true -> false
+        connectivity_logs_enabled = true
   }
 
   event_handler {
