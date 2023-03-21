@@ -1,5 +1,6 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions"
-import { Session } from "../db";
+import connectToDatabase, { Session } from "../db";
+import * as sql from 'mssql';
 
 const ConnectUser: AzureFunction = async function (context: Context, req: HttpRequest, wpsReq): Promise<Object> {
   let { sessionId } = wpsReq.request.query;
@@ -13,7 +14,21 @@ const ConnectUser: AzureFunction = async function (context: Context, req: HttpRe
   }
 
   sessionId = sessionId[0];
-  const session = await Session.findOne({ where: { id: sessionId } });
+
+  const pool = await connectToDatabase(context);
+  const result = await pool.request()
+  .input('sessionId', sql.Int, sessionId)
+  .query('SELECT * FROM dbo.ChessGames WHERE id = @sessionId');
+  context.log('result: ', result);
+  if (!result || result.recordset.length !== 1) {
+    return {
+      status: 400,
+      body: 'Session not found',
+    };
+  }
+
+  const session: Session = result.recordset[0];
+  context.log('session: ', session)
   if (!session) {
     return {
       status: 404,
@@ -21,16 +36,19 @@ const ConnectUser: AzureFunction = async function (context: Context, req: HttpRe
     };
   }
 
-  if (session.dataValues.black !== userId && session.dataValues.white !== userId) {
+  if (session.black !== userId && session.white !== userId) {
     return {
       status: 401,
       body: 'You are not a player in this session.',
     };
   }
 
-  const color = session.dataValues.white === userId ? 'w' : 'b';
+  const color = session.white === userId ? 'w' : 'b';
 
-  await Session.update(color === 'w' ? { whiteConId: connectionId } : { blackConId: connectionId }, { where: { id: sessionId } })
+  await pool.request()
+    .input('sessionId', sql.Int, sessionId)
+    .input('connectionId', sql.VarChar(100), connectionId)
+    .query(`UPDATE dbo.ChessGames SET ${color === 'w' ? 'whiteConId = @connectionId' : 'blackConId = @connectionId'} WHERE id = @sessionId`);
 };
 
 export default ConnectUser;

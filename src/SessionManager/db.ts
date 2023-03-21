@@ -3,7 +3,7 @@ const sql = require('mssql');
 
 const connectionString = process.env.SqlConnectionString
 
-export interface schema {
+export interface Session {
   start: Date,
   black: string,
   blackConId?: string,

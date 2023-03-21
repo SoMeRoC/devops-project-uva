@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "@azure/functions": "^3.0.0",
+    "@types/mssql": "^8.1.2",
     "@types/node": "16.x",
     "azure-functions-core-tools": "^4.x",
     "concurrently": "^7.6.0",

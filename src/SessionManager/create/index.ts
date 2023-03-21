@@ -1,6 +1,6 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions"
-import connectToDatabase, { schema } from "../db";
-const sql = require('mssql');
+import connectToDatabase, { Session } from "../db";
+import * as sql from 'mssql';
 
 
 const CreateSessions: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
@@ -16,7 +16,7 @@ const CreateSessions: AzureFunction = async function (context: Context, req: Htt
 
   const pool = await connectToDatabase(context);
 
-  const session: schema = {
+  const session: Session = {
     start: new Date(),
     white: players[0],
     black: players[1]
