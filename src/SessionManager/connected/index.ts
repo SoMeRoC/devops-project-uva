@@ -1,6 +1,7 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions"
 
-const ConnectUser: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
+const ConnectUser: AzureFunction = async function (context: Context, req: HttpRequest, wpsReq): Promise<void> {
+  // context.log('connected', wpsReq);
   return;
   const { sessionId, userId, color } = context.bindingData.connectionContext;
   console.log('Connected', sessionId, userId, color)

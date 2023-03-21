@@ -1,39 +1,48 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions"
 import { Session } from "../db";
 
-const ConnectUser: AzureFunction = async function (context: Context, req: HttpRequest): Promise<Object> {
-  context.log('connecting');
-  context.log(context.req)
+const ConnectUser: AzureFunction = async function (context: Context, req: HttpRequest, wpsReq): Promise<Object> {
+  let { sessionId } = wpsReq.request.query;
+  const { userId } = wpsReq.request.connectionContext;
 
-  return {
-    sessionId: 1,
-    color: 'w',
-    userId: 'hi',
+  if (!sessionId || sessionId.length !== 1) {
+    return {
+      status: 400,
+      body: 'Required parameter "sessionId" not supplied.',
+    };
   }
-  const { sessionId, uid } = req.query;
 
+  sessionId = sessionId[0];
   const session = await Session.findOne({ where: { id: sessionId } });
   if (!session) {
     return {
-      code: 'not found',
-      errorMessage: 'Session not found.',
-    }
+      status: 404,
+      body: 'Session not found',
+    };
   }
 
-  if (session.dataValues.black !== uid && session.dataValues.white !== uid) {
+  if (session.dataValues.black !== userId && session.dataValues.white !== userId) {
     return {
-      code: 'unauthorized',
-      errorMessage: 'You are not a player in this session.',
-    }
+      status: 401,
+      body: 'You are not a player in this session.',
+    };
   }
 
-  const color = session.dataValues.white === uid ? 'w' : 'b';
+  const color = session.dataValues.white === userId ? 'w' : 'b';
 
-  return {
-    sessionId,
-    color,
-    userId: uid
-  };
+  context.bindings.actions = [{
+    actionName: 'addUserToGroup',
+    userId: userId,
+    group: `session-${sessionId}`,
+  }, {
+    actionName: 'sendToGroup',
+    group: `session-${sessionId}`,
+    data: JSON.stringify({ event: 'playerConnected', color: color }),
+    dataType: 'json',
+  }];
+
+
+  return { status: 200 };
 };
 
 export default ConnectUser;

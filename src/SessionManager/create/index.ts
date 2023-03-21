@@ -2,7 +2,7 @@ import { AzureFunction, Context, HttpRequest } from "@azure/functions"
 import { Session } from "../db";
 
 const CreateSessions: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
-  const { players } = req.query;
+  const { players } = req.body;
   if (!players || players.length !== 2) {
     context.res = {
       status: 400,

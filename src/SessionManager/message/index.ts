@@ -4,9 +4,14 @@ import gameApi from "../gameApi";
 
 const GameAction: AzureFunction = async function (context: Context, req: HttpRequest, wpsReq): Promise<Object> {
   context.log(wpsReq, wpsReq.request.data);
-  return {
-    body: wpsReq.request.data,
+
+  context.bindings.actions = {
+    actionName: 'sendToAll',
+    data: wpsReq.request.data,
+    dataType: wpsReq.request.dataType,
   };
+
+  return;
   const { sessionId, uid, move } = context.bindingData.connectionContext;
 
   const session = await Session.findOne({ where: { id: sessionId } });

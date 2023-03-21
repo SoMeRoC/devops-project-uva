@@ -2,7 +2,7 @@
   "disabled": false,
   "bindings": [
     {
-      "authLevel": "anonymous",
+      "authLevel": "function",
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
@@ -13,12 +13,17 @@
     {
       "type": "http",
       "direction": "out",
-      "name": "res"
+      "name": "$return"
     },
     {
       "type": "webPubSubContext",
       "name": "wpsReq",
       "direction": "in"
+    },
+    {
+      "type": "webPubSub",
+      "name": "actions",
+      "direction": "out"
     }
   ],
   "scriptFile": "../dist/connect/index.js"
