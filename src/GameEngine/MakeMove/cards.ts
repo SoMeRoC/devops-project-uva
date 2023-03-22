@@ -440,8 +440,8 @@ export class WinCondition extends Card {
 		const blackKings = kings.filter(e => e.color == Color.Black);
 
 		if (whiteKings.length == 0)
-			board.win = Color.White;
-		else if (blackKings.length == 0)
 			board.win = Color.Black;
+		else if (blackKings.length == 0)
+			board.win = Color.White;
 	}
 }
