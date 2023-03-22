@@ -36,13 +36,13 @@ class Home extends React.Component<{ openGame: any }, {show: boolean}> {
   }
 
   startWhite = () => {
-    const apiToken1 = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ3c3M6Ly93cHMtc29tZXJvYy1kZXYud2VicHVic3ViLmF6dXJlLmNvbS9jbGllbnQvaHVicy9zZXNzaW9uX2h1YiIsImlhdCI6MTY3OTQzOTkxNCwiZXhwIjoxNjc5NDc1OTE0LCJzdWIiOiIxIn0.RTbDQvP4JZWq_6ZndR_XCaoEnMJvKbGqRXTO-I292z4';
-    this.props.openGame(8, apiToken1)
+    const apiToken1 = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ3c3M6Ly93cHMtc29tZXJvYy1kZXYud2VicHVic3ViLmF6dXJlLmNvbS9jbGllbnQvaHVicy9zZXNzaW9uX2h1YiIsImlhdCI6MTY3OTQ3NzMzNiwiZXhwIjoxNjc5NTEzMzM2LCJzdWIiOiIxIn0.-JIBJdngo9Ou5-iyqa6r6NnnzZWkm4TR-g5sXcwwLa8';
+    this.props.openGame(2, apiToken1)
   }
 
   startBlack = () => {
-    const apiToken2 = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ3c3M6Ly93cHMtc29tZXJvYy1kZXYud2VicHVic3ViLmF6dXJlLmNvbS9jbGllbnQvaHVicy9zZXNzaW9uX2h1YiIsImlhdCI6MTY3OTQzOTg5MSwiZXhwIjoxNjc5NDc1ODkxLCJzdWIiOiIyIn0.7o8xcflgADo51Km9yJ7RyxAJ6rMRYGMgskBVrw0SKzQ';
-    this.props.openGame(8, apiToken2)
+    const apiToken2 = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ3c3M6Ly93cHMtc29tZXJvYy1kZXYud2VicHVic3ViLmF6dXJlLmNvbS9jbGllbnQvaHVicy9zZXNzaW9uX2h1YiIsImlhdCI6MTY3OTQ3NzM3MCwiZXhwIjoxNjc5NTEzMzcwLCJzdWIiOiIyIn0.MYegqkkLpXM8sip6tCt4UjBDquw_mbuxOTs3IduYH9I';
+    this.props.openGame(2, apiToken2)
   }
 
   handleClose = () => this.setState({show: false});
