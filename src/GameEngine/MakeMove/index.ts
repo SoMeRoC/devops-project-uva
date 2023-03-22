@@ -97,6 +97,9 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 		case Action.ChooseCard:
 			game.chooseCard(choice);
 			break;
+
+		case Action.Ping:
+			break;
 	}
 
 	// Get the result to the client
