@@ -22,7 +22,7 @@ const gameApi = {
     return gameService.get('/MakeMove', {
       params: {
         ...payload,
-        gameId,
+        gameid: gameId,
         color,
       }
     });
