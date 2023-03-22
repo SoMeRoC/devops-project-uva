@@ -61,6 +61,9 @@ class Game extends React.Component {
 
       this.cgApi?.set({
         orientation: cgColor,
+        movable: {
+          color: cgColor
+        }
       });
     })
     this.api.on('newState', (newState) => {
