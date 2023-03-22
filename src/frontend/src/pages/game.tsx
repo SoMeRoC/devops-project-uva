@@ -235,10 +235,6 @@ class Game extends React.Component<{}, state> {
 
   render() {
     const chessConfig = {
-      animation: {
-        enabled: true,
-        duration: 1000
-      },
       movable: {
         events: {
           after: this.onPlayerMove
