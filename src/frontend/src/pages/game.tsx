@@ -22,7 +22,6 @@ interface rule {
 }
 class Game extends React.Component<{ sessionId: string, apiToken: string }> {
   state: {
-    gameId: number,
     color: "black" | "white" | undefined,
     white: number,  // Did this as nested interfaces first but was not desirable. See: https://stackoverflow.com/a/51136076
     black: number,
@@ -40,7 +39,6 @@ class Game extends React.Component<{ sessionId: string, apiToken: string }> {
 
     this.api = new GameAPI(props.sessionId, props.apiToken);
     this.state = {
-      gameId: 7,
       color: undefined,
       white: 0,
       black: 0,
@@ -88,6 +86,9 @@ class Game extends React.Component<{ sessionId: string, apiToken: string }> {
           this.setState({alertText: `${this.getCgColor(boardstate.won)} WON!`.toUpperCase()})
         } else {
           this.setState({alertText: `${winner} WON ROUND ${this.state.black + this.state.white + 1}!`.toUpperCase()})
+          
+          if (winner === this.state.color) 
+            this.handleShow();
         }
       }
     });
