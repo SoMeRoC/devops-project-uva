@@ -57,12 +57,20 @@ class Game extends React.Component<{ sessionId: string, apiToken: string }> {
       const cgColor = this.getCgColor(color);
       this.setState({ color: cgColor });
 
+      const {boardstate, score, rules, cardSelection} = board;
       this.cgApi?.set({
         orientation: cgColor,
         movable: {
           free: true
         },
-        fen: board.boardstate.fen,
+        fen: boardstate.fen,
+      });
+
+      this.setState({
+        black: score.black,
+        white: score.white,
+        activeRules: rules,
+        proposedRules: cardSelection,
       });
     })
     this.api.on('newState', (newState) => {
