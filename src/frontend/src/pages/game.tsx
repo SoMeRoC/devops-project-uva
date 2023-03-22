@@ -10,8 +10,8 @@ import "./game.scss"
 
 import GameAPI from "../api";
 
-const sessionId = '7';
-const /* black */ apiToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ3c3M6Ly93cHMtc29tZXJvYy1kZXYud2VicHVic3ViLmF6dXJlLmNvbS9jbGllbnQvaHVicy9zZXNzaW9uX2h1YiIsImlhdCI6MTY3OTQ0MTM2NywiZXhwIjoxNjc5NDc3MzY3LCJzdWIiOiIyIn0.COB6zV4fDVrhFSPHmO9Kxv--OlKzr_6umVcidZ-thpU';
+// const sessionId = '7';
+// const /* black */ apiToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ3c3M6Ly93cHMtc29tZXJvYy1kZXYud2VicHVic3ViLmF6dXJlLmNvbS9jbGllbnQvaHVicy9zZXNzaW9uX2h1YiIsImlhdCI6MTY3OTQ0MTM2NywiZXhwIjoxNjc5NDc3MzY3LCJzdWIiOiIyIn0.COB6zV4fDVrhFSPHmO9Kxv--OlKzr_6umVcidZ-thpU';
 // const /* white */ apiToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ3c3M6Ly93cHMtc29tZXJvYy1kZXYud2VicHVic3ViLmF6dXJlLmNvbS9jbGllbnQvaHVicy9zZXNzaW9uX2h1YiIsImlhdCI6MTY3OTQ0MTQ4NCwiZXhwIjoxNjc5NDc3NDg0LCJzdWIiOiIxIn0.ZRWOfQ7-pnuDNjuoF0bJmAOZoYMyN-hvtACCIyc7K9Y'
 
 interface rule {
@@ -20,7 +20,7 @@ interface rule {
   color: "b"|"w"|" ",
   description: string
 }
-class Game extends React.Component {
+class Game extends React.Component<{ sessionId: string, apiToken: string }> {
   state: {
     gameId: number,
     color: "black" | "white" | undefined,
@@ -118,8 +118,6 @@ class Game extends React.Component {
 
     return (
       <div className="full-background h-100 d-flex flex-column min-vh-100 justify-content-center align-items-center">
-        {
-          this.state.color !== undefined ? (
             <>
               <div style={{position:"absolute"}}>
                 <div style={{position: "relative"}}>
@@ -132,12 +130,12 @@ class Game extends React.Component {
                         {/* {this.props.opponent.username} */}
                       </div>
                       <div className="score-number">
-                        {this.state[this.getOpponent()]}
+                        {this.state.color ? this.state[this.getOpponent()] : null}
                       </div>
                     </div>
                     <div className="user-container" style={{position: "absolute", bottom: "0px"}}>
                       <div className="score-number">
-                        {this.state[this.state.color]}
+                        {this.state.color ? this.state[this.state.color] : null}
                       </div>
                       <div className="username">
                         {/* {this.props.player.username} */}
@@ -181,12 +179,7 @@ class Game extends React.Component {
               {/* TODO: remove this button */}
               {/* <button style={{position: "absolute", bottom: "10px"}} onClick={this.buttonClick}>Test button</button> */}
             </>
-          ) : (
-            <div>
-              <h1> Waiting for opponent </h1>
-              <Spinner animation="grow" variant="light" />
-            </div>
-          )}
+
       </div>
     );
   }
