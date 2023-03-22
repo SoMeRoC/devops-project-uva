@@ -335,10 +335,10 @@ export class Pawn extends Card {
 		const to = move.pieceMove!.to;
 
 		// Make sure that the pawn is moving forwards
-		if (board.color == Color.Black && from.row >= to.row)
+		if (board.color == Color.Black && to.row >= from.row)
 			return false;
 
-		if (board.color == Color.White && from.row <= to.row)
+		if (board.color == Color.White && to.row <= from.row)
 			return false;
 
 		const diff = {
