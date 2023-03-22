@@ -6,6 +6,7 @@ export enum Action {
 	Move,
 	ChooseCard,
 	StartGame,
+	Ping,
 }
 
 export type Move = {
@@ -73,8 +74,8 @@ function isPiece(piece: Piece) {
 // some spot
 function addPiece(piece: Piece, color: Color) {
 	return (board: Board, _move: Move) => {
+		// Find all empty squares
 		const empties = []
-
 		for (const [row, rowElement] of board.grid.entries()) {
 			for (const [col, piece] of rowElement.entries()) {
 				if (piece.piece == Piece.Empty) {
@@ -86,7 +87,11 @@ function addPiece(piece: Piece, color: Color) {
 			}
 		}
 
-		board.grid[empties[0].row][empties[0].col] = {
+		// Pick a random one
+		const square = empties[empties.length * Math.random() | 0];
+
+		// Add the piece
+		board.grid[square.row][square.col] = {
 			piece: piece,
 			color: color,
 		};
