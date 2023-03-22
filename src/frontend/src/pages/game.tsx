@@ -9,12 +9,10 @@ import "./full-page-background.scss"
 import "./game.scss"
 
 import GameAPI from "../api";
-import BackendGampeApi from "./gameApi";
 
 const sessionId = '7';
 const /* black */ apiToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ3c3M6Ly93cHMtc29tZXJvYy1kZXYud2VicHVic3ViLmF6dXJlLmNvbS9jbGllbnQvaHVicy9zZXNzaW9uX2h1YiIsImlhdCI6MTY3OTQ0MTM2NywiZXhwIjoxNjc5NDc3MzY3LCJzdWIiOiIyIn0.COB6zV4fDVrhFSPHmO9Kxv--OlKzr_6umVcidZ-thpU';
 // const /* white */ apiToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ3c3M6Ly93cHMtc29tZXJvYy1kZXYud2VicHVic3ViLmF6dXJlLmNvbS9jbGllbnQvaHVicy9zZXNzaW9uX2h1YiIsImlhdCI6MTY3OTQ0MTQ4NCwiZXhwIjoxNjc5NDc3NDg0LCJzdWIiOiIxIn0.ZRWOfQ7-pnuDNjuoF0bJmAOZoYMyN-hvtACCIyc7K9Y'
-const api = new GameAPI(sessionId, apiToken);
 
 interface rule {
   className: string,
@@ -22,71 +20,61 @@ interface rule {
   color: "b"|"w"|" ",
   description: string
 }
-interface score {
-  black: number, 
-  white: number
-}
-interface boardstate {
-  fen: cg.FEN,
-  won: "b"|"w"|" "
-}
-type state = { 
-  gameId: number,
-  color: "black" | "white" | undefined,  
-  cgApi: cgApi | null,
-  white: number,  // Did this as nested interfaces first but was not desirable. See: https://stackoverflow.com/a/51136076
-  black: number,
-  alertText: string,
-  showProposedRules: boolean,
-  proposedRules: rule[],
-  activeRules: rule[],
-  waitingOnNextRound: boolean
-};
-class Game extends React.Component<{}, state> {
+class Game extends React.Component {
+  state: {
+    gameId: number,
+    color: "black" | "white" | undefined,
+    white: number,  // Did this as nested interfaces first but was not desirable. See: https://stackoverflow.com/a/51136076
+    black: number,
+    alertText: string,
+    showProposedRules: boolean,
+    proposedRules: rule[],
+    activeRules: rule[],
+    waitingOnNextRound: boolean
+  }
+  api: GameAPI
+  cgApi: undefined | cgApi
+
   constructor(props:any) {
     super(props);
 
+    this.api = new GameAPI(props.sessionId, props.apiToken);
     this.state = {
       gameId: 7,
       color: undefined,
-      cgApi: null, 
       white: 0,
       black: 0,
-      alertText: "", 
+      alertText: "",
       showProposedRules: false,
       proposedRules: [],
       activeRules: [],
       waitingOnNextRound: false,
     };
-
-    // This binding is necessary to make `this` work in the callback
-    this.buttonClick = this.buttonClick.bind(this);
-    this.getOpponent = this.getOpponent.bind(this);
-    this.onPlayerMove = this.onPlayerMove.bind(this);
   }
 
-  componentDidMount(): void {
-    api.on('handshake', (color: "b"|"w") => {
+  receiveCGApi = (cgApi: cgApi): void => {
+    this.cgApi = cgApi;
+    this.api.on('handshake', (color: "b"|"w") => {
       console.log(color);
-      const cgColor = this.getCgColor(color); 
+      const cgColor = this.getCgColor(color);
       this.setState({ color: cgColor });
-      
-      this.state.cgApi?.set({
+
+      this.cgApi?.set({
         orientation: cgColor,
         movable: {
           color: cgColor === "white" ? "white" as cg.Color : undefined, // Can only move pieces if they are white
       }});
     })
-    api.on('newState', (newState) => {
+    this.api.on('newState', (newState) => {
       const {boardstate, score, rules, cardSelection} = newState;
       console.log(newState);
 
-      this.state.cgApi?.set({
+      this.cgApi?.set({
         fen: boardstate.fen,
       })
 
       this.setState({
-        black: score.black, 
+        black: score.black,
         white: score.white,
         activeRules: rules,
         proposedRules: cardSelection,
@@ -101,19 +89,19 @@ class Game extends React.Component<{}, state> {
         }
       }
     });
-    api.connect();
+    this.api.connect();
   }
 
-  onPlayerMove(from: cg.Key, to: cg.Key) {
+  onPlayerMove = (from: cg.Key, to: cg.Key) => {
     //TODO: Send move to api, if valid -> change board, otherwise retry
     const move = `${from}-${to}`;
-    api.action({action:2, move: move});
+    this.api.action({action:2, move: move});
   }
 
-  onRuleChoose(ruleIndex: number) {
-    api.action({action: 3, choice: ruleIndex});
+  onRuleChoose = (ruleIndex: number) => {
+    this.api.action({action: 3, choice: ruleIndex});
   }
-  
+
   handleRuleClicked = (ruleIndex:number) => {this.onRuleChoose(ruleIndex)}
   handleClose = () => this.setState({showProposedRules: false});
   handleShow = () => this.setState({showProposedRules: true});
@@ -136,7 +124,7 @@ class Game extends React.Component<{}, state> {
               <div style={{position:"absolute"}}>
                 <div style={{position: "relative"}}>
                   <div>
-                    <Chessground config={chessConfig} api={this.state.cgApi} setApi={(cgApi) => this.setState({cgApi:cgApi})}/>
+                    <Chessground config={chessConfig} setApi={this.receiveCGApi}/>
                   </div>
                   <div className="score-sidebar text-monospace font-weight-bold lh-1" style={{}}>
                     <div className="user-container">
@@ -159,7 +147,7 @@ class Game extends React.Component<{}, state> {
                   <div className="rule-sidebar">
                     {
                       this.state.activeRules.map((rule) => (
-                        rule.color !== " " && 
+                        rule.color !== " " &&
                         <Card key={rule.className} bg="light" text="dark" style={{ width: "18rem", marginBottom: "10px"}}>
                           <Card.Body>
                             <Card.Title>{rule.title}</Card.Title>
@@ -207,7 +195,7 @@ class Game extends React.Component<{}, state> {
   // Help functions
   // ======================
 
-  private getOpponent(): cg.Color {
+  private getOpponent = (): cg.Color => {
     if (this.state.color === "black")
       return "white";
     if (this.state.color === "white")
@@ -215,7 +203,7 @@ class Game extends React.Component<{}, state> {
     throw new Error("Invalid orientation");
   }
 
-  private getCgColor(color: "b"|"w"): cg.Color {
+  private getCgColor = (color: "b"|"w"): cg.Color => {
     if (color === "w")
       return "white";
     else
@@ -223,7 +211,7 @@ class Game extends React.Component<{}, state> {
   }
 
   // Example programmatic move
-  buttonClick() {
+  buttonClick = () => {
     console.log("clicked");
 
     // this.onRoundEnd({fen:"rnbqkbnr/pppppppp/11111111/11111111/11111111/11N11N11/PPPPPPPP/R1BQKB1R w - - 14 8","won":"b"}
