@@ -45,9 +45,7 @@ class Home extends React.Component<{}, {show: boolean, gameId?: number}> {
       animation: {
         duration: 1000
       },
-      drawable: {
-        visible: false
-      },
+      viewOnly: true,
       fen: "8/1QP1B3/pP5R/r1RnP3/5b2/2P4P/4K2k/5n2 w - - 0 1",
     };
 

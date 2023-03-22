@@ -11,9 +11,9 @@ import "./game.scss"
 import GameAPI from "../api";
 import BackendGampeApi from "./gameApi";
 
-const sessionId = '2';
-// const /* black */ apiToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ3c3M6Ly93cHMtc29tZXJvYy1kZXYud2VicHVic3ViLmF6dXJlLmNvbS9jbGllbnQvaHVicy9zZXNzaW9uX2h1YiIsImlhdCI6MTY3OTQ0MTM2NywiZXhwIjoxNjc5NDc3MzY3LCJzdWIiOiIyIn0.COB6zV4fDVrhFSPHmO9Kxv--OlKzr_6umVcidZ-thpU';
-const /* white */ apiToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ3c3M6Ly93cHMtc29tZXJvYy1kZXYud2VicHVic3ViLmF6dXJlLmNvbS9jbGllbnQvaHVicy9zZXNzaW9uX2h1YiIsImlhdCI6MTY3OTQ0MTQ4NCwiZXhwIjoxNjc5NDc3NDg0LCJzdWIiOiIxIn0.ZRWOfQ7-pnuDNjuoF0bJmAOZoYMyN-hvtACCIyc7K9Y'
+const sessionId = '7';
+const /* black */ apiToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ3c3M6Ly93cHMtc29tZXJvYy1kZXYud2VicHVic3ViLmF6dXJlLmNvbS9jbGllbnQvaHVicy9zZXNzaW9uX2h1YiIsImlhdCI6MTY3OTQ0MTM2NywiZXhwIjoxNjc5NDc3MzY3LCJzdWIiOiIyIn0.COB6zV4fDVrhFSPHmO9Kxv--OlKzr_6umVcidZ-thpU';
+// const /* white */ apiToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ3c3M6Ly93cHMtc29tZXJvYy1kZXYud2VicHVic3ViLmF6dXJlLmNvbS9jbGllbnQvaHVicy9zZXNzaW9uX2h1YiIsImlhdCI6MTY3OTQ0MTQ4NCwiZXhwIjoxNjc5NDc3NDg0LCJzdWIiOiIxIn0.ZRWOfQ7-pnuDNjuoF0bJmAOZoYMyN-hvtACCIyc7K9Y'
 const api = new GameAPI(sessionId, apiToken);
 
 interface rule {
@@ -47,8 +47,8 @@ class Game extends React.Component<{}, state> {
     super(props);
 
     this.state = {
-      gameId: 5,
-      color: "white",
+      gameId: 7,
+      color: undefined,
       cgApi: null, 
       white: 0,
       black: 0,
@@ -67,6 +67,7 @@ class Game extends React.Component<{}, state> {
 
   componentDidMount(): void {
     api.on('handshake', (color: "b"|"w") => {
+      console.log(color);
       const cgColor = this.getCgColor(color); 
       this.setState({ color: cgColor });
       
@@ -103,126 +104,10 @@ class Game extends React.Component<{}, state> {
     api.connect();
   }
 
-  // onOpponentMove(boardstate: boardstate, score: score, activerules: rule[], proposedrules: rule[]) {
-  //   this.state.cgApi?.set({
-  //     fen: boardstate.fen, // Move all pieces to newly updated board
-  //     turnColor: this.state.color, // Make it so the pieces are moveable again
-  //     movable: {
-  //       color: this.state.color // Make it so the pieces are moveable again
-  //     },
-  //     selectable: {
-  //       enabled: true,
-  //     },
-  //     draggable: {
-  //       enabled: true,
-  //     },
-  //   }); 
-
-  //   this.setState({
-  //     black: score.black, 
-  //     white: score.white,
-  //     activeRules: activerules
-  //   });
-  // }
-
-  // onRoundEnd(boardstate: boardstate, score: score, activerules: rule[], proposedrules: rule[]) {
-  //   if (boardstate.won === " ") 
-  //     throw new Error ("Round ended without winner, this is not possible and should likely be onOpponentMove instead")
-
-  //   // Update game state and don't allow movement
-  //   this.state.cgApi?.set({
-  //     fen: boardstate.fen,
-  //     turnColor: undefined,
-  //     movable: {
-  //       color: undefined 
-  //     },
-  //     selectable: {
-  //       enabled: false,
-  //     },
-  //     draggable: {
-  //       enabled: false,
-  //     },
-  //   });
-
-  //   // Update the score and display alert
-  //   const winner = this.getCgColor(boardstate.won)  
-  //   this.setState({
-  //     black: score.black, 
-  //     white: score.white,
-  //     activeRules: activerules,
-  //     proposedRules: proposedrules,
-  //     alertText: `${winner} WON ROUND ${this.state.black + this.state.white + 1}!`.toUpperCase()
-  //   });
-
-  //   // TODO: retrieve rules if enemy won 
-  //   if (winner !== this.state.color) {
-  //     this.handleShow();
-  //   }
-  // }
-
-  // onRoundStart(boardstate: boardstate, score: score, activerules: rule[], proposedrules: rule[]) {
-  //   // Update score and active rules (score should already be correct but why not update again if we get the values 🤷‍♂️)
-  //   this.setState({
-  //     black: score.black, 
-  //     white: score.white,
-  //     activeRules: activerules,
-  //   });
-
-  //   this.state.cgApi?.set({
-  //     fen: boardstate.fen,
-  //     turnColor: "white",
-  //     movable: {
-  //       color: this.state.color === "white" ? "white" as cg.Color : undefined, // Can only play if they are white because white starts the game
-  //     }
-  //   })
-  // }
-
-  // onGameEnd(boardstate: boardstate, score: score, activerules: rule[], proposedrules: rule[]) {
-  //   if (boardstate.won === " ") 
-  //     throw new Error ("Game ended without winner, this is not possible and should likely be onOpponentMove instead")
-
-  //   // Disable board
-  //   this.state.cgApi?.set({fen: boardstate.fen});
-  //   this.state.cgApi?.stop();
-
-  //   // Update score for the last time
-  //   this.setState({
-  //     black: score.black, 
-  //     white: score.white,
-  //     activeRules: activerules,
-  //     alertText: `${this.getCgColor(boardstate.won)} WON!`.toUpperCase()
-  //   });
-  // }
-
   onPlayerMove(from: cg.Key, to: cg.Key) {
     //TODO: Send move to api, if valid -> change board, otherwise retry
     const move = `${from}-${to}`;
     api.action({action:2, move: move});
-
-    // callAzureFunction(`gameid=${5}&color=${this.state.color?.charAt(0)}&action=${2}&move=${move}`).then(value => {
-    //   const currentPlayer = this.getCgColor(value.boardstate.fen.split(" ")[1]); 
-    //   const moveHasGoneThrough = currentPlayer !== this.state.color;
-
-    //   if (moveHasGoneThrough) {
-    //     // Give move to opponent, make player unable to move
-    //     const opponent = this.getOpponent();
-    //     this.state.cgApi?.set({
-    //       turnColor: opponent,
-    //       selectable: {
-    //         enabled: false,
-    //       },
-    //       draggable: {
-    //         enabled: false,
-    //       },
-    //     });
-    //   } else {
-    //     this.setState({alertText: `INVALID MOVE ${move}!`});
-    //     this.state.cgApi?.move(to, from)
-    //   }
-    // }).catch((error) => {
-    //   this.setState({alertText: `ERROR SENDING MOVE: ${error}`});
-    //   this.state.cgApi?.move(to, from)
-    // });
   }
 
   onRuleChoose(ruleIndex: number) {
@@ -236,13 +121,13 @@ class Game extends React.Component<{}, state> {
   render() {
     const chessConfig = {
       movable: {
+        free: true,
         events: {
           after: this.onPlayerMove
         }
       },
     };
 
-    //TODO: Show active cards
     return (
       <div className="full-background h-100 d-flex flex-column min-vh-100 justify-content-center align-items-center">
         {
