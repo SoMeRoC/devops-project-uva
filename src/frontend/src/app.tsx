@@ -58,7 +58,7 @@ function App(props:any) {
     <MsalProvider instance={props.instance}>
       <BrowserRouter>
         <Routes>
-          <Route path='*' element={<Game sessionId={sessionId} apiToken={apiToken} />} />
+          <Route path='*' element={<RequireAuth><Game sessionId={sessionId} apiToken={apiToken} /></RequireAuth>} />
         </Routes>
       </BrowserRouter>
 
