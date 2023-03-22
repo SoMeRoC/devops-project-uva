@@ -54,6 +54,7 @@ class Game extends React.Component<{ sessionId: string, apiToken: string }> {
 
   receiveCGApi = (cgApi: cgApi): void => {
     this.cgApi = cgApi;
+
     this.api.on('handshake', (color: "b"|"w") => {
       console.log(color);
       const cgColor = this.getCgColor(color);
@@ -123,7 +124,7 @@ class Game extends React.Component<{ sessionId: string, apiToken: string }> {
               <div style={{position:"absolute"}}>
                 <div style={{position: "relative"}}>
                   <div>
-                    <Chessground config={chessConfig} setApi={this.receiveCGApi}/>
+                    <Chessground config={chessConfig} api={this.cgApi} setApi={this.receiveCGApi}/>
                   </div>
                   <div className="score-sidebar text-monospace font-weight-bold lh-1" style={{}}>
                     <div className="user-container">
