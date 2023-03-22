@@ -1,10 +1,10 @@
 import React from "react"
 import Chessground from "./chessground";
-import { Navigate } from "react-router-dom";
 
 import "./home.scss"
 
-class Home extends React.Component<{}, {show: boolean, gameId?: number}> {
+
+class Home extends React.Component<{ openGame: any }, {show: boolean}> {
   constructor(props:any) {
     super(props);
 
@@ -18,8 +18,6 @@ class Home extends React.Component<{}, {show: boolean, gameId?: number}> {
   }
 
   findMatch() {
-    this.setState({gameId: 0})
-    
     // this.handleShow();
     // TODO: fix endpoint
     // const endpoint: any = "";
@@ -35,6 +33,16 @@ class Home extends React.Component<{}, {show: boolean, gameId?: number}> {
     //   console.log(err.message);
     //   this.handleClose();
     // });
+  }
+
+  startWhite = () => {
+    const apiToken1 = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ3c3M6Ly93cHMtc29tZXJvYy1kZXYud2VicHVic3ViLmF6dXJlLmNvbS9jbGllbnQvaHVicy9zZXNzaW9uX2h1YiIsImlhdCI6MTY3OTQzOTkxNCwiZXhwIjoxNjc5NDc1OTE0LCJzdWIiOiIxIn0.RTbDQvP4JZWq_6ZndR_XCaoEnMJvKbGqRXTO-I292z4';
+    this.props.openGame(7, apiToken1)
+  }
+
+  startBlack = () => {
+    const apiToken2 = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ3c3M6Ly93cHMtc29tZXJvYy1kZXYud2VicHVic3ViLmF6dXJlLmNvbS9jbGllbnQvaHVicy9zZXNzaW9uX2h1YiIsImlhdCI6MTY3OTQzOTg5MSwiZXhwIjoxNjc5NDc1ODkxLCJzdWIiOiIyIn0.7o8xcflgADo51Km9yJ7RyxAJ6rMRYGMgskBVrw0SKzQ';
+    this.props.openGame(7, apiToken2)
   }
 
   handleClose = () => this.setState({show: false});
@@ -59,7 +67,8 @@ class Home extends React.Component<{}, {show: boolean, gameId?: number}> {
                   <h1 className="font-weight-bold" >SoMeRoC</h1>
                   <p className="lead">A roguelike chess game</p>
                   <p className="lead">
-                    <a onClick={this.findMatch} className="btn btn-light btn-lg btn-outline-dark play-button">Play now!</a>
+                    <a onClick={this.startWhite} className="btn btn-light btn-lg btn-outline-dark play-button">Play now as white!</a>
+                    <a onClick={this.startBlack} className="btn btn-light btn-lg btn-outline-dark play-button">Play now as black!</a>
                   </p>
                 </main>
               </div>
@@ -82,9 +91,6 @@ class Home extends React.Component<{}, {show: boolean, gameId?: number}> {
             <h2>Chess where you get <b className="purple-text">stronger by losing</b>!</h2>
           </div>
         </div>
-        {this.state.gameId !== undefined && (
-          <Navigate to={`/game/${this.state.gameId}`} replace={false}/>
-        )}
       </div>
     );
   }

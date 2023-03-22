@@ -11,7 +11,7 @@ import Success from './pages/success';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthenticatedTemplate, MsalProvider, UnauthenticatedTemplate, useMsalAuthentication } from '@azure/msal-react';
 import { InteractionType } from "@azure/msal-browser";
-import { Fragment, useEffect } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 
 // Used to require authentication on specific Urls
@@ -44,12 +44,33 @@ export const RequireAuth: React.FC<{ children: JSX.Element }> = ({ children }) =
 };
 
 function App(props:any) {
+
+  const [sessionId, setSessionId] = useState('');
+  const [apiToken, setApiToken] = useState('');
+
+  function openGame(sessionId: string, apiToken: string) {
+    setSessionId(sessionId);
+    setApiToken(apiToken);
+  }
+
+  if (sessionId && apiToken) {
+    return (
+    <MsalProvider instance={props.instance}>
+      <BrowserRouter>
+        <Routes>
+          <Route path='*' element={<RequireAuth><Game sessionId={sessionId} apiToken={apiToken} /></RequireAuth>} />
+        </Routes>
+      </BrowserRouter>
+
+    </MsalProvider>
+    )
+  }
+
   return (
     <MsalProvider instance={props.instance}>
       <BrowserRouter>
         <Routes>
-          <Route path='/' element={<Page page={<Home />} />} />
-          <Route path='/game/*' element={<RequireAuth><Game /></RequireAuth>} />
+          <Route path='/' element={<Page page={<Home openGame={openGame} />} />} />
           <Route path='/test' element={<RequireAuth><Test /></RequireAuth>} />
           <Route path='/error'element={<Page page={<Error />} />} />
           <Route path='/success'element={<Page page={<Success />} />} />
