@@ -78,6 +78,7 @@ export class Board {
 			col++;
 		}
 
+		grid.reverse();
 		return grid;
 	}
 
@@ -127,7 +128,9 @@ export class Board {
 
 	toFEN(): FEN {
 		// Position encoded
-		let fen = this.grid.reverse().map(row => 
+		const grid = this.grid.slice();
+		grid.reverse();
+		let fen = grid.map(row => 
 			row.map(e => {
 				const {piece: piece, color: color} = e;
 

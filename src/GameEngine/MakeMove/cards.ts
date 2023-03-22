@@ -64,13 +64,12 @@ function isPiece(piece: Piece) {
 		// This card applies if the piece being moved matches with the given
 		// piece and the color of the piece matches with who is to move
 		const from = move.pieceMove.from;
-		return move.color == board.color &&
-			   board.pieceAt(from).piece == piece &&
+		return board.pieceAt(from).piece == piece &&
 			   board.pieceAt(from).color == board.color;
 	}
 }
 
-// Helper compute funcion that puts the given piece with the class color on
+// Helper compute function that puts the given piece with the class color on
 // some spot
 function addPiece(piece: Piece, color: Color) {
 	return (board: Board, _move: Move) => {
@@ -194,6 +193,20 @@ export class MoveAPiece extends Card {
 
 	legal(board: Board, move: Move) {
 		return board.pieceAt(move.pieceMove!.from).piece != Piece.Empty;
+	}
+}
+
+@defaultCard
+export class TurnMathches extends Card {
+	title = "Turn matches";
+	description = "The player whose turn it is is the one making the move";
+
+	applies(_board: Board, move: Move) {
+		return move.type == Action.Move;
+	}
+
+	legal(board: Board, move: Move) {
+		return move.color == board.color;
 	}
 }
 
