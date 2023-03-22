@@ -3,7 +3,7 @@ import React from 'react';
 import Chessground from "./chessground";
 import { Api as cgApi } from 'chessground/api';
 import * as cg from 'chessground/types';
-import {Alert, Modal, Card, CardGroup, Spinner} from 'react-bootstrap/';
+import {Alert, Modal, Card, CardGroup} from 'react-bootstrap/';
 
 import "./full-page-background.scss"
 import "./game.scss"
