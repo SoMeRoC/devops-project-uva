@@ -47,7 +47,7 @@ export default class GameAPI extends EventEmitter {
         this.game = {
           color: data.color,
         };
-        this.emit(data.event, this.color);
+        this.emit(data.event, this.color, data.board);
         break;
 
       case 'playerConnected':

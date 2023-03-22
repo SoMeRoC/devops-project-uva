@@ -55,8 +55,7 @@ class Game extends React.Component<{ sessionId: string, apiToken: string }> {
   receiveCGApi = (cgApi: cgApi): void => {
     this.cgApi = cgApi;
 
-    this.api.on('handshake', (color: "b"|"w") => {
-      console.log(color);
+    this.api.on('handshake', (color: "b"|"w", board) => {
       const cgColor = this.getCgColor(color);
       this.setState({ color: cgColor });
 
@@ -64,7 +63,8 @@ class Game extends React.Component<{ sessionId: string, apiToken: string }> {
         orientation: cgColor,
         movable: {
           free: true
-        }
+        },
+        fen: board.boardstate.fen,
       });
     })
     this.api.on('newState', (newState) => {
