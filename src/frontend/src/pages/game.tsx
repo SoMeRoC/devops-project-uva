@@ -63,7 +63,7 @@ class Game extends React.Component<{ sessionId: string, apiToken: string }> {
       this.cgApi?.set({
         orientation: cgColor,
         movable: {
-          color: cgColor
+          free: true
         }
       });
     })
