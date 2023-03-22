@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const gameConf = {
-  url: process.env.GAME_URL || 'https://func-someroc-gameengine-dev.azurewebsites.net/api',
-  apiToken: process.env.API_TOKEN || '', // ?code=
+  url: process.env.gameUrl || 'https://func-someroc-gameengine-dev.azurewebsites.net/api',
+  apiToken: process.env.gameApi || '', // ?code=
 }
 
 const gameService = axios.create({
@@ -20,9 +20,9 @@ const gameService = axios.create({
 const gameApi = {
   action: (gameId: Number | String, color: String, payload: Object) => {
     return gameService.get('/MakeMove', {
-      data: {
+      params: {
         ...payload,
-        gameId,
+        gameid: gameId,
         color,
       }
     });
