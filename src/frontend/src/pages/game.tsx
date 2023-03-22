@@ -61,9 +61,7 @@ class Game extends React.Component {
 
       this.cgApi?.set({
         orientation: cgColor,
-        movable: {
-          color: cgColor === "white" ? "white" as cg.Color : undefined, // Can only move pieces if they are white
-      }});
+      });
     })
     this.api.on('newState', (newState) => {
       const {boardstate, score, rules, cardSelection} = newState;
