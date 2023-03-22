@@ -86,8 +86,8 @@ class Game extends React.Component<{ sessionId: string, apiToken: string }> {
           this.setState({alertText: `${this.getCgColor(boardstate.won)} WON!`.toUpperCase()})
         } else {
           this.setState({alertText: `${winner} WON ROUND ${this.state.black + this.state.white + 1}!`.toUpperCase()})
-          
-          if (winner === this.state.color) 
+
+          if (winner !== this.state.color)
             this.handleShow();
         }
       }
@@ -147,9 +147,9 @@ class Game extends React.Component<{ sessionId: string, apiToken: string }> {
                   </div>
                   <div className="rule-sidebar">
                     {
-                      this.state.activeRules.map((rule) => (
+                      this.state.activeRules.map((rule, i) => (
                         rule.color !== " " &&
-                        <Card key={rule.className} bg="light" text="dark" style={{ width: "18rem", marginBottom: "10px"}}>
+                        <Card key={i} bg="light" text="dark" style={{ width: "18rem", marginBottom: "10px"}}>
                           <Card.Body>
                             <Card.Title>{rule.title}</Card.Title>
                             <Card.Subtitle className="mb-2 text-muted">
