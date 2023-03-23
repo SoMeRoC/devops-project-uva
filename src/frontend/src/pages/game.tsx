@@ -75,7 +75,6 @@ class Game extends React.Component<{ sessionId: string, apiToken: string }> {
     })
     this.api.on('newState', (newState) => {
       const {boardstate, score, rules, cardSelection} = newState;
-      console.log(newState);
 
       this.cgApi?.set({
         fen: boardstate.fen,
