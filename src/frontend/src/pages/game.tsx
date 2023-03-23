@@ -10,10 +10,6 @@ import "./game.scss"
 
 import GameAPI from "../api";
 
-// const sessionId = '7';
-// const /* black */ apiToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ3c3M6Ly93cHMtc29tZXJvYy1kZXYud2VicHVic3ViLmF6dXJlLmNvbS9jbGllbnQvaHVicy9zZXNzaW9uX2h1YiIsImlhdCI6MTY3OTQ0MTM2NywiZXhwIjoxNjc5NDc3MzY3LCJzdWIiOiIyIn0.COB6zV4fDVrhFSPHmO9Kxv--OlKzr_6umVcidZ-thpU';
-// const /* white */ apiToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ3c3M6Ly93cHMtc29tZXJvYy1kZXYud2VicHVic3ViLmF6dXJlLmNvbS9jbGllbnQvaHVicy9zZXNzaW9uX2h1YiIsImlhdCI6MTY3OTQ0MTQ4NCwiZXhwIjoxNjc5NDc3NDg0LCJzdWIiOiIxIn0.ZRWOfQ7-pnuDNjuoF0bJmAOZoYMyN-hvtACCIyc7K9Y'
-
 interface rule {
   className: string,
   title: string,

@@ -36,13 +36,13 @@ class Home extends React.Component<{ openGame: any }, {show: boolean}> {
   }
 
   startWhite = () => {
-    const apiToken1 = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ3c3M6Ly93cHMtc29tZXJvYy1kZXYud2VicHVic3ViLmF6dXJlLmNvbS9jbGllbnQvaHVicy9zZXNzaW9uX2h1YiIsImlhdCI6MTY3OTU4NTU0NCwiZXhwIjoxNjc5NjIxNTQ0LCJzdWIiOiIxIn0.gS43lMeoZiLHc6yDuexEZ4vsZmPIkxE4Jye95eFI7_I';
-    this.props.openGame(2, apiToken1)
+    const apiToken1 = process.env.REACT_APP_API_TOKEN1;
+    this.props.openGame(2, apiToken1);
   }
 
   startBlack = () => {
-    const apiToken2 = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ3c3M6Ly93cHMtc29tZXJvYy1kZXYud2VicHVic3ViLmF6dXJlLmNvbS9jbGllbnQvaHVicy9zZXNzaW9uX2h1YiIsImlhdCI6MTY3OTU4NTU3MCwiZXhwIjoxNjc5NjIxNTcwLCJzdWIiOiIyIn0.U4iPuMsT6mSa9X_cjodtuIOQnmEeunmn3aDpULrbXK8';
-    this.props.openGame(2, apiToken2)
+    const apiToken2 = process.env.REACT_APP_API_TOKEN2;
+    this.props.openGame(2, apiToken2);
   }
 
   handleClose = () => this.setState({show: false});
