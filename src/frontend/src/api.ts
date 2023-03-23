@@ -9,6 +9,8 @@ export default class GameAPI extends EventEmitter {
   connecting: boolean
   connected: boolean
   game: undefined | { color: 'w' | 'b' }
+  start: number | null = null
+  times: number[] = []
 
   constructor(sessionId: string, apiToken: string) {
     super();
@@ -56,6 +58,11 @@ export default class GameAPI extends EventEmitter {
         break;
 
       case 'newState':
+        if (this.start) {
+          this.times.push(new Date().valueOf() - this.start)
+          this.start = null;
+          console.log('Avg: ', this.times.reduce((sum, cur) => sum + cur, 0) / this.times.length)
+        }
         this.emit(data.event, data.newState);
         break;
 
@@ -82,6 +89,7 @@ export default class GameAPI extends EventEmitter {
   action(payload: { action: 2, move: String } | { action: 3, choice: number }) {
     if (!this.socket || !this.connected) { throw new Error('Socket not connected!'); }
 
+    this.start = new Date().valueOf();
     this.socket.send(JSON.stringify(payload));
   }
 }
